@@ -76,6 +76,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 * **Chun-Wah Chung** - *What he do* - [chunwahchung](https://github.com/chunwahchung)
 * **Dan Kozlovsky** - *What he do* - [PurpleBooth](https://github.com/PurpleBooth)
 * **Matt Walker** - *What he do* - [matthewwalk](https://github.com/matthewwalk)
+* **Toan Truong** - *What he do* - [truong25](https://github.com/truong25)
 
 
 
