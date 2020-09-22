@@ -73,7 +73,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 ## Authors
 
 * **Akinloluwa Adewale** - *What he do* - [AkinAD](https://github.com/AkinaAD)
-* **Chun-Wah Chung** - *What he do* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Chun-Wah Chung** - *What he do* - [chunwahchung](https://github.com/chunwahchung)
 * **Dan Kozlovsky** - *What he do* - [PurpleBooth](https://github.com/PurpleBooth)
 * **Matt Walker** - *What he do* - [matthewwalk](https://github.com/matthewwalk)
 
