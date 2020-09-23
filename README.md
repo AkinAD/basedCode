@@ -75,7 +75,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 * **Akinloluwa Adewale** - *What he do* - [AkinAD](https://github.com/AkinaAD)
 * **Chun-Wah Chung** - *What he do* - [chunwahchung](https://github.com/chunwahchung)
 * **Allen Kaplan** - *Software Engineer - [AllenKaplan](https://github.com/AllenKaplan)
-* **Dan Kozlovsky** - *What he do* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Dan Kozlovsky** - Student - [daniel-kozlovsky](https://github.com/daniel-kozlovsky)
 * **Matt Walker** - *What he do* - [matthewwalk](https://github.com/matthewwalk)
 * **Toan Truong** - *What he do* - [truong25](https://github.com/truong25)
 
