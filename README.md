@@ -72,7 +72,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Akinloluwa Adewale** - *What he do* - [AkinAD](https://github.com/AkinaAD)
+* **Akinloluwa Adewale** - *What he do* - [AkinAD](https://github.com/AkinAD)
 * **Chun-Wah Chung** - *What he do* - [chunwahchung](https://github.com/chunwahchung)
 * **Allen Kaplan** - *Software Engineer - [AllenKaplan](https://github.com/AllenKaplan)
 * **Dan Kozlovsky** - Student - [daniel-kozlovsky](https://github.com/daniel-kozlovsky)
