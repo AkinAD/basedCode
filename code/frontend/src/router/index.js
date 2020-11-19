@@ -48,14 +48,9 @@ const routes = [
     component: views.recommended
   },
   {
-    path: '/signin',
-    name: 'Signin',
-    component: views.signin
-  },
-  {
-    path: '/signup',
-    name: 'Signup',
-    component: views.signup
+    path: '/login',
+    name: 'Login',
+    component: views.login
   },
   {
     path: '/stores',
