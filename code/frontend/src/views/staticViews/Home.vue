@@ -1,17 +1,26 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../../assets/logo.png">
+    <img alt="Vue logo" src="../../assets/logo.png" />
+    <Banner />
+    <Recommendations />
+    <Footer />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
+
+import Recommendations from "../../components/Recommendations";
+import Banner from "../../components/Banner";
+import Footer from "../../components/Footer";
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
-  }
-}
+    Banner,
+    Recommendations,
+    Footer,
+  },
+};
 </script>
 
-<style>
-</style>
+<style></style>
