@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import AccountList from '../../components/AccountList'
+import AccountList from '../components/AccountList'
 export default {
   name: 'Home',
   components: {
