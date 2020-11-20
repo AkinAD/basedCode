@@ -12,7 +12,7 @@
 
 import Recommendations from "../components/Recommendations";
 import Banner from "../components/Banner";
-import Footer from "../components/Footer";
+import Footer from "../components/layout/Footer";
 export default {
   name: "Home",
   components: {

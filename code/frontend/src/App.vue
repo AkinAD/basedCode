@@ -1,7 +1,9 @@
 <template>
-  <v-app> <!-- main app tag -->
+  <v-app>
+    <!-- main app tag -->
     <Header />
-    <v-content> <!--where pages are to be loaded-->
+    <v-content>
+      <!--where pages are to be loaded-->
       <router-view></router-view>
     </v-content>
   </v-app>
@@ -17,6 +19,4 @@ export default {
 };
 </script>
 
-<style>
-
-</style>
+<style></style>
