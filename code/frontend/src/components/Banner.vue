@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-container>
     <v-sheet :height="sheetHeight">
       <v-container class="fill-height">
         <v-row align="center" justify="center">
@@ -12,7 +12,7 @@
         </v-row>
       </v-container>
     </v-sheet>
-  </v-app>
+  </v-container>
 </template>
 
 <script>

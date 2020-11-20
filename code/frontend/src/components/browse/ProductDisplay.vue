@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-container>
     <div>
       <h3>Products</h3>
       <v-row>
@@ -13,7 +13,7 @@
         </v-col>
       </v-row>
     </div>
-  </v-app>
+  </v-container>
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app>
+    <v-container>
       <v-sheet v-if="$vuetify.breakpoint.mdAndUp" :elevation="4" class="pa-8"
         ><h3>Filters</h3>
         <v-radial-group v-model="priceFilter" :mandatory="true">
@@ -29,7 +29,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-    </v-app>
+    </v-container>
   </div>
 </template>
 
