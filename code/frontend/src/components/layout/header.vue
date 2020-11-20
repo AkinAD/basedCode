@@ -21,10 +21,10 @@ export default {
     //needs to be modified to be dynamic based on router links maybe
     return {
       menuItems: [
-        { title: "Home", path: "/home", icon: "home" },
+        { title: "Home", path: "/home", icon: "mdi-home" },
         { title: "Browse", path: "/browse", icon: "mdi-book" },
         { title: "Account", path: "/account", icon: "mdi-account" }, //should be if logged in only
-        { title: "login", path: "/login", icon: "lock_open" },
+        { title: "login", path: "/login", icon: "mdi-lock" },
       ],
     };
   },
