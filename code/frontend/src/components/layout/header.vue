@@ -1,45 +1,25 @@
 <template>
   <v-card>
-    <v-navigation-drawer v-model="sidebar" app>
-      <v-list>
-        <v-list-tile
-          v-for="item in menuItems"
-          :key="item.title"
-          :to="item.path"
-        >
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>{{ item.title }}</v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-toolbar app>
-      <span class="hidden-sm-and-up">
-        <v-toolbar-side-icon @click="sidebar = !sidebar"> </v-toolbar-side-icon>
-      </span>
-      <v-toolbar-title>
-          Smart Shopping
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-xs-only">
-        <v-btn flat v-for="item in menuItems" :key="item.title" :to="item.path">
-          <v-icon left dark>{{ item.icon }}</v-icon>
-          {{ item.title }}
-        </v-btn>
-      </v-toolbar-items>
-    </v-toolbar>
+    <v-card-title class="text-center justify-center">
+      <h1 class="text-center display-3 hidden-xs-only">Smart Shopping</h1>
+      <h1 class="text-center display-1 hidden-sm-and-up">Smart Shopping</h1>
+    </v-card-title>
+    <v-tabs grow>
+      <v-tabs-slider></v-tabs-slider>
+      <v-tab flat v-for="item in menuItems" :key="item.title" :to="item.path">
+        <v-icon left dark>{{ item.icon }}</v-icon>
+        {{ item.title }}
+      </v-tab>
+    </v-tabs>
   </v-card>
 </template>
 
 <script>
 export default {
   name: "Header",
-  data() { //needs to be modified to be dynamic based on router links maybe
+  data() {
+    //needs to be modified to be dynamic based on router links maybe
     return {
-      appTitle: "Smart Shopping",
-      sidebar: false,
       menuItems: [
         { title: "Home", path: "/home", icon: "home" },
         { title: "Browse", path: "/browse", icon: "mdi-book" },
