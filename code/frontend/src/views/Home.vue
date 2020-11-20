@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <Banner />
     <Recommendations />
   </v-container>

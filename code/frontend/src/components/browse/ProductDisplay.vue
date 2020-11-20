@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <div>
       <h3>Products</h3>
       <v-row>

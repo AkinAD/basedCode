@@ -1,6 +1,6 @@
 <template>
-  <v-card outlined>
-    <v-img :src="product.image" height="200px" />
+  <v-card outlined fluid>
+    <v-img :src="product.image" contain height="200px" />
     <v-card-title>{{ product.title }} </v-card-title>
     <v-card-subtitle>$ {{ product.price }} </v-card-subtitle>
     <v-card-actions>
