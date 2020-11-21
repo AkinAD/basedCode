@@ -1,1 +1,10 @@
-{}
+{
+  "auth": {
+    "smartshoppera93a5040": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}
