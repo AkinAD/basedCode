@@ -1,15 +1,6 @@
 <template>
   <v-container>
-    <v-container class="fill-height">
-      <v-row align="center" justify="center">
-        <h1 class="text-center display-1 hidden-xs-only">
-          How's it going Akin?
-        </h1>
-        <h1 class="text-center display-2 hidden-sm-and-up">
-          How's it going Akin?
-        </h1>
-      </v-row>
-    </v-container>
+    <Banner text="Hello Akin, here's your account" size="150px"/>
     <v-row>
       <v-col md="3" offset-lg="1"><UserCardWithPastPurchases /></v-col>
       <v-col md="9" lg="7">
@@ -75,6 +66,7 @@
 <script>
 import UserCardWithPastPurchases from "../components/cards/UserCardWithPastPurchases";
 import Recommendations from "../components/Recommendations";
+import Banner from "../components/layout/Banner"
 import { mapGetters, mapActions } from "vuex";
 
 export default {
@@ -82,6 +74,7 @@ export default {
   components: {
     UserCardWithPastPurchases,
     Recommendations,
+    Banner
   },
   methods: {
     ...mapActions(["fetchPurchasedItems"]),
