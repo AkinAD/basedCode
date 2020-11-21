@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="text-center justify-center">
-      <h1 class="text-center display-3 hidden-xs-only">Smart Shopping</h1>
+      <h1 class="text-center display-3 hidden-xs-only">Smart Shopping </h1>
       <h1 class="text-center display-1 hidden-sm-and-up">Smart Shopping</h1>
     </v-card-title>
     <v-tabs grow>
