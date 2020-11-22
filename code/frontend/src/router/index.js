@@ -10,10 +10,11 @@ const routerOptions = [
   {path: "/cart", component: "cart" },
   {path: "/employees", component: "employees", meta: {requiresAuth: true} },
   {path: "/Home", component: "Home" },
-  {path: "/login", component: "login" },
+  {path: "/login", component: "login", meta: {requiresNonAuth: true}},
   {path: "/managers", component: "managers", meta: {requiresAuth: true} },
   {path: "/recommended", component: "recommended" },
   {path: "/stores", component: "stores" },
+  {path: "*", component: "Home"}
 ];
 
 const routes = routerOptions.map(route => {
@@ -38,6 +39,17 @@ router.beforeResolve((to, from, next) => {
       });
     });
   }
+  if (to.matched.some(record => record.meta.requiresNonAuth)) {
+    Auth.currentAuthenticatedUser().then(() => {
+      next({
+        path: '/'
+      }).catch(() => {
+        next()
+      })
+    });
+  }
   next()
 })
+
+
 export default router

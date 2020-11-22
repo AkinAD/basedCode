@@ -3,14 +3,14 @@
     <v-container>
       <v-sheet v-if="$vuetify.breakpoint.mdAndUp" :elevation="4" class="pa-8"
         ><h3>Filters</h3>
-        <v-radial-group v-model="priceFilter" :mandatory="true">
+        <v-radio-group v-model="priceFilter" :mandatory="true">
           <v-radio
             v-for="(price, i) in prices"
             :key="i"
             :label="price"
             :value="i"
           />
-        </v-radial-group>
+        </v-radio-group>
       </v-sheet>
       <v-expansion-panels v-else>
         <v-expansion-panel>
