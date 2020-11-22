@@ -1,6 +1,9 @@
 <template>
   <v-container>
     <Banner text="Hello Akin, here's your account" size="150px"/>
+    <v-row align="center" justify="center">
+       <amplify-sign-out></amplify-sign-out>
+    </v-row>
     <v-row>
       <v-col md="3" offset-lg="1"><UserCardWithPastPurchases /></v-col>
       <v-col md="9" lg="7">
