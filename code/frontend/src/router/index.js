@@ -11,7 +11,7 @@ const routerOptions = [
   {path: "/employees", component: "employees", meta: {requiresAuth: true} },
   {path: "/Home", component: "Home" },
   {path: "/login", component: "login", meta: {requiresNonAuth: true}},
-  {path: "/managers", component: "managers", meta: {requiresAuth: true} },
+  {path: "/managers", component: "manageItems"},// meta: {requiresAuth: true} }, FOR TESTING, auth removed
   {path: "/recommended", component: "recommended" },
   {path: "/stores", component: "stores" },
   {path: "*", component: "Home"}
