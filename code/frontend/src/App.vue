@@ -4,7 +4,9 @@
     <Header />
     <v-main
       ><!--where pages are to be loaded-->
-      <router-view />
+      <transition name="fade" mode="out-in">
+        <router-view />
+      </transition>
     </v-main>
     <Footer />
   </v-app>
@@ -34,7 +36,7 @@ export default {
       }
       if (payload.event === "signOut") {
         this.signOut();
-        this.$router.push("/");
+        this.$router.push("/home");
       }
     });
     Auth.currentAuthenticatedUser()

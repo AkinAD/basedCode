@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid >
     <Banner text="Welcome to Smart Shopping" resize/>
     <Recommendations />
   </v-container>
