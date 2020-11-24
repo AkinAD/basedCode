@@ -17,7 +17,7 @@
         <v-icon left dark>{{ item.icon }}</v-icon>
         {{ item.title }}
       </v-tab>
-
+      <!--Tabs that do require authentication-->
       <v-tab v-show="this.signedIn" to="/account">
         <v-icon left dark> mdi-account </v-icon>
         Account
@@ -26,6 +26,11 @@
       <v-tab v-show="!this.signedIn" to="/login">
         <v-icon left dark> mdi-lock </v-icon>
         Login
+      </v-tab>
+      <!--Managers/employees tab-->
+      <v-tab v-show="this.signedIn" to="/employee">
+        <v-icon left dark> mdi-briefcase </v-icon>
+        Manage
       </v-tab>
     </v-tabs>
   </v-card>
@@ -52,5 +57,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
