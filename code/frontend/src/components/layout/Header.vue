@@ -17,7 +17,7 @@
         <v-icon left dark>{{ item.icon }}</v-icon>
         {{ item.title }}
       </v-tab>
-
+      <!--Tabs that do require authentication-->
       <v-tab v-show="this.signedIn" to="/account">
         <v-icon left dark> mdi-account </v-icon>
         Account
@@ -27,12 +27,20 @@
         <v-icon left dark> mdi-lock </v-icon>
         Login
       </v-tab>
+
+      <!--Managers/employees tab-->
+      <v-tab v-show="this.signedIn" to="/employee">
+        <v-icon left dark> mdi-briefcase </v-icon>
+        Manage
+      </v-tab>
+
       <v-btn class="ma-2" text icon color="blue lighten-2" ref="setLocationBtn">
         <SetLocation />
       </v-btn>
       <v-btn class="ma-2" text icon>
         <v-icon>mdi-cart</v-icon>
       </v-btn>
+
     </v-tabs>
   </v-card>
 </template>
