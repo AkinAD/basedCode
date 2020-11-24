@@ -43,7 +43,7 @@ func main() {
 	itemSrv = item.NewService(itemRepoConnString)
 
 	router.GET("/", homeHandler)
-	router.GET("/", auth.AuthMiddleware(region, userPoolID, []string{"user, employee, manager, admin"}), homeHandler)
+	router.GET("/", auth.AuthMiddleware(region, userPoolID, []string{"user", "employee", "manager", "admin"}), homeHandler)
 
 	if port == "443" {
 		router.RunTLS(":"+port, "add cert here", "add key here")
