@@ -10,12 +10,23 @@
 <script>
 import Sidebar from "../components/Sidebar";
 import ProductDisplay from "../components/browse/ProductDisplay";
+import { mapGetters } from "vuex";
 
 export default {
   name: "browse",
   components: {
     Sidebar,
     ProductDisplay,
+  },
+  created() {
+    if (this.getLocation === null) {
+      const trigerLocationSetBtn = this.$refs.setLocationBtn;
+      console.log("what it do: ", trigerLocationSetBtn);
+      trigerLocationSetBtn.click();
+    }
+  },
+  computed: {
+    ...mapGetters(["getLocation"]),
   },
 };
 </script>

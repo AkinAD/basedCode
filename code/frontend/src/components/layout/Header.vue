@@ -27,16 +27,25 @@
         <v-icon left dark> mdi-lock </v-icon>
         Login
       </v-tab>
+      <v-btn class="ma-2" text icon color="blue lighten-2" ref="setLocationBtn">
+        <SetLocation />
+      </v-btn>
+      <v-btn class="ma-2" text icon>
+        <v-icon>mdi-cart</v-icon>
+      </v-btn>
     </v-tabs>
   </v-card>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import SetLocation from "../../components/browse/SetLocation";
 
 export default {
   name: "Header",
-  components: {},
+  components: {
+    SetLocation,
+  },
   data() {
     //needs to be modified to be dynamic based on router links maybe
     return {
@@ -52,5 +61,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
