@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "frontend74cf5cb3_identitypool_74cf5cb3",
+    "identityPoolName": "frontend0464a612_identitypool_0464a612",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "fronte74cf5cb3",
-    "userPoolName": "frontend74cf5cb3_userpool_74cf5cb3",
+    "resourceNameTruncated": "fronte0464a612",
+    "userPoolName": "frontend0464a612_userpool_0464a612",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "fronte74cf5cb3_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "fronte0464a612_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "74cf5cb3",
-    "resourceName": "frontend74cf5cb3",
+    "sharedId": "0464a612",
+    "resourceName": "frontend0464a612",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -46,13 +46,9 @@
         ]
     },
     "useDefault": "default",
-    "usernameAttributes": [
-        "email"
-    ],
-    "triggers": "{\n  \"DefineAuthChallenge\": [\n    \"captcha-define-challenge\"\n  ],\n  \"CreateAuthChallenge\": [\n    \"captcha-create-challenge\"\n  ],\n  \"VerifyAuthChallengeResponse\": [\n    \"captcha-verify\"\n  ],\n  \"CustomMessage\": [\n    \"verification-link\"\n  ],\n  \"PostConfirmation\": [\n    \"add-to-group\"\n  ]\n}",
+    "triggers": "{\n  \"PostConfirmation\": [\n    \"add-to-group\"\n  ]\n}",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
-    "verificationBucketName": "frontend74cf5cb3verificationbucket",
     "parentStack": {
         "Ref": "AWS::StackId"
     },
@@ -62,43 +58,7 @@
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "frontend74cf5cb3DefineAuthChallenge",
-            "triggerProvider": "Cognito",
-            "attributes": [
-                "Arn",
-                "Name"
-            ]
-        },
-        {
-            "category": "function",
-            "resourceName": "frontend74cf5cb3CreateAuthChallenge",
-            "triggerProvider": "Cognito",
-            "attributes": [
-                "Arn",
-                "Name"
-            ]
-        },
-        {
-            "category": "function",
-            "resourceName": "frontend74cf5cb3VerifyAuthChallengeResponse",
-            "triggerProvider": "Cognito",
-            "attributes": [
-                "Arn",
-                "Name"
-            ]
-        },
-        {
-            "category": "function",
-            "resourceName": "frontend74cf5cb3CustomMessage",
-            "triggerProvider": "Cognito",
-            "attributes": [
-                "Arn",
-                "Name"
-            ]
-        },
-        {
-            "category": "function",
-            "resourceName": "frontend74cf5cb3PostConfirmation",
+            "resourceName": "frontend0464a612PostConfirmation",
             "triggerProvider": "Cognito",
             "attributes": [
                 "Arn",

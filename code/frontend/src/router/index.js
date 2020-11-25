@@ -10,7 +10,7 @@ const routerOptions = [
     component: "account",
     meta: {
       requiresAuth: true,
-      group: "users",
+      group: "user",
     },
   },
   {
@@ -22,7 +22,7 @@ const routerOptions = [
     component: "cart",
     meta: {
       requiresAuth: true,
-      group: "users",
+      group: "user",
     },
   },
   {

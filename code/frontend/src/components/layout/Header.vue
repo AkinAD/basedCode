@@ -41,6 +41,7 @@
       <v-btn class="ma-2" text icon v-show="signedIn"> 
         <v-icon>mdi-cart</v-icon>
       </v-btn>
+      <amplify-sign-out v-show="signedIn"></amplify-sign-out>
     </v-tabs>
   </v-card>
 </template>
@@ -72,4 +73,5 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

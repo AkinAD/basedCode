@@ -1,9 +1,6 @@
 <template>
   <v-container>
     <Banner :text="msg" size="100px" />
-    <v-row align="center" justify="center">
-      <amplify-sign-out></amplify-sign-out>
-    </v-row>
     <v-row>
       <v-col md="3" offset-lg="1"><UserCardWithPastPurchases /></v-col>
       <v-col md="9" lg="7">

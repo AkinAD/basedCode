@@ -11,53 +11,13 @@ Parameters:
   
   
   
-  functionfrontend74cf5cb3DefineAuthChallengeArn: 
+  functionfrontend0464a612PostConfirmationArn: 
     Type: String
-    Default: functionfrontend74cf5cb3DefineAuthChallengeArn
+    Default: functionfrontend0464a612PostConfirmationArn
   
-  functionfrontend74cf5cb3DefineAuthChallengeName: 
+  functionfrontend0464a612PostConfirmationName: 
     Type: String
-    Default: functionfrontend74cf5cb3DefineAuthChallengeName
-  
-  
-  
-  functionfrontend74cf5cb3CreateAuthChallengeArn: 
-    Type: String
-    Default: functionfrontend74cf5cb3CreateAuthChallengeArn
-  
-  functionfrontend74cf5cb3CreateAuthChallengeName: 
-    Type: String
-    Default: functionfrontend74cf5cb3CreateAuthChallengeName
-  
-  
-  
-  functionfrontend74cf5cb3VerifyAuthChallengeResponseArn: 
-    Type: String
-    Default: functionfrontend74cf5cb3VerifyAuthChallengeResponseArn
-  
-  functionfrontend74cf5cb3VerifyAuthChallengeResponseName: 
-    Type: String
-    Default: functionfrontend74cf5cb3VerifyAuthChallengeResponseName
-  
-  
-  
-  functionfrontend74cf5cb3CustomMessageArn: 
-    Type: String
-    Default: functionfrontend74cf5cb3CustomMessageArn
-  
-  functionfrontend74cf5cb3CustomMessageName: 
-    Type: String
-    Default: functionfrontend74cf5cb3CustomMessageName
-  
-  
-  
-  functionfrontend74cf5cb3PostConfirmationArn: 
-    Type: String
-    Default: functionfrontend74cf5cb3PostConfirmationArn
-  
-  functionfrontend74cf5cb3PostConfirmationName: 
-    Type: String
-    Default: functionfrontend74cf5cb3PostConfirmationName
+    Default: functionfrontend0464a612PostConfirmationName
   
   
   
@@ -165,10 +125,6 @@ Parameters:
     Type: String
   
             
-        
-  usernameAttributes:
-    Type: CommaDelimitedList
-      
   triggers:
     Type: String
   
@@ -179,10 +135,6 @@ Parameters:
       
             
   serviceName:
-    Type: String
-  
-            
-  verificationBucketName:
     Type: String
   
             
@@ -203,34 +155,13 @@ Conditions:
 
 Resources:
   
-  CustomMessageConfirmationBucket:
-    Type: AWS::S3::Bucket
-    DeletionPolicy: "Retain"
-    Properties:
-      BucketName:  !If [ShouldNotCreateEnvResources, !Ref verificationBucketName, !Join ['',[!Ref verificationBucketName, '-', !Ref env]]]
-      AccessControl: "Private"
-      WebsiteConfiguration:
-        IndexDocument: "index.html"
-        ErrorDocument: "index.html"
-      CorsConfiguration:
-        CorsRules:
-          - 
-            AllowedHeaders:
-              - "Authorization" 
-              - "Content-Length"
-            AllowedMethods:
-              - "GET"
-            AllowedOrigins:
-              - "*"
-            MaxAge: 3000
-  
   
   # BEGIN SNS ROLE RESOURCE
   SNSRole: 
   # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, 'fronte74cf5cb3_sns-role', !Join ['',[ 'sns', '74cf5cb3', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, 'fronte0464a612_sns-role', !Join ['',[ 'sns', '0464a612', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
         Statement: 
@@ -242,10 +173,10 @@ Resources:
               - "sts:AssumeRole"
             Condition: 
               StringEquals:
-                sts:ExternalId: fronte74cf5cb3_role_external_id
+                sts:ExternalId: fronte0464a612_role_external_id
       Policies: 
         - 
-          PolicyName: fronte74cf5cb3-sns-policy
+          PolicyName: fronte0464a612-sns-policy
           PolicyDocument: 
             Version: "2012-10-17"
             Statement: 
@@ -274,23 +205,15 @@ Resources:
       
       LambdaConfig:
         
-          CreateAuthChallenge: !Ref functionfrontend74cf5cb3CreateAuthChallengeArn
-        
-        
-          CustomMessage: !Ref functionfrontend74cf5cb3CustomMessageArn
-        
-        
-          DefineAuthChallenge: !Ref functionfrontend74cf5cb3DefineAuthChallengeArn
-        
-        
-        
-          PostConfirmation: !Ref functionfrontend74cf5cb3PostConfirmationArn
         
         
         
         
+          PostConfirmation: !Ref functionfrontend0464a612PostConfirmationArn
         
-          VerifyAuthChallengeResponse: !Ref functionfrontend74cf5cb3VerifyAuthChallengeResponseArn
+        
+        
+        
         
       
       
@@ -307,45 +230,16 @@ Resources:
           RequireNumbers: false
           RequireSymbols: false
           RequireUppercase: false
-      
-      UsernameAttributes: !Ref usernameAttributes
           
       MfaConfiguration: !Ref mfaConfiguration
       SmsVerificationMessage: !Ref smsVerificationMessage
       SmsConfiguration: 
         SnsCallerArn: !GetAtt SNSRole.Arn
-        ExternalId: fronte74cf5cb3_role_external_id
+        ExternalId: fronte0464a612_role_external_id
     
   
-  
-  UserPoolCreateAuthChallengeLambdaInvokePermission: 
-    Type: "AWS::Lambda::Permission"
-    DependsOn: UserPool
-    Properties: 
-      Action: "lambda:invokeFunction"
-      Principal: "cognito-idp.amazonaws.com"
-      FunctionName: !Ref functionfrontend74cf5cb3CreateAuthChallengeName
-      SourceArn: !GetAtt UserPool.Arn
     
-  
-  UserPoolCustomMessageLambdaInvokePermission: 
-    Type: "AWS::Lambda::Permission"
-    DependsOn: UserPool
-    Properties: 
-      Action: "lambda:invokeFunction"
-      Principal: "cognito-idp.amazonaws.com"
-      FunctionName: !Ref functionfrontend74cf5cb3CustomMessageName
-      SourceArn: !GetAtt UserPool.Arn
     
-  
-  UserPoolDefineAuthChallengeLambdaInvokePermission: 
-    Type: "AWS::Lambda::Permission"
-    DependsOn: UserPool
-    Properties: 
-      Action: "lambda:invokeFunction"
-      Principal: "cognito-idp.amazonaws.com"
-      FunctionName: !Ref functionfrontend74cf5cb3DefineAuthChallengeName
-      SourceArn: !GetAtt UserPool.Arn
   
     
   
@@ -355,29 +249,20 @@ Resources:
     Properties: 
       Action: "lambda:invokeFunction"
       Principal: "cognito-idp.amazonaws.com"
-      FunctionName: !Ref functionfrontend74cf5cb3PostConfirmationName
+      FunctionName: !Ref functionfrontend0464a612PostConfirmationName
       SourceArn: !GetAtt UserPool.Arn
     
   
   
    
-  
-  UserPoolVerifyAuthChallengeResponseLambdaInvokePermission: 
-    Type: "AWS::Lambda::Permission"
-    DependsOn: UserPool
-    Properties: 
-      Action: "lambda:invokeFunction"
-      Principal: "cognito-idp.amazonaws.com"
-      FunctionName: !Ref functionfrontend74cf5cb3VerifyAuthChallengeResponseName
-      SourceArn: !GetAtt UserPool.Arn
     
   # Updating lambda role with permissions to Cognito
   
   
-  frontend74cf5cb3PostConfirmationAddToGroupCognito:
+  frontend0464a612PostConfirmationAddToGroupCognito:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: frontend74cf5cb3PostConfirmationAddToGroupCognito
+      PolicyName: frontend0464a612PostConfirmationAddToGroupCognito
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -402,7 +287,7 @@ Resources:
             
 
       Roles:
-        - !Join ['',["frontend74cf5cb3PostConfirmation", '-', !Ref env]]
+        - !Join ['',["frontend0464a612PostConfirmation", '-', !Ref env]]
   
   
   
@@ -411,7 +296,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: fronte74cf5cb3_app_clientWeb
+      ClientName: fronte0464a612_app_clientWeb
       
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
@@ -421,7 +306,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: fronte74cf5cb3_app_client
+      ClientName: fronte0464a612_app_client
       
       GenerateSecret: !Ref userpoolClientGenerateSecret
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
@@ -432,7 +317,7 @@ Resources:
   # Created to execute Lambda which gets userpool app client config values
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', '74cf5cb3', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', '0464a612', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -486,7 +371,7 @@ Resources:
   # Marked as depending on UserPoolClientRole for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: fronte74cf5cb3_userpoolclient_lambda_iam_policy
+      PolicyName: fronte0464a612_userpoolclient_lambda_iam_policy
       Roles: 
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -503,7 +388,7 @@ Resources:
   # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: fronte74cf5cb3_userpoolclient_lambda_log_policy
+      PolicyName: fronte0464a612_userpoolclient_lambda_log_policy
       Roles: 
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -543,7 +428,7 @@ Resources:
   # Always created
     Type: AWS::Cognito::IdentityPool
     Properties: 
-      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'frontend74cf5cb3_identitypool_74cf5cb3', !Join ['',['frontend74cf5cb3_identitypool_74cf5cb3', '__', !Ref env]]]
+      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'frontend0464a612_identitypool_0464a612', !Join ['',['frontend0464a612_identitypool_0464a612', '__', !Ref env]]]
       
       CognitoIdentityProviders:
         - ClientId:  !Ref UserPoolClient

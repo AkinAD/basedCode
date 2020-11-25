@@ -1,34 +1,24 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-frontend-dev-112224-authRole",
-      "UnauthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-112224-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-112224-authRole",
+      "AuthRoleName": "amplify-frontend-dev-165357-authRole",
+      "UnauthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-165357-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-165357-authRole",
       "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-frontend-dev-112224-deployment",
-      "UnauthRoleName": "amplify-frontend-dev-112224-unauthRole",
-      "StackName": "amplify-frontend-dev-112224",
-      "StackId": "arn:aws:cloudformation:us-east-2:121498509612:stack/amplify-frontend-dev-112224/675144c0-2f3a-11eb-bd41-02d73f43bc02",
-      "AmplifyAppId": "d3cgs0q3h3ic2o"
+      "DeploymentBucketName": "amplify-frontend-dev-165357-deployment",
+      "UnauthRoleName": "amplify-frontend-dev-165357-unauthRole",
+      "StackName": "amplify-frontend-dev-165357",
+      "StackId": "arn:aws:cloudformation:us-east-2:121498509612:stack/amplify-frontend-dev-165357/b9b0ad40-2f68-11eb-9edd-06a68ce6af12",
+      "AmplifyAppId": "d3fwm3n5tyag1w"
     },
     "categories": {
       "function": {
-        "frontend74cf5cb3DefineAuthChallenge": {},
-        "frontend74cf5cb3CreateAuthChallenge": {},
-        "frontend74cf5cb3VerifyAuthChallengeResponse": {
-          "RECAPTCHASECRET": ""
-        },
-        "frontend74cf5cb3CustomMessage": {
-          "REDIRECTURL": "/",
-          "EMAILSUBJECT": "Smart Shopping Email Validation",
-          "EMAILMESSAGE": ""
-        },
-        "frontend74cf5cb3PostConfirmation": {
-          "GROUP": "users"
+        "frontend0464a612PostConfirmation": {
+          "GROUP": "user"
         }
       },
       "auth": {
-        "frontend74cf5cb3": {}
+        "frontend0464a612": {}
       }
     }
   }

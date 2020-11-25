@@ -2,15 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Lambda resource stack creation using Amplify CLI",
   "Parameters": {
-    "REDIRECTURL": {
-      "Type": "String",
-      "Default": ""
-    },
-    "EMAILMESSAGE": {
-      "Type": "String",
-      "Default": ""
-    },
-    "EMAILSUBJECT": {
+    "GROUP": {
       "Type": "String",
       "Default": ""
     },
@@ -69,12 +61,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "frontend74cf5cb3CustomMessage",
+            "frontend0464a612PostConfirmation",
             {
               "Fn::Join": [
                 "",
                 [
-                  "frontend74cf5cb3CustomMessage",
+                  "frontend0464a612PostConfirmation",
                   "-",
                   {
                     "Ref": "env"
@@ -95,17 +87,8 @@
             "REGION": {
               "Ref": "AWS::Region"
             },
-            "REDIRECTURL": {
-              "Ref": "REDIRECTURL"
-            },
-            "EMAILSUBJECT": {
-              "Ref": "EMAILSUBJECT"
-            },
-            "EMAILMESSAGE": {
-              "Ref": "EMAILMESSAGE"
-            },
-            "RESOURCENAME": {
-              "Ref": "resourceName"
+            "GROUP": {
+              "Ref": "GROUP"
             }
           }
         },
@@ -118,8 +101,8 @@
         "Runtime": "nodejs10.x",
         "Timeout": "25",
         "Code": {
-          "S3Bucket": "amplify-frontend-dev-112224-deployment",
-          "S3Key": "amplify-builds/frontend74cf5cb3CustomMessage-695744436f6a46355a39-build.zip"
+          "S3Bucket": "amplify-frontend-dev-165357-deployment",
+          "S3Key": "amplify-builds/frontend0464a612PostConfirmation-597545713539732f6961-build.zip"
         }
       }
     },
@@ -129,12 +112,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "frontend74cf5cb3CustomMessage",
+            "frontend0464a612PostConfirmation",
             {
               "Fn::Join": [
                 "",
                 [
-                  "frontend74cf5cb3CustomMessage",
+                  "frontend0464a612PostConfirmation",
                   "-",
                   {
                     "Ref": "env"
