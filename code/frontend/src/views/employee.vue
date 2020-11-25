@@ -11,7 +11,7 @@
         Manage Categories
       </v-tab>
       <!--Tabs that do require manager authentication-->
-      <v-tab>
+      <v-tab v-show="isManager">
         <v-icon left dark> mdi-briefcase </v-icon>
         Manage Employees
       </v-tab>
@@ -29,8 +29,7 @@
         </v-tab-item>
       </keep-alive>
       <keep-alive>
-        <v-tab-item>
-          <!--v-show if authenticated as manager-->
+        <v-tab-item v-show="isManager">
           <ManageEmployees />
         </v-tab-item>
       </keep-alive>
@@ -42,6 +41,7 @@
 import ManageItems from "../components/manage/ManageItems";
 import ManageEmployees from "../components/manage/ManageEmployees";
 import ManageCategories from "../components/manage/ManageCategories";
+import { mapGetters } from "vuex";
 
 export default {
   name: "employee",
@@ -50,6 +50,12 @@ export default {
     return {
       tabs: null,
     };
+  },
+  computed: {
+    ...mapGetters(["getUserGroups"]),
+    isManager() {
+      return this.getUserGroups.includes("manager");
+    },
   },
 };
 </script>

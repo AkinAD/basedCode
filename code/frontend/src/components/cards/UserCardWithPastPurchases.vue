@@ -76,7 +76,7 @@ export default {
         purchaseCount: `Purchased 9 items.`,
         address: "1738 Jane Street",
         color: "deep-purple lighten-1",
-      },
+      }, 
       {
         store: "Waltmart",
         purchaseCount: "Purchases 16 items",

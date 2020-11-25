@@ -41,7 +41,7 @@ import { mapGetters, mapMutations } from "vuex";
 
 export default {
   data() {
-    return {
+    return { 
       checkbox: true,
       selection: 0
     };

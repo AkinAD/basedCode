@@ -29,7 +29,7 @@
       </v-tab>
 
       <!--Managers/employees tab-->
-      <v-tab v-show="isManager" to="/employee">
+      <v-tab v-show="isManagerOrEmployee" to="/employee">
         <v-icon left dark> mdi-briefcase </v-icon>
         Manage
       </v-tab>
@@ -38,7 +38,7 @@
         <StoreSelector />
       </v-btn>
 
-      <v-btn class="ma-2" text icon>
+      <v-btn class="ma-2" text icon v-show="signedIn"> 
         <v-icon>mdi-cart</v-icon>
       </v-btn>
     </v-tabs>
@@ -65,8 +65,8 @@ export default {
   },
   computed: {
     ...mapGetters(["signedIn", "getUserGroups"]),
-    isManager() {
-      return this.getUserGroups.includes("manager");
+    isManagerOrEmployee() {
+      return this.getUserGroups.includes("manager") || this.getUserGroups.includes("employee")
     },
   },
 };
