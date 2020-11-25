@@ -2,6 +2,11 @@
     "dev": {
         "configLevel": "project",
         "useProfile": true,
-        "profileName": "default"
+        "profileName": "Matt"
+    },
+    "ssdev": {
+        "configLevel": "project",
+        "useProfile": true,
+        "profileName": "Matt"
     }
 }

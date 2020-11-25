@@ -95,7 +95,11 @@ export default {
   computed: {
     ...mapGetters(["getUser"]),
     userName() {
-      return this.getUser.attributes.email.split("@")[0]; //could be changed
+      try {
+        return this.getUser.attributes.email.split("@")[0]; //could be changed
+      } catch (e) {
+        return "";
+      }
     }
   }
 };

@@ -39,9 +39,9 @@
 </template>
 
 <script>
-import ManageItems from "../components/manage/manageItems";
-import ManageEmployees from "../components/manage/manageEmployees";
-import ManageCategories from "../components/manage/manageCategories";
+import ManageItems from "../components/manage/ManageItems";
+import ManageEmployees from "../components/manage/ManageEmployees";
+import ManageCategories from "../components/manage/ManageCategories";
 
 export default {
   name: "employee",

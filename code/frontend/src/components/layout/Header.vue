@@ -47,6 +47,7 @@
 
 <script>
 import StoreSelector from "../../components/browse/StoreSelector";
+import {mapGetters} from 'vuex'
 
 export default {
   name: "Header",
@@ -62,6 +63,9 @@ export default {
       ],
     };
   },
+  computed: {
+    ...mapGetters(["signedIn"])
+  }
 };
 </script>
 
