@@ -1,127 +1,127 @@
 {
   "providers": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-smartshopping-dev-182718-authRole",
-      "UnauthRoleArn": "arn:aws:iam::034071745495:role/amplify-smartshopping-dev-182718-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::034071745495:role/amplify-smartshopping-dev-182718-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-smartshopping-dev-182718-deployment",
-      "UnauthRoleName": "amplify-smartshopping-dev-182718-unauthRole",
-      "StackName": "amplify-smartshopping-dev-182718",
-      "StackId": "arn:aws:cloudformation:us-east-1:034071745495:stack/amplify-smartshopping-dev-182718/1a84dc60-2c51-11eb-8bc4-0e0748486565",
-      "AmplifyAppId": "d3g4guyzqwx5il"
+      "AuthRoleName": "amplify-frontend-dev-112224-authRole",
+      "UnauthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-112224-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-112224-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-frontend-dev-112224-deployment",
+      "UnauthRoleName": "amplify-frontend-dev-112224-unauthRole",
+      "StackName": "amplify-frontend-dev-112224",
+      "StackId": "arn:aws:cloudformation:us-east-2:121498509612:stack/amplify-frontend-dev-112224/675144c0-2f3a-11eb-bd41-02d73f43bc02",
+      "AmplifyAppId": "d3cgs0q3h3ic2o"
     }
   },
   "function": {
-    "smartshopping55fedd85DefineAuthChallenge": {
+    "frontend74cf5cb3DefineAuthChallenge": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda",
-      "lastBuildTimeStamp": "2020-11-21T23:44:39.473Z",
-      "lastPackageTimeStamp": "2020-11-21T23:44:39.645Z",
-      "distZipFilename": "smartshopping55fedd85DefineAuthChallenge-5a5a7362365a4d4e4164-build.zip",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.712Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:00.874Z",
+      "distZipFilename": "frontend74cf5cb3DefineAuthChallenge-31667758475372666f70-build.zip",
       "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-smartshopping-dev-182718-deployment/amplify-cfn-templates/function/smartshopping55fedd85DefineAuthChallenge-cloudformation-template.json",
-        "logicalId": "functionsmartshopping55fedd85DefineAuthChallenge"
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3DefineAuthChallenge-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3DefineAuthChallenge"
       },
-      "lastPushTimeStamp": "2020-11-21T23:48:12.936Z",
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
       "output": {
-        "Region": "us-east-1",
-        "Arn": "arn:aws:lambda:us-east-1:034071745495:function:smartshopping55fedd85DefineAuthChallenge-dev",
-        "Name": "smartshopping55fedd85DefineAuthChallenge-dev",
-        "LambdaExecutionRole": "smartshopping55fedd85DefineAuthChallenge-dev"
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3DefineAuthChallenge-dev",
+        "Name": "frontend74cf5cb3DefineAuthChallenge-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3DefineAuthChallenge-dev"
       },
-      "lastPushDirHash": "4+lU9EZeyVMWpO5FFsT/Md5nxLI="
+      "lastPushDirHash": "2BN4Sfgb73v0xpkms/mxzUr3es8="
     },
-    "smartshopping55fedd85CreateAuthChallenge": {
+    "frontend74cf5cb3CreateAuthChallenge": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda",
-      "lastBuildTimeStamp": "2020-11-21T23:44:39.478Z",
-      "lastPackageTimeStamp": "2020-11-21T23:44:39.659Z",
-      "distZipFilename": "smartshopping55fedd85CreateAuthChallenge-344a317869437349756f-build.zip",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.717Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:00.860Z",
+      "distZipFilename": "frontend74cf5cb3CreateAuthChallenge-61346a6d6f2b6c4d7756-build.zip",
       "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-smartshopping-dev-182718-deployment/amplify-cfn-templates/function/smartshopping55fedd85CreateAuthChallenge-cloudformation-template.json",
-        "logicalId": "functionsmartshopping55fedd85CreateAuthChallenge"
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3CreateAuthChallenge-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3CreateAuthChallenge"
       },
-      "lastPushTimeStamp": "2020-11-21T23:48:12.936Z",
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
       "output": {
-        "Region": "us-east-1",
-        "Arn": "arn:aws:lambda:us-east-1:034071745495:function:smartshopping55fedd85CreateAuthChallenge-dev",
-        "Name": "smartshopping55fedd85CreateAuthChallenge-dev",
-        "LambdaExecutionRole": "smartshopping55fedd85CreateAuthChallenge-dev"
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3CreateAuthChallenge-dev",
+        "Name": "frontend74cf5cb3CreateAuthChallenge-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3CreateAuthChallenge-dev"
       },
-      "lastPushDirHash": "Hs5UtVQsubCOTZrnsGuLu4oRLec="
+      "lastPushDirHash": "Yc8cvvQ6WVSY7M3zetv1weMs4wI="
     },
-    "smartshopping55fedd85VerifyAuthChallengeResponse": {
+    "frontend74cf5cb3VerifyAuthChallengeResponse": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda",
-      "lastBuildTimeStamp": "2020-11-21T23:44:39.482Z",
-      "lastPackageTimeStamp": "2020-11-21T23:44:39.816Z",
-      "distZipFilename": "smartshopping55fedd85VerifyAuthChallengeResponse-386a5971774139454a4e-build.zip",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.719Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:01.003Z",
+      "distZipFilename": "frontend74cf5cb3VerifyAuthChallengeResponse-5a6f4c4c494b66422f2f-build.zip",
       "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-smartshopping-dev-182718-deployment/amplify-cfn-templates/function/smartshopping55fedd85VerifyAuthChallengeResponse-cloudformation-template.json",
-        "logicalId": "functionsmartshopping55fedd85VerifyAuthChallengeResponse"
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3VerifyAuthChallengeResponse-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3VerifyAuthChallengeResponse"
       },
-      "lastPushTimeStamp": "2020-11-21T23:48:12.936Z",
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
       "output": {
-        "Region": "us-east-1",
-        "Arn": "arn:aws:lambda:us-east-1:034071745495:function:smartshopping55fedd85VerifyAuthChallengeResponse-dev",
-        "Name": "smartshopping55fedd85VerifyAuthChallengeResponse-dev",
-        "LambdaExecutionRole": "smartshopping55fedd85VerifyAuthChallengeResponse-dev"
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3VerifyAuthChallengeResponse-dev",
+        "Name": "frontend74cf5cb3VerifyAuthChallengeResponse-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3VerifyAuthChallengeResponse-dev"
       },
-      "lastPushDirHash": "kQdXpMTbhsHkBlJ8h9vIhCH4ZJM="
+      "lastPushDirHash": "HpOLC/DnS8sP9arhKoM7e0hn2Rc="
     },
-    "smartshopping55fedd85CustomMessage": {
+    "frontend74cf5cb3CustomMessage": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda",
-      "lastBuildTimeStamp": "2020-11-21T23:44:39.484Z",
-      "lastPackageTimeStamp": "2020-11-21T23:44:39.663Z",
-      "distZipFilename": "smartshopping55fedd85CustomMessage-4d4d715946455679576d-build.zip",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.722Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:00.878Z",
+      "distZipFilename": "frontend74cf5cb3CustomMessage-695744436f6a46355a39-build.zip",
       "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-smartshopping-dev-182718-deployment/amplify-cfn-templates/function/smartshopping55fedd85CustomMessage-cloudformation-template.json",
-        "logicalId": "functionsmartshopping55fedd85CustomMessage"
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3CustomMessage-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3CustomMessage"
       },
-      "lastPushTimeStamp": "2020-11-21T23:48:12.936Z",
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
       "output": {
-        "Region": "us-east-1",
-        "Arn": "arn:aws:lambda:us-east-1:034071745495:function:smartshopping55fedd85CustomMessage-dev",
-        "Name": "smartshopping55fedd85CustomMessage-dev",
-        "LambdaExecutionRole": "smartshopping55fedd85CustomMessage-dev"
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3CustomMessage-dev",
+        "Name": "frontend74cf5cb3CustomMessage-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3CustomMessage-dev"
       },
-      "lastPushDirHash": "62et55V9dUPiRyt/v4twTfOgp54="
+      "lastPushDirHash": "V1hD9F3mz/jajkADjbC42sEY6LY="
     },
-    "smartshopping55fedd85PostConfirmation": {
+    "frontend74cf5cb3PostConfirmation": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda",
-      "lastBuildTimeStamp": "2020-11-21T23:44:39.487Z",
-      "lastPackageTimeStamp": "2020-11-21T23:44:39.788Z",
-      "distZipFilename": "smartshopping55fedd85PostConfirmation-65627779395847626949-build.zip",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.724Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:00.999Z",
+      "distZipFilename": "frontend74cf5cb3PostConfirmation-34676a4c456a51772b6f-build.zip",
       "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-smartshopping-dev-182718-deployment/amplify-cfn-templates/function/smartshopping55fedd85PostConfirmation-cloudformation-template.json",
-        "logicalId": "functionsmartshopping55fedd85PostConfirmation"
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3PostConfirmation-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3PostConfirmation"
       },
-      "lastPushTimeStamp": "2020-11-21T23:48:12.936Z",
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
       "output": {
-        "Region": "us-east-1",
-        "Arn": "arn:aws:lambda:us-east-1:034071745495:function:smartshopping55fedd85PostConfirmation-dev",
-        "Name": "smartshopping55fedd85PostConfirmation-dev",
-        "LambdaExecutionRole": "smartshopping55fedd85PostConfirmation-dev"
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3PostConfirmation-dev",
+        "Name": "frontend74cf5cb3PostConfirmation-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3PostConfirmation-dev"
       },
-      "lastPushDirHash": "1DAp13pBmdz+NrgWiM0PoRgvXPQ="
+      "lastPushDirHash": "8zz6zSTtvEBTRCwKiYIJeqbGyyk="
     }
   },
   "auth": {
-    "smartshopping55fedd85": {
+    "frontend74cf5cb3": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85DefineAuthChallenge",
+          "resourceName": "frontend74cf5cb3DefineAuthChallenge",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -130,7 +130,7 @@
         },
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85CreateAuthChallenge",
+          "resourceName": "frontend74cf5cb3CreateAuthChallenge",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -139,7 +139,7 @@
         },
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85VerifyAuthChallengeResponse",
+          "resourceName": "frontend74cf5cb3VerifyAuthChallengeResponse",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -148,7 +148,7 @@
         },
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85CustomMessage",
+          "resourceName": "frontend74cf5cb3CustomMessage",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -157,7 +157,7 @@
         },
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85PostConfirmation",
+          "resourceName": "frontend74cf5cb3PostConfirmation",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -167,20 +167,19 @@
       ],
       "customAuth": true,
       "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-smartshopping-dev-182718-deployment/amplify-cfn-templates/auth/smartshopping55fedd85-cloudformation-template.yml",
-        "logicalId": "authsmartshopping55fedd85"
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/auth/frontend74cf5cb3-cloudformation-template.yml",
+        "logicalId": "authfrontend74cf5cb3"
       },
-      "lastPushTimeStamp": "2020-11-21T23:48:12.936Z",
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
       "output": {
-        "AppClientSecret": "ulh5i8kn5eq75e4vfpnmquesmb7letmj0g5o49g39j1q5o5eqk5",
-        "UserPoolId": "us-east-1_Fuj8Audgw",
-        "AppClientIDWeb": "2d37bn2ogr9uvjl721lgqd06s4",
-        "AppClientID": "7m35sa89ck6boaj72gb4mjs37j",
-        "IdentityPoolId": "us-east-1:48a6362b-0b1f-4383-8dbf-0b211710e1cc",
-        "IdentityPoolName": "smartshopping55fedd85_identitypool_55fedd85__dev",
-        "UserPoolName": "smartshopping55fedd85_userpool_55fedd85"
+        "UserPoolId": "us-east-2_BaI3B16or",
+        "AppClientIDWeb": "3ml60dguum6oav2vuc2om8sm35",
+        "AppClientID": "2pkie2ko0gphu3os78m4p347ql",
+        "IdentityPoolId": "us-east-2:7260e781-0621-4f80-ada3-b8115686fd2b",
+        "IdentityPoolName": "frontend74cf5cb3_identitypool_74cf5cb3__dev",
+        "UserPoolName": "frontend74cf5cb3_userpool_74cf5cb3"
       },
-      "lastPushDirHash": "JuvwE57ghLiK0DWyeOucAuPxVfQ="
+      "lastPushDirHash": "MJaVTtFGUTRDEAcl6OWJPXj8loo="
     }
   }
 }

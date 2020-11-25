@@ -1,18 +1,16 @@
 <template>
   <v-container fluid>
-    <div>
-      <h3>Products</h3>
-      <v-row>
-        <v-col
-          sm="6"
-          md="4"
-          v-for="recommendation in allRecommendations"
-          :key="recommendation.id"
-        >
-          <VerticalProduct :product="recommendation" />
-        </v-col>
-      </v-row>
-    </div>
+    <h3>Products</h3>
+    <v-row>
+      <v-col
+        sm="6"
+        md="4"
+        v-for="recommendation in filteredRecommendations"
+        :key="recommendation.id"
+      >
+        <VerticalProduct :product="recommendation" />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -29,7 +27,23 @@ export default {
   methods: {
     ...mapActions(["fetchRecommendations"]),
   },
-  computed: mapGetters(["allRecommendations"]),
+  computed: {
+    ...mapGetters([
+      "allRecommendations",
+      "getSelectedStore",
+      "getSelectedFilter",
+    ]),
+
+    filteredRecommendations() {
+      const filter = this.getSelectedFilter;
+      if (filter === null) {
+        return this.allRecommendations;
+      } else
+        return this.allRecommendations.filter((product) => {
+          return product.price <= filter[1] && product.price >= filter[0];
+        });
+    },
+  },
   created() {
     this.fetchRecommendations();
   },

@@ -5,16 +5,49 @@ import { Auth } from "aws-amplify";
 Vue.use(VueRouter);
 
 const routerOptions = [
-  { path: "/account", component: "account", meta: { requiresAuth: true } },
-  { path: "/browse", component: "browse" },
-  { path: "/cart", component: "cart" },
-  { path: "/employee", component: "employee", meta: { requiresAuth: true } },
-  { path: "/Home", component: "Home" },
-  { path: "/login", component: "login", meta: { requiresNonAuth: true } },
-  //{path: "/managers", component: "managers", meta: {requiresAuth: true} }, We probably don't need this one, since managers are a subset of employees (permissions)
-  { path: "/recommended", component: "recommended" },
-  { path: "/stores", component: "stores" },
-  { path: "*", component: "Home" },
+  {
+    path: "/account",
+    component: "account",
+    meta: {
+      requiresAuth: true,
+      group: "users",
+    },
+  },
+  {
+    path: "/browse",
+    component: "browse",
+  },
+  {
+    path: "/cart",
+    component: "cart",
+    meta: {
+      requiresAuth: true,
+      group: "users",
+    },
+  },
+  {
+    path: "/employee",
+    component: "employee",
+    meta: {
+      requiresAuth: true,
+      group: "employee",
+    },
+  },
+  {
+    path: "/Home",
+    component: "Home",
+  },
+  {
+    path: "/login",
+    component: "login",
+    meta: {
+      requiresNonAuth: true,
+    },
+  },
+  {
+    path: "*",
+    component: "Home",
+  },
 ];
 
 const routes = routerOptions.map((route) => {
@@ -31,24 +64,27 @@ const router = new VueRouter({
 
 router.beforeResolve((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    Auth.currentAuthenticatedUser()
-      .then(() => {
-        next();
+    Auth.currentSession()
+      .then((result) => {
+        if (
+          result.accessToken.payload["cognito:groups"].includes(
+            to.matched[0].meta.group
+          )
+        ) {
+          next();
+        } else {
+          //display popup
+          console.log('user does not have permission')
+          next({
+            path: "/home",
+          });
+        }
       })
       .catch(() => {
         next({
           path: "/login",
         });
       });
-  }
-  if (to.matched.some((record) => record.meta.requiresNonAuth)) {
-    Auth.currentAuthenticatedUser().then(() => {
-      next({
-        path: "/",
-      }).catch(() => {
-        next();
-      });
-    });
   }
   next();
 });

@@ -1,10 +1,10 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import recommendations from "./modules/recommendations";
-import notification from "./modules/notification";
 import purchases from "./modules/purchases";
-import login from "./modules/login";
-import location from "./modules/location";
+import user from "./modules/user";
+import stores from "./modules/stores";
+import filter from "./modules/filter";
 
 Vue.use(Vuex);
 
@@ -14,9 +14,9 @@ export default new Vuex.Store({
   actions: {},
   modules: {
     recommendations,
-    notification,
-    login,
-    location,
+    user,
     purchases,
+    stores,
+    filter
   },
 });

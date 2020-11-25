@@ -1,39 +1,39 @@
 {
   "function": {
-    "smartshopping55fedd85DefineAuthChallenge": {
+    "frontend74cf5cb3DefineAuthChallenge": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "smartshopping55fedd85CreateAuthChallenge": {
+    "frontend74cf5cb3CreateAuthChallenge": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "smartshopping55fedd85VerifyAuthChallengeResponse": {
+    "frontend74cf5cb3VerifyAuthChallengeResponse": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "smartshopping55fedd85CustomMessage": {
+    "frontend74cf5cb3CustomMessage": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "smartshopping55fedd85PostConfirmation": {
+    "frontend74cf5cb3PostConfirmation": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
   },
   "auth": {
-    "smartshopping55fedd85": {
+    "frontend74cf5cb3": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85DefineAuthChallenge",
+          "resourceName": "frontend74cf5cb3DefineAuthChallenge",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -42,7 +42,7 @@
         },
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85CreateAuthChallenge",
+          "resourceName": "frontend74cf5cb3CreateAuthChallenge",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -51,7 +51,7 @@
         },
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85VerifyAuthChallengeResponse",
+          "resourceName": "frontend74cf5cb3VerifyAuthChallengeResponse",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -60,7 +60,7 @@
         },
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85CustomMessage",
+          "resourceName": "frontend74cf5cb3CustomMessage",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -69,7 +69,7 @@
         },
         {
           "category": "function",
-          "resourceName": "smartshopping55fedd85PostConfirmation",
+          "resourceName": "frontend74cf5cb3PostConfirmation",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",

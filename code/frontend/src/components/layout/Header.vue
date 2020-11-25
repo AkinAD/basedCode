@@ -29,14 +29,15 @@
       </v-tab>
 
       <!--Managers/employees tab-->
-      <v-tab v-show="this.signedIn" to="/employee">
+      <v-tab v-show="isManager" to="/employee">
         <v-icon left dark> mdi-briefcase </v-icon>
         Manage
       </v-tab>
 
-      <v-btn class="ma-2" text icon color="blue lighten-2" ref="setLocationBtn">
-        <SetLocation />
+      <v-btn class="ma-2" text icon>
+        <StoreSelector />
       </v-btn>
+
       <v-btn class="ma-2" text icon>
         <v-icon>mdi-cart</v-icon>
       </v-btn>
@@ -45,13 +46,13 @@
 </template>
 
 <script>
+import StoreSelector from "../../components/browse/StoreSelector";
 import { mapGetters } from "vuex";
-import SetLocation from "../../components/browse/SetLocation";
 
 export default {
   name: "Header",
   components: {
-    SetLocation,
+    StoreSelector,
   },
   data() {
     //needs to be modified to be dynamic based on router links maybe
@@ -63,7 +64,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["signedIn"]),
+    ...mapGetters(["signedIn", "getUserGroups"]),
+    isManager() {
+      return this.getUserGroups.includes("manager");
+    },
   },
   created() {
     this.$root.on(

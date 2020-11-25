@@ -35,7 +35,7 @@
 export default {
   name: "Banner",
   props: {
-    text: String,
+    text: null,
     resize: Boolean,
     size: String,
     display: String

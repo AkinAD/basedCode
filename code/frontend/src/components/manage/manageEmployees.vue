@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ManagementList from "../browse/ManagementList";
+import ManagementList from "./ManagementList";
 
 export default {
   name: "manageEmployees",
