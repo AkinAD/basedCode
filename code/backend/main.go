@@ -17,10 +17,12 @@ var (
 	itemSrv item.ItemService
 	// authSrv auth.AuthService
 
-	port          string
-	connString    string
-	userPoolID    string
-	cognitoRegion string
+	port       string
+	connString string
+	userPoolID string
+	awsRegion  string
+	awsID      string
+	awsSecret  string
 )
 
 func main() {
@@ -28,40 +30,40 @@ func main() {
 
 	router.Use(corsMiddleware)
 
-	userSrv = user.NewService()
+	userSrv = user.NewService(awsRegion, awsID, awsSecret)
 	itemSrv = item.NewService(connString)
 	// authSrv = auth.NewService()
 
 	// heartbeat
 	router.GET("/", homeHandler)
-	router.GET("/", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), homeHandler)
+	router.GET("/", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), homeHandler)
 
 	//users
-	router.GET("/account/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
-	router.PUT("/account/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
+	router.GET("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
+	router.PUT("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
 
 	//employees
-	router.GET("/employee", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"employee", "manager", "admin"}), getEmployees)
-	router.POST("/employee", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"manager", "admin"}), createEmployee)
+	router.GET("/employee", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), getEmployees)
+	router.POST("/employee", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), createEmployee)
 	// router.PUT("/employee", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"employee", "manager", "admin"}), updateEmployee)
 	// router.DELETE("/employee", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{manager", "admin"}), deleteEmployee)
 
 	//managers
-	router.GET("/manager", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"manager", "admin"}), getManagers)
-	router.POST("/manager/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}), promoteToManager)
+	router.GET("/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), getManagers)
+	router.POST("/manager/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToManager)
 	// router.DELETE("manager/:id", deleteManager)
 
 	//admin
-	router.GET("/admin", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}), getAdmins)
-	router.POST("/admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}), promoteToAdmin)
+	router.GET("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getAdmins)
+	router.POST("/admin/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
 	// router.DELTE("admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}) ,deleteFromAdmin)
 
 	//items
 	router.GET("/item", getItems)
 	router.GET("/item/:id", getItem)
-	router.POST("/item", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"employee", "manager", "admin"}), addItem)
-	router.PUT("/item/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"employee", "manager", "admin"}), updateItem)
-	router.DELETE("/item/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteItem)
+	router.POST("/item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), addItem)
+	router.PUT("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), updateItem)
+	router.DELETE("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteItem)
 
 	if port == "443" {
 		router.RunTLS(":"+port, "add cert here", "add key here")
@@ -73,7 +75,9 @@ func main() {
 func init() {
 	connString = initPostgres()
 	port = defaulter("PORT", "8081")
-	cognitoRegion = defaulter("COGNITO_REGION", "us-east-1")
+	awsRegion = defaulter("AWS_REGION", "us-east-2")
+	awsID = defaulter("AWS_ID", "")
+	awsSecret = defaulter("AWS_SECRET", "")
 	userPoolID = defaulter("COGNITO_USER_POOL_ID", "")
 }
 
