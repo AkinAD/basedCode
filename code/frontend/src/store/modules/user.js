@@ -3,6 +3,7 @@ import { Auth } from "aws-amplify";
 const state = {
   user: {},
   signedIn: false,
+  assignedStore: {}, //assigned store for manager/employee (via admin)
 };
 
 const getters = {
@@ -13,7 +14,10 @@ const getters = {
     return state.user;
   },
   getUserGroups() {
-    return state.user.signInUserSession.accessToken.payload['cognito:groups'];
+    return state.user.signInUserSession.accessToken.payload["cognito:groups"];
+  },
+  getAssignedStore() {
+    return state.assignedStore;
   }
 };
 
@@ -37,6 +41,9 @@ const mutations = {
   signOut: () => {
     (state.signedIn = false), (state.user = {});
   },
+  setSignedStore: (state, newStore) => {
+    (state.assignedStore = newStore)
+  }
 };
 
 export default {

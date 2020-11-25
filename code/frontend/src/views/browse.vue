@@ -2,14 +2,14 @@
   <v-container v-show="nonNull" fluid transition="slide-x-transition">
     <Banner :text="msg" size="100px" />
     <v-row>
-      <v-col md="3" offset-lg="1"><Sidebar /></v-col>
+      <v-col md="3" offset-lg="1"><ProductFilter /></v-col>
       <v-col md="9" lg="7"> <ProductDisplay /> </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import Sidebar from "../components/Sidebar";
+import ProductFilter from "../components/ProductFilter";
 import ProductDisplay from "../components/browse/ProductDisplay";
 import Banner from "../components/layout/Banner";
 import { mapGetters, mapMutations } from "vuex";
@@ -17,7 +17,7 @@ import { mapGetters, mapMutations } from "vuex";
 export default {
   name: "browse",
   components: {
-    Sidebar,
+    ProductFilter,
     ProductDisplay,
     Banner,
   },

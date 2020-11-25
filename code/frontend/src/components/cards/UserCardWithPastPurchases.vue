@@ -37,7 +37,7 @@
                 src="https://cdn.pixabay.com/photo/2020/06/24/19/12/cabbage-5337431_1280.jpg"
               />
             </v-avatar>
-            <p class="ml-3">Akin Adewale</p>
+            <p class="ml-3">{{userName}}</p>
           </v-card-title>
         </v-img>
 
@@ -66,9 +66,11 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+
 export default {
   data: () => ({
-    purchases: [
+    purchases: [ //needs to be converted to vuex
       {
         store: "Sloblaws",
         purchaseCount: `Purchased 9 items.`,
@@ -89,6 +91,13 @@ export default {
       },
     ],
   }),
+
+  computed: {
+    ...mapGetters(["getUser"]),
+    userName() {
+      return this.getUser.attributes.email.split("@")[0]; //could be changed
+    }
+  }
 };
 </script>
 

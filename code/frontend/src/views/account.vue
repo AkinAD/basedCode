@@ -12,6 +12,7 @@
             ><v-col sm="10" lg="8">
               <h2>Frequent Purchases</h2>
             </v-col>
+            <!--past purchases to be displayed here -> get across all stores -->
           </v-card>
         </v-col>
       </v-col>

@@ -1,20 +1,17 @@
 <template>
-  <v-container fluid >
-    <Banner text="Welcome to Smart Shopping" resize/>
-    <Recommendations />
-  </v-container>
+  <span>
+    <Landing />
+  </span>
 </template>
 
 <script>
-import Recommendations from "../components/Recommendations";
-import Banner from "../components/layout/Banner";
+import Landing from "../components/home/Landing";
 
 export default {
   name: "Home",
   components: {
-    Banner,
-    Recommendations,
-  },
+    Landing,
+  }
 };
 </script>
 

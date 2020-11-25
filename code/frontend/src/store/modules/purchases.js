@@ -8,8 +8,8 @@ const getters = {
   allPurchasedItems: (state) => state.purchasedItems,
 };
 
-const actions = {
-  async fetchPurchasedItems({ commit }) {
+const actions = { 
+  async fetchPurchasedItems({ commit }) { //needs to come from backend for current user
     const response = await axios.get("https://fakestoreapi.com/products/");
 
     commit("setPurchasedItems", response.data);

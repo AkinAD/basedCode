@@ -34,7 +34,7 @@
         Manage
       </v-tab>
 
-      <v-btn v-show="this.signedIn" class="ma-2" text icon>
+      <v-btn class="ma-2" text icon>
         <StoreSelector />
       </v-btn>
 
@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import StoreSelector from "../../components/browse/StoreSelector";
 
 export default {
@@ -62,9 +61,6 @@ export default {
         { title: "Browse", path: "/browse", icon: "mdi-book" },
       ],
     };
-  },
-  computed: {
-    ...mapGetters(["signedIn"]),
   },
 };
 </script>

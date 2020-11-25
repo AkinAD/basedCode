@@ -5,7 +5,7 @@
       <v-col
         sm="6"
         md="4"
-        v-for="recommendation in allRecommendations"
+        v-for="recommendation in filteredRecommendations"
         :key="recommendation.id"
       >
         <VerticalProduct :product="recommendation" />
@@ -28,7 +28,21 @@ export default {
     ...mapActions(["fetchRecommendations"]),
   },
   computed: {
-    ...mapGetters(["allRecommendations", "getSelectedStore"]),
+    ...mapGetters([
+      "allRecommendations",
+      "getSelectedStore",
+      "getSelectedFilter",
+    ]),
+
+    filteredRecommendations() {
+      const filter = this.getSelectedFilter;
+      if (filter === null) {
+        return this.allRecommendations;
+      } else
+        return this.allRecommendations.filter((product) => {
+          return product.price <= filter[1] && product.price >= filter[0];
+        });
+    },
   },
   created() {
     this.fetchRecommendations();
