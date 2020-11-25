@@ -8,11 +8,12 @@ type UserService interface {
 	AddUserToGroup(input *cognito.AdminAddUserToGroupInput) (*cognito.AdminAddUserToGroupOutput, error)
 	RemoveUserFromGroup(input *cognito.AdminRemoveUserFromGroupInput) (*cognito.AdminRemoveUserFromGroupOutput, error)
 	GetUser(input *cognito.AdminGetUserInput) (*cognito.AdminGetUserOutput, error)
+	ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error)
 }
 
 //cognito = CognitoIdentityProvider
 
-//https://docs.aws.amazon.com/sdk-for-go/api/service/cognitoidentityprovider/#CognitoIdentityProvider.AdminCreateUser
+// https://docs.aws.amazon.com/sdk-for-go/api/service/cognitoidentityprovider/#CognitoIdentityProvider.AdminCreateUser
 func (s *userService) CreateEmployee(input *cognito.AdminCreateUserInput) (*cognito.AdminCreateUserOutput, error) {
 	output, err := s.cognito.AdminCreateUser(input)
 	if err != nil {
@@ -58,9 +59,32 @@ func (s *userService) RemoveUserFromGroup(input *cognito.AdminRemoveUserFromGrou
 
 }
 
-// https://docs.aws.amazon.com/sdk-for-go/api/service/cognitoidentityprovider/#CognitoIdentityProvider.AdminGetUser
+/* https://docs.aws.amazon.com/sdk-for-go/api/service/cognitoidentityprovider/#CognitoIdentityProvider.AdminGetUser
+Request Syntax
+{
+   "Username": "string",
+   "UserPoolId": "string"
+}
+*/
 func (s *userService) GetUser(input *cognito.AdminGetUserInput) (*cognito.AdminGetUserOutput, error) {
 	output, err := s.cognito.AdminGetUser(input)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+/* https://docs.aws.amazon.com/sdk-for-go/api/service/cognitoidentityprovider/#CognitoIdentityProvider.ListUsersInGroup
+Request Syntax
+{
+   "GroupName": "string",
+   "Limit": number,
+   "NextToken": "string",
+   "UserPoolId": "string"
+}
+*/
+func (s *userService) ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error) {
+	output, err := s.cognito.ListUsersInGroup(input)
 	if err != nil {
 		return nil, err
 	}
