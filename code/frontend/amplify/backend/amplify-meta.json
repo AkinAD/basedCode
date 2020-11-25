@@ -1,15 +1,185 @@
 {
   "providers": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-frontend-ssdev-14211-authRole",
-      "UnauthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-ssdev-14211-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-ssdev-14211-authRole",
+      "AuthRoleName": "amplify-frontend-dev-112224-authRole",
+      "UnauthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-112224-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-112224-authRole",
       "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-frontend-ssdev-14211-deployment",
-      "UnauthRoleName": "amplify-frontend-ssdev-14211-unauthRole",
-      "StackName": "amplify-frontend-ssdev-14211",
-      "StackId": "arn:aws:cloudformation:us-east-2:121498509612:stack/amplify-frontend-ssdev-14211/58d39110-2ee9-11eb-ba01-0687d54fdbaa",
-      "AmplifyAppId": "d2xb7e0e7gqwch"
+      "DeploymentBucketName": "amplify-frontend-dev-112224-deployment",
+      "UnauthRoleName": "amplify-frontend-dev-112224-unauthRole",
+      "StackName": "amplify-frontend-dev-112224",
+      "StackId": "arn:aws:cloudformation:us-east-2:121498509612:stack/amplify-frontend-dev-112224/675144c0-2f3a-11eb-bd41-02d73f43bc02",
+      "AmplifyAppId": "d3cgs0q3h3ic2o"
+    }
+  },
+  "function": {
+    "frontend74cf5cb3DefineAuthChallenge": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.712Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:00.874Z",
+      "distZipFilename": "frontend74cf5cb3DefineAuthChallenge-31667758475372666f70-build.zip",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3DefineAuthChallenge-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3DefineAuthChallenge"
+      },
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
+      "output": {
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3DefineAuthChallenge-dev",
+        "Name": "frontend74cf5cb3DefineAuthChallenge-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3DefineAuthChallenge-dev"
+      },
+      "lastPushDirHash": "2BN4Sfgb73v0xpkms/mxzUr3es8="
+    },
+    "frontend74cf5cb3CreateAuthChallenge": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.717Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:00.860Z",
+      "distZipFilename": "frontend74cf5cb3CreateAuthChallenge-61346a6d6f2b6c4d7756-build.zip",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3CreateAuthChallenge-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3CreateAuthChallenge"
+      },
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
+      "output": {
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3CreateAuthChallenge-dev",
+        "Name": "frontend74cf5cb3CreateAuthChallenge-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3CreateAuthChallenge-dev"
+      },
+      "lastPushDirHash": "Yc8cvvQ6WVSY7M3zetv1weMs4wI="
+    },
+    "frontend74cf5cb3VerifyAuthChallengeResponse": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.719Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:01.003Z",
+      "distZipFilename": "frontend74cf5cb3VerifyAuthChallengeResponse-5a6f4c4c494b66422f2f-build.zip",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3VerifyAuthChallengeResponse-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3VerifyAuthChallengeResponse"
+      },
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
+      "output": {
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3VerifyAuthChallengeResponse-dev",
+        "Name": "frontend74cf5cb3VerifyAuthChallengeResponse-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3VerifyAuthChallengeResponse-dev"
+      },
+      "lastPushDirHash": "HpOLC/DnS8sP9arhKoM7e0hn2Rc="
+    },
+    "frontend74cf5cb3CustomMessage": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.722Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:00.878Z",
+      "distZipFilename": "frontend74cf5cb3CustomMessage-695744436f6a46355a39-build.zip",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3CustomMessage-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3CustomMessage"
+      },
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
+      "output": {
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3CustomMessage-dev",
+        "Name": "frontend74cf5cb3CustomMessage-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3CustomMessage-dev"
+      },
+      "lastPushDirHash": "V1hD9F3mz/jajkADjbC42sEY6LY="
+    },
+    "frontend74cf5cb3PostConfirmation": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "lastBuildTimeStamp": "2020-11-25T16:31:00.724Z",
+      "lastPackageTimeStamp": "2020-11-25T16:31:00.999Z",
+      "distZipFilename": "frontend74cf5cb3PostConfirmation-34676a4c456a51772b6f-build.zip",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/function/frontend74cf5cb3PostConfirmation-cloudformation-template.json",
+        "logicalId": "functionfrontend74cf5cb3PostConfirmation"
+      },
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
+      "output": {
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:121498509612:function:frontend74cf5cb3PostConfirmation-dev",
+        "Name": "frontend74cf5cb3PostConfirmation-dev",
+        "LambdaExecutionRole": "frontend74cf5cb3PostConfirmation-dev"
+      },
+      "lastPushDirHash": "8zz6zSTtvEBTRCwKiYIJeqbGyyk="
+    }
+  },
+  "auth": {
+    "frontend74cf5cb3": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "frontend74cf5cb3DefineAuthChallenge",
+          "triggerProvider": "Cognito",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "frontend74cf5cb3CreateAuthChallenge",
+          "triggerProvider": "Cognito",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "frontend74cf5cb3VerifyAuthChallengeResponse",
+          "triggerProvider": "Cognito",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "frontend74cf5cb3CustomMessage",
+          "triggerProvider": "Cognito",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "frontend74cf5cb3PostConfirmation",
+          "triggerProvider": "Cognito",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        }
+      ],
+      "customAuth": true,
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-frontend-dev-112224-deployment/amplify-cfn-templates/auth/frontend74cf5cb3-cloudformation-template.yml",
+        "logicalId": "authfrontend74cf5cb3"
+      },
+      "lastPushTimeStamp": "2020-11-25T16:34:04.120Z",
+      "output": {
+        "UserPoolId": "us-east-2_BaI3B16or",
+        "AppClientIDWeb": "3ml60dguum6oav2vuc2om8sm35",
+        "AppClientID": "2pkie2ko0gphu3os78m4p347ql",
+        "IdentityPoolId": "us-east-2:7260e781-0621-4f80-ada3-b8115686fd2b",
+        "IdentityPoolName": "frontend74cf5cb3_identitypool_74cf5cb3__dev",
+        "UserPoolName": "frontend74cf5cb3_userpool_74cf5cb3"
+      },
+      "lastPushDirHash": "MJaVTtFGUTRDEAcl6OWJPXj8loo="
     }
   }
 }

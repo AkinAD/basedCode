@@ -29,7 +29,7 @@
       </v-tab>
 
       <!--Managers/employees tab-->
-      <v-tab v-show="this.signedIn" to="/employee">
+      <v-tab v-show="isManager" to="/employee">
         <v-icon left dark> mdi-briefcase </v-icon>
         Manage
       </v-tab>
@@ -47,7 +47,7 @@
 
 <script>
 import StoreSelector from "../../components/browse/StoreSelector";
-import {mapGetters} from 'vuex'
+import { mapGetters } from "vuex";
 
 export default {
   name: "Header",
@@ -64,8 +64,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["signedIn"])
-  }
+    ...mapGetters(["signedIn", "getUserGroups"]),
+    isManager() {
+      return this.getUserGroups.includes("manager");
+    },
+  },
 };
 </script>
 

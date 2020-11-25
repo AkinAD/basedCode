@@ -10,7 +10,7 @@ const routerOptions = [
     component: "account",
     meta: {
       requiresAuth: true,
-      groups: ["user"]
+      group: "users",
     },
   },
   {
@@ -22,7 +22,7 @@ const routerOptions = [
     component: "cart",
     meta: {
       requiresAuth: true,
-      groups: ["user"]
+      group: "users",
     },
   },
   {
@@ -30,7 +30,7 @@ const routerOptions = [
     component: "employee",
     meta: {
       requiresAuth: true,
-      groups: ["employee"]
+      group: "employee",
     },
   },
   {
@@ -43,10 +43,6 @@ const routerOptions = [
     meta: {
       requiresNonAuth: true,
     },
-  },
-  {
-    path: "/recommended",
-    component: "recommended",
   },
   {
     path: "*",
@@ -67,27 +63,22 @@ const router = new VueRouter({
 });
 
 router.beforeResolve((to, from, next) => {
-  // const user = Auth.currentAuthenticatedUser();
-  // if (to.matched.some((record) => record.meta.requiresAuth)) {
-  //   if (user !== null) {
-  //     if (
-  //       user.signInUserSession.accessToken.payload["cognito:groups"].includes(
-  //         record.meta.group
-  //       )
-  //     ) {
-  //       next();
-  //     }
-  //   }
-  //   next({
-  //     path: "/login",
-  //   });
-  // }
-  // next();
-
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    Auth.currentAuthenticatedUser()
-      .then(() => {
-        next();
+    Auth.currentSession()
+      .then((result) => {
+        if (
+          result.accessToken.payload["cognito:groups"].includes(
+            to.matched[0].meta.group
+          )
+        ) {
+          next();
+        } else {
+          //display popup
+          console.log('user does not have permission')
+          next({
+            path: "/home",
+          });
+        }
       })
       .catch(() => {
         next({
