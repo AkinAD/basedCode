@@ -13,7 +13,6 @@ const routerOptions = [
   { path: "/login", component: "login", meta: { requiresNonAuth: true } },
   //{path: "/managers", component: "managers", meta: {requiresAuth: true} }, We probably don't need this one, since managers are a subset of employees (permissions)
   { path: "/recommended", component: "recommended" },
-  { path: "/stores", component: "stores" },
   { path: "*", component: "Home" },
 ];
 

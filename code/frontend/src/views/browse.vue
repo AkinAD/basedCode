@@ -1,5 +1,6 @@
 <template>
   <v-container fluid transition="slide-x-transition">
+    <Banner :text="msg" size="100px" />
     <v-row>
       <v-col md="3" offset-lg="1"><Sidebar /></v-col>
       <v-col md="9" lg="7"> <ProductDisplay /> </v-col>
@@ -10,23 +11,34 @@
 <script>
 import Sidebar from "../components/Sidebar";
 import ProductDisplay from "../components/browse/ProductDisplay";
-import { mapGetters } from "vuex";
+import Banner from "../components/layout/Banner";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "browse",
   components: {
     Sidebar,
     ProductDisplay,
+    Banner,
   },
-  created() {
-    if (this.getLocation === null) {
-      const trigerLocationSetBtn = this.$refs.setLocationBtn;
-      console.log("what it do: ", trigerLocationSetBtn);
-      trigerLocationSetBtn.click();
+  mounted() {
+    if (this.getSelectedStore === null) {
+      this.setDialog(true);
     }
   },
   computed: {
-    ...mapGetters(["getLocation"]),
+    ...mapGetters(["getSelectedStore"]),
+
+    msg() {
+      try {
+        return "Products from ".concat(`${this.getSelectedStore.text}`);
+      } catch (err) {
+        return "";
+      }
+    },
+  },
+  methods: {
+    ...mapMutations(["setDialog"]),
   },
 };
 </script>
