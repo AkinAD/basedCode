@@ -12,6 +12,9 @@ const getters = {
   getUser() {
     return state.user;
   },
+  getUserGroups() {
+    return state.user.signInUserSession.accessToken.payload['cognito:groups'];
+  }
 };
 
 const actions = {

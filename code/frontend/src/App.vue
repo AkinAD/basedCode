@@ -4,9 +4,7 @@
     <Header />
     <v-main
       ><!--where pages are to be loaded-->
-      <transition name="fade" mode="out-in">
-        <router-view />
-      </transition>
+      <router-view />
     </v-main>
     <Footer />
   </v-app>
@@ -18,7 +16,7 @@ import Footer from "./components/layout/Footer";
 
 import { Hub } from "aws-amplify";
 import { mapActions } from "vuex";
-import { Auth } from 'aws-amplify';
+import { Auth } from "aws-amplify";
 
 export default {
   name: "app",
@@ -32,7 +30,7 @@ export default {
       const { payload } = data;
       if (payload.event === "signIn") {
         this.signIn();
-        this.$router.push('/account')
+        this.$router.push("/account");
       }
       if (payload.event === "signOut") {
         this.signOut();

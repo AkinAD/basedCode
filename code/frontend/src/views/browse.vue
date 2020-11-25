@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid transition="slide-x-transition">
+  <v-container v-show="nonNull" fluid transition="slide-x-transition">
     <Banner :text="msg" size="100px" />
     <v-row>
       <v-col md="3" offset-lg="1"><Sidebar /></v-col>
@@ -28,13 +28,15 @@ export default {
   },
   computed: {
     ...mapGetters(["getSelectedStore"]),
-
     msg() {
       try {
         return "Products from ".concat(`${this.getSelectedStore.text}`);
       } catch (err) {
         return "";
       }
+    },
+    nonNull() {
+      return this.getSelectedStore !== null;
     },
   },
   methods: {

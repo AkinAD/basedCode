@@ -12,30 +12,6 @@
             ><v-col sm="10" lg="8">
               <h2>Frequent Purchases</h2>
             </v-col>
-            <!--
-            <v-col
-              sm="6"
-              md="4"
-              v-for="purchasedItem in allPurchasedItems.slice(2, 9)"
-              :key="purchasedItem.id"
-            >
-              <v-card class="" max-width="344" outlined elevation="2">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="overline mb-4">{{purchasedItem.title}}</div>
-                  </v-list-item-content>
-                  <v-list-item-avatar
-                    tile
-                    size="80"
-                  > <v-img contain :src="purchasedItem.image"></v-img></v-list-item-avatar>
-                </v-list-item>
-                <v-card-actions>
-                  <v-btn color="success" outlined
-                    ><v-icon left>add</v-icon> Add to cart</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-col>-->
           </v-card>
         </v-col>
       </v-col>
@@ -65,7 +41,7 @@ export default {
   },
   computed: {
     ...mapGetters(["allPurchasedItems"]),
-    ...mapGetters(["getUser"]),
+    ...mapGetters(["getUser", "getUserGroups"]),
     msg() {
       try {
         return "Hello, ".concat(`${this.getUser.attributes.email}`)
