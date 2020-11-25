@@ -1,10 +1,10 @@
 <template>
   <v-container fluid>
-    <v-dialog v-model="dialog" max-width="290">
+    <v-dialog v-model="dialog" persistent max-width="290">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           class="ma-2"
-          color="grey"
+          :color="buttonColor"
           dark
           v-bind="attrs"
           v-on="on"
@@ -42,7 +42,7 @@
               two-line
               :key="item.text"
               :disabled="loading"
-              @click="selected = item"
+              @click="select(item)"
             >
               <v-list-item-avatar>
                 <v-icon :disabled="loading" v-text="item.icon"></v-icon>
@@ -111,6 +111,10 @@ export default {
         this.setDialog(value);
       },
     },
+    buttonColor() {
+      if (this.getSelectedStore === null) return "grey";
+      return "primary";
+    },
   },
 
   methods: {
@@ -120,13 +124,17 @@ export default {
       this.loading = true;
       this.setSelectedStore(this.selected);
       this.search = "";
-      this.selected = null;
       this.loading = false;
       this.setDialog(false);
     },
 
     setSearchBoxVisibility(bool) {
       this.searchBoxVisible = bool;
+    },
+
+    select(item) {
+      if (item === this.selected) this.selected = null;
+      else this.selected = item;
     },
   },
 };

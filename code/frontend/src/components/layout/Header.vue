@@ -34,7 +34,7 @@
         Manage
       </v-tab>
 
-      <v-btn v-show="this.signedIn" class="ma-2" text icon color="grey">
+      <v-btn v-show="this.signedIn" class="ma-2" text icon>
         <StoreSelector />
       </v-btn>
 
