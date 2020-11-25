@@ -69,13 +69,6 @@ export default {
       return this.getUserGroups.includes("manager") || this.getUserGroups.includes("employee")
     },
   },
-  created() {
-    this.$root.on(
-      "openPopup",
-      () => this.$refs.SetLocation.click(),
-      console.log("open popup emitted")
-    );
-  },
 };
 </script>
 
