@@ -120,35 +120,94 @@ func homeHandler(c *gin.Context) {
 }
 
 func getAccount(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	var accountID string
+	bindedVar := c.ShouldBind(&accountID)
+	resp, err := userSrv.GetUser(bindedVar)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
 func updateAccount(c *gin.Context) {
+	// what is an update
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
 func getEmployees(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	// employee UserPoolId = 3
+	var groupName string
+	bindedVar := c.ShouldBind(&groupName)
+	resp, err := userSrv.ListUsersInGroup(bindedVar)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
 func createEmployee(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	//binded variables change depending on what is being sent from front-end
+	var name string
+	bindedVar := c.ShouldBind(&name)
+	resp, err := userSrv.CreateEmployee(bindedVar)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
 func getManagers(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	//binded variables change depending on what is being sent from front-end
+	// managers UserPoolId = 2
+	var groupName string
+	bindedVar := c.ShouldBind(&groupName)
+	resp, err := userSrv.ListUsersInGroup(bindedVar)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
 func promoteToManager(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	// need user to be promoted, changing their UserPoolId to 2 (manager)
+	//
+	var accountID string
+	bindedVar := c.ShouldBind(&accountID)
+	resp, err := userSrv.AddUserToGroup(bindedVar)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
+
 }
 
 func getAdmins(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	// admin - UserPoolId = 1
+	var groupName string
+	bindedVar := c.ShouldBind(&groupName)
+	resp, err := userSrv.ListUsersInGroup(bindedVar)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
 func promoteToAdmin(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	// need user to be promoted, changing their UserPoolId to 1 (admin)
+	var accountID string
+	bindedVar := c.ShouldBind(&accountID)
+	resp, err := userSrv.AddUserToGroup(bindedVar)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
 func getItems(c *gin.Context) {
