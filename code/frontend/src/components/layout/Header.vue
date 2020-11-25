@@ -40,7 +40,6 @@
       <v-btn class="ma-2" text icon>
         <v-icon>mdi-cart</v-icon>
       </v-btn>
-
     </v-tabs>
   </v-card>
 </template>
@@ -65,6 +64,13 @@ export default {
   },
   computed: {
     ...mapGetters(["signedIn"]),
+  },
+  created() {
+    this.$root.on(
+      "openPopup",
+      () => this.$refs.SetLocation.click(),
+      console.log("open popup emitted")
+    );
   },
 };
 </script>

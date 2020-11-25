@@ -18,13 +18,18 @@ export default {
     Sidebar,
     ProductDisplay,
   },
-  created() {
-    if (this.getLocation === null) {
-      const trigerLocationSetBtn = this.$refs.setLocationBtn;
-      console.log("what it do: ", trigerLocationSetBtn);
-      trigerLocationSetBtn.click();
-    }
+  mounted: function () {
+    console.log(this.$refs);
+    console.log(this.$root);
+    this.$root.emit("openPopup");
   },
+  // mounted() {
+  //   if (this.getLocation === null) {
+  //     const trigerLocationSetBtn = this.$refs.setLocationBtn;
+  //     console.log("what it do: ", trigerLocationSetBtn);
+  //     trigerLocationSetBtn.click();
+  //   }
+  // },
   computed: {
     ...mapGetters(["getLocation"]),
   },
