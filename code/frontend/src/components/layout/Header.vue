@@ -3,9 +3,9 @@
     <v-app-bar elevate-on-scroll app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-app-bar-title>
-        <v-container> Smart Shopping </v-container>
-      </v-app-bar-title>
+      <v-avatar :tile="true">
+        <v-icon> mdi-cart-outline </v-icon>
+      </v-avatar>
 
       <v-tabs grow @change="toTop">
         <!--Tabs that don't require authentication-->
@@ -87,4 +87,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>
