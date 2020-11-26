@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-6">
     <v-row align="center" justify="center">
-      <amplify-authenticator>
+      <amplify-authenticator> <!--needs to be styled-->
       </amplify-authenticator>
     </v-row>
   </v-container>
