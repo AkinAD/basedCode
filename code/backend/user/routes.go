@@ -9,6 +9,7 @@ type UserService interface {
 	RemoveUserFromGroup(input *cognito.AdminRemoveUserFromGroupInput) (*cognito.AdminRemoveUserFromGroupOutput, error)
 	GetUser(input *cognito.AdminGetUserInput) (*cognito.AdminGetUserOutput, error)
 	ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error)
+	Login(*cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error)
 }
 
 //cognito = CognitoIdentityProvider
@@ -89,4 +90,12 @@ func (s *userService) ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*c
 		return nil, err
 	}
 	return output, nil
+}
+
+func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error) {
+	output, err := s.cognito.InitiateAuth(input)
+	if err != nil {
+		return nil, err
+	}
+	return output, err
 }

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"math/big"
 	"net/http"
 	"strings"
@@ -39,8 +40,11 @@ func AuthMiddleware(region, userPoolID string, authedGroups []string) gin.Handle
 		}
 
 		token, err := validateToken(tokenString, region, userPoolID, jwk, authedGroups)
-		if err != nil || !token.Valid {
-			fmt.Printf("token is not valid\n%v", err)
+		if !token.Valid {
+			fmt.Printf("token is not valid\n")
+			c.AbortWithStatusJSON(401, res{Text: fmt.Sprintf("token is not valid")})
+		} else if err != nil {
+			fmt.Printf("token is not valid\n%v\n", err)
 			c.AbortWithStatusJSON(401, res{Text: fmt.Sprintf("token is not valid%v", err)})
 		} else {
 			c.Set("token", token)
@@ -77,16 +81,19 @@ func validateAWSJwtClaims(claims jwt.MapClaims, region, userPoolID string, authe
 
 	validateValidGroup := func() error {
 		if groupsFromClaims, ok := claims["cognito:groups"]; ok {
-			if groupsFromClaimsStr, ok := groupsFromClaims.(string); ok {
-
-				for _, group := range authedGroups {
-					if strings.Index(groupsFromClaimsStr, group) > -1 {
+			log.Printf("Groups1 | %t | %v\n", groupsFromClaims, groupsFromClaims)
+			groupsFromClaimsStr := groupsToStringArray(groupsFromClaims)
+			log.Printf("Groups2 | %v\n", groupsFromClaimsStr)
+			for _, group := range authedGroups {
+				for _, grp := range groupsFromClaimsStr {
+					if strings.Index(grp, group) > -1 {
 						return nil
 					}
+
 				}
 			}
 		}
-		return errors.New("User unauthorized to perform this action")
+		return errors.New("user unauthorized to perform this action")
 	}
 
 	err = validateValidGroup()
@@ -101,6 +108,14 @@ func validateAWSJwtClaims(claims jwt.MapClaims, region, userPoolID string, authe
 	}
 
 	return nil
+}
+
+func groupsToStringArray(t ...interface{}) []string {
+	s := make([]string, len(t))
+	for i, v := range t {
+		s[i] = fmt.Sprint(v)
+	}
+	return s
 }
 
 // // validateAWSJwtClaims validates Google JWT
@@ -181,7 +196,7 @@ func validateToken(tokenStr, region, userPoolID string, jwk map[string]JWKKey, a
 	}
 
 	claims := token.Claims.(jwt.MapClaims)
-
+	log.Printf("CLAIMS | %v\n", claims)
 	iss, ok := claims["iss"]
 	if !ok {
 		return token, fmt.Errorf("token does not contain issuer")
@@ -203,6 +218,7 @@ func validateToken(tokenStr, region, userPoolID string, jwk map[string]JWKKey, a
 	if token.Valid {
 		return token, nil
 	}
+
 	return token, err
 }
 
