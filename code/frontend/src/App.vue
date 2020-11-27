@@ -4,21 +4,25 @@
     <Header />
     <v-main
       ><!--where pages are to be loaded-->
-      <router-view />
+      <v-container fluid>
+        <router-view />
+      </v-container>
+      <v-container>
+        <v-btn
+          v-scroll="onScroll"
+          v-show="fab"
+          fab
+          dark
+          fixed
+          bottom
+          right
+          color="primary"
+          @click="toTop"
+        >
+          <v-icon>mdi-chevron-up</v-icon>
+        </v-btn>
+      </v-container>
     </v-main>
-    <v-btn
-      v-scroll="onScroll"
-      v-show="fab"
-      fab
-      dark
-      fixed
-      bottom
-      right
-      color="primary"
-      @click="toTop"
-    >
-      <v-icon>mdi-chevron-up</v-icon>
-    </v-btn>
     <Footer />
   </v-app>
 </template>
@@ -57,11 +61,11 @@ export default {
     Auth.currentAuthenticatedUser()
       .then(() => {
         this.signIn();
-        this.$router.push("/browse")
+        this.$router.push("/browse");
       })
       .catch(() => {
         this.signOut();
-        this.$router.push("/home")
+        this.$router.push("/home");
       });
   },
   methods: {

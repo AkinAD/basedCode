@@ -12,12 +12,19 @@
       <v-icon large color="black"> mdi-cart-outline </v-icon>
     </v-card-title>
     <v-tabs grow>
+      
       <!--Tabs that don't require authentication-->
       <v-tab flat v-for="item in menuItems" :key="item.title" :to="item.path">
         <v-icon left dark>{{ item.icon }}</v-icon>
         {{ item.title }}
       </v-tab>
+
       <!--Tabs that do require authentication-->
+      <v-tab v-show="this.signedIn" to="/cart">
+        <v-icon left dark> mdi-cart </v-icon>
+        Cart
+      </v-tab>
+
       <v-tab v-show="this.signedIn" to="/account">
         <v-icon left dark> mdi-account </v-icon>
         Account
@@ -38,9 +45,6 @@
         <StoreSelector />
       </v-btn>
 
-      <v-btn class="ma-2" text icon v-show="signedIn"> 
-        <v-icon>mdi-cart</v-icon>
-      </v-btn>
       <amplify-sign-out v-show="signedIn"></amplify-sign-out>
     </v-tabs>
   </v-card>
@@ -67,7 +71,10 @@ export default {
   computed: {
     ...mapGetters(["signedIn", "getUserGroups"]),
     isManagerOrEmployee() {
-      return this.getUserGroups.includes("manager") || this.getUserGroups.includes("employee")
+      return (
+        this.getUserGroups.includes("manager") ||
+        this.getUserGroups.includes("employee")
+      );
     },
   },
 };

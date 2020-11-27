@@ -1,4 +1,4 @@
-//import axios from "axios";
+import axios from "axios";
 
 //each store should have a name, location, and list of items
 const state = {
@@ -34,8 +34,9 @@ const state = {
       location: "404 Unknown Street",
     },
   ],
+  items: [],
   selectedStore: null,
-  dialog: false
+  dialog: false,
 };
 
 const getters = {
@@ -47,19 +48,39 @@ const getters = {
   },
   getDialog() {
     return state.dialog;
+  },
+  getItems() {
+    return state.items;
   }
 };
 
 const actions = {
   //todo: implement axios calls to get stores
+  async updateStores({ commit }) {
+    try {
+      const res = await axios.get(""); //stores endpoint
+      commit("updateStores", res.data);
+    } catch {
+      commit("updateStores", []);
+    }
+  },
+  async setSelectedStore({ commit }, store) {
+    try {
+      const res = await axios.get("https://fakestoreapi.com/products/"); //selected store's items
+      commit("setSelectedStore", [store, res.data]);
+    } catch {
+      commit("setSelectedStore", store, []); //no items found
+    }
+  }
 };
 
 const mutations = {
   updateStores: (state, newStores) => {
     state.stores = newStores;
   },
-  setSelectedStore: (state, store) => {
-    state.selectedStore = store;
+  setSelectedStore: (state, data) => {
+    (state.selectedStore = data[0]),
+    (state.items = data[1])
   },
   setDialog: (state, bool) => {
     state.dialog = bool;

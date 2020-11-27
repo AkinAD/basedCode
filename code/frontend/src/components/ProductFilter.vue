@@ -1,48 +1,41 @@
 <template>
   <div>
-    <v-container>
-      <v-sheet v-if="$vuetify.breakpoint.mdAndUp" :elevation="2" class="pa-8"
-        ><h3>Filters</h3>
-        <v-radio-group v-model="selection" :mandatory="true">
-          <v-radio
-            v-for="(price, i) in this.getFilters"
-            :key="i"
-            :label="price"
-            :value="i"
-            @click="setFilter()"
-          />
-        </v-radio-group>
-        <SearchBar />
-      </v-sheet>
+    <v-card v-if="$vuetify.breakpoint.mdAndUp" elevation="3" class="pa-8">
+      <h3>Categories</h3>
+      <v-radio-group v-model="selection" :mandatory="true">
+        <v-radio
+          v-for="(price, i) in this.getFilters"
+          :key="i"
+          :label="price"
+          :value="i"
+          @click="setFilter"
+        />
+      </v-radio-group>
+    </v-card>
 
-      <v-expansion-panels v-else>
-        <v-expansion-panel>
-          <v-expansion-panel-header expand-icon="arrow_drop_down"
-            >Filters
-          </v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-radio-group v-model="selection" :mandatory="true">
-              <v-radio
-                v-for="(price, i) in this.getFilters"
-                :key="i"
-                :label="price"
-                :value="i"
-                @click="setFilter()"
-              />
-            </v-radio-group>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-          <SearchBar />
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-container>
+    <v-expansion-panels v-else>
+      <v-expansion-panel>
+        <v-expansion-panel-header expand-icon="arrow_drop_down"
+          >Filters
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-radio-group v-model="selection" :mandatory="true">
+            <v-radio
+              v-for="(price, i) in this.getFilters"
+              :key="i"
+              :label="price"
+              :value="i"
+              @click="setFilter"
+            />
+          </v-radio-group>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import SearchBar from "../components/browse/SearchBar.vue";
 
 export default {
   data() {
@@ -51,10 +44,6 @@ export default {
       selection: 0,
     };
   },
-  components: {
-    SearchBar,
-  },
-
   computed: {
     ...mapGetters(["getFilters", "getPriceFilter"]),
   },

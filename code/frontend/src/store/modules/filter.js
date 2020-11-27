@@ -14,7 +14,7 @@ const getters = {
 
 const mutations = {
   setSelectedFilter: (state, newFilter) => {
-    state.selectedFilter = newFilter;
+    (state.selectedFilter = newFilter)
   },
 };
 

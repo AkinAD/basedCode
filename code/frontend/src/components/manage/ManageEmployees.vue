@@ -8,7 +8,7 @@
 import ManagementList from "./ManagementList";
 
 export default {
-  name: "manageEmployees",
+  name: "ManageEmployees",
   components: {
     ManagementList,
   },
