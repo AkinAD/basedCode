@@ -74,7 +74,7 @@ router.beforeResolve((to, from, next) => {
           next();
         } else {
           //display popup
-          console.log('user does not have permission')
+          console.log("user does not have permission");
           next({
             path: "/home",
           });
