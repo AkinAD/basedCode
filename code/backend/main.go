@@ -40,10 +40,7 @@ func main() {
 
 	// heartbeat
 	router.GET("/", homeHandler)
-	router.GET("/auth/user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user"}), heartbeatUser)
-	router.GET("/auth/employee", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee"}), heartbeatEmployee)
-	router.GET("/auth/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager"}), heartbeatManager)
-	router.GET("/auth/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), heartbeatAdmin)
+	router.GET("/heartbeat", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user"}), heartbeat)
 
 	//login
 	router.POST("/login", login)
@@ -63,20 +60,34 @@ func main() {
 
 	//managers
 	router.GET("/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), getGroupManager)
-	router.POST("/manager/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToManager)
+	router.POST("/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToManager)
 	// router.DELETE("manager/:id", deleteManager)
 
 	//admin
 	router.GET("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupAdmin)
-	router.POST("/admin/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
+	router.POST("/admin)", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
 	// router.DELTE("admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}) ,deleteFromAdmin)
 
 	//items
-	router.GET("/item", getItems)
+	router.GET("/item", getItems) //?storeID= to get the items/stock for a specific store
 	router.GET("/item/:id", getItem)
 	router.POST("/item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), addItem)
 	router.PUT("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), updateItem)
 	router.DELETE("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteItem)
+
+	//store
+	router.GET("/store", getStores)
+	router.POST("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), createStore)
+	router.PUT("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), updateStore)
+	router.DELETE("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
+
+	//stock
+	router.POST("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), addItemToStock)
+	router.PUT("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editItemInStock)
+	router.DELETE("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteItemInStock)
+	router.POST("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adimnAddItemToStock)
+	router.PUT("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminEditItemInStock)
+	router.DELETE("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminDeleteItemInStock)
 
 	if port == "443" {
 		router.RunTLS(":"+port, "add cert here", "add key here")
@@ -134,23 +145,12 @@ func homeHandler(c *gin.Context) {
 	)
 }
 
-func heartbeatUser(c *gin.Context) {
-	heartbeat(c, "user")
-}
-func heartbeatEmployee(c *gin.Context) {
-	heartbeat(c, "employee")
-}
-func heartbeatManager(c *gin.Context) {
-	heartbeat(c, "manager")
-}
-func heartbeatAdmin(c *gin.Context) {
-	heartbeat(c, "admin")
-}
+func heartbeat(c *gin.Context) {
+	groups, _ := c.Get("groups")
 
-func heartbeat(c *gin.Context, group string) {
 	c.JSON(
 		200,
-		gin.H{"group": group},
+		gin.H{"groups": groups},
 	)
 }
 
@@ -326,5 +326,45 @@ func updateItem(c *gin.Context) {
 }
 
 func deleteItem(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func getStores(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func createStore(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func updateStore(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func deleteStore(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func addItemToStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func editItemInStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func deleteItemInStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func adimnAddItemToStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func adminEditItemInStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func adminDeleteItemInStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
