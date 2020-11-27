@@ -12,6 +12,7 @@
             @click="setFilter()"
           />
         </v-radio-group>
+        <SearchBar />
       </v-sheet>
 
       <v-expansion-panels v-else>
@@ -31,6 +32,9 @@
             </v-radio-group>
           </v-expansion-panel-content>
         </v-expansion-panel>
+        <v-expansion-panel>
+          <SearchBar />
+        </v-expansion-panel>
       </v-expansion-panels>
     </v-container>
   </div>
@@ -38,13 +42,17 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
+import SearchBar from "../components/browse/SearchBar.vue";
 
 export default {
   data() {
-    return { 
+    return {
       checkbox: true,
-      selection: 0
+      selection: 0,
     };
+  },
+  components: {
+    SearchBar,
   },
 
   computed: {
@@ -55,11 +63,11 @@ export default {
     ...mapMutations(["setSelectedFilter"]),
 
     setFilter() {
-      if (this.selection === 0) this.setSelectedFilter(null)
-      if (this.selection === 1) this.setSelectedFilter([0,25])
-      if (this.selection === 2) this.setSelectedFilter([25,100])
-      if (this.selection === 3) this.setSelectedFilter([100,500])
-      if (this.selection === 4) this.setSelectedFilter([500,10000])
+      if (this.selection === 0) this.setSelectedFilter(null);
+      if (this.selection === 1) this.setSelectedFilter([0, 25]);
+      if (this.selection === 2) this.setSelectedFilter([25, 100]);
+      if (this.selection === 3) this.setSelectedFilter([100, 500]);
+      if (this.selection === 4) this.setSelectedFilter([500, 10000]);
     },
   },
 };

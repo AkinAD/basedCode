@@ -1,7 +1,6 @@
 <template>
   <v-container v-show="nonNull" fluid transition="slide-x-transition">
     <Banner :text="msg" size="100px" />
-    <SearchBar />
     <v-row>
       <v-col md="3" offset-lg="1"><ProductFilter /></v-col>
       <v-col md="9" lg="7"> <ProductDisplay /> </v-col>
@@ -14,7 +13,6 @@ import ProductFilter from "../components/ProductFilter";
 import ProductDisplay from "../components/browse/ProductDisplay";
 import Banner from "../components/layout/Banner";
 import { mapGetters, mapMutations } from "vuex";
-import SearchBar from "../components/browse/SearchBar.vue";
 
 export default {
   name: "browse",
@@ -22,7 +20,6 @@ export default {
     ProductFilter,
     ProductDisplay,
     Banner,
-    SearchBar,
   },
   mounted() {
     if (this.getSelectedStore === null) {
