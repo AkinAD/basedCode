@@ -12,10 +12,10 @@
       </v-col>
       <!--Info-->
       <v-col md="8">
-        <v-card-title>{{ product.title }} </v-card-title>
+        <v-card-title>{{ product.name }} </v-card-title>
         <v-card-subtitle>$ {{ product.price }} </v-card-subtitle>
         <v-card-actions>
-          <v-btn color="red" outlined>
+          <v-btn color="red" outlined v-on:click="$emit('remove-from-cart', product)">
             <v-icon left>mdi-delete</v-icon>
             Remove from Cart</v-btn
           >

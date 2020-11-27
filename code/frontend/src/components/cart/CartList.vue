@@ -3,17 +3,17 @@
     <v-row>
       <v-col
         md="12"
-        v-for="recommendation in allRecommendations"
-        :key="recommendation.id"
+        v-for="item in cartItems"
+        :key="item.id"
       >
-        <CartCard :product="recommendation" visibleImage/>
+        <CartCard :product="item" visibleImage v-on:remove-from-cart="removeFromCart($event)"/>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 
 import CartCard from "../cards/CartCard";
 
@@ -23,13 +23,15 @@ export default {
     CartCard,
   },
   methods: {
-    removeFromCart() {},
-    ...mapActions(["fetchRecommendations"]),
+    ...mapActions(["fetchSavedCart",]),
+    ...mapMutations(["removeFromCart"]),
   },
-  computed: mapGetters(["allRecommendations"]),
-  created() {
-    this.fetchRecommendations();
-  }
+  computed: 
+    mapGetters(["cartItems"]),
+    created() {
+      this.fetchSavedCart();
+    },
+  
 };
 </script>
 
