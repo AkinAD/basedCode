@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import recommendations from "./modules/recommendations";
-import purchases from "./modules/purchases";
 import user from "./modules/user";
 import stores from "./modules/stores";
 import filter from "./modules/filter";
@@ -16,7 +15,6 @@ export default new Vuex.Store({
   modules: {
     recommendations,
     user,
-    purchases,
     stores,
     filter,
     cart

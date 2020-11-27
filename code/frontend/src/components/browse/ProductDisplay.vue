@@ -5,17 +5,17 @@
       <v-col
         sm="6"
         md="4"
-        v-for="recommendation in filteredRecommendations"
-        :key="recommendation.id"
+        v-for="item in filteredItems"
+        :key="item.id"
       >
-        <VerticalProduct :product="recommendation" />
+        <VerticalProduct :product="item" />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 import VerticalProduct from "../cards/VerticalProduct";
 
@@ -24,29 +24,22 @@ export default {
   components: {
     VerticalProduct,
   },
-  methods: {
-    ...mapActions(["fetchRecommendations"]),
-  },
   computed: {
     ...mapGetters([
-      "allRecommendations",
-      "getSelectedStore",
+      "getItems",
       "getSelectedFilter",
     ]),
 
-    filteredRecommendations() {
+    filteredItems() {
       const filter = this.getSelectedFilter;
-      if (filter === null) {
-        return this.allRecommendations;
+      if (filter === null) {//any is selected
+        return this.getItems;
       } else
-        return this.allRecommendations.filter((product) => {
-          return product.price <= filter[1] && product.price >= filter[0];
+        return this.getItems.filter((item) => {
+          return item.price <= filter[1] && item.price >= filter[0];
         });
     },
-  },
-  created() {
-    this.fetchRecommendations();
-  },
+  }
 };
 </script>
 

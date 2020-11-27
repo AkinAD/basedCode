@@ -1,26 +1,19 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
-      <v-col sm="10" offset-sm="1" lg="8" offset-lg="2">
-        <h2>
-          We think you'll like these products
-          <v-btn to="recommended" color="primary" small text>View All</v-btn>
-        </h2>
-      </v-col>
+      <v-card elevation="3" class="pa-8">
+        <h2>We think you'll like these products</h2>
+      </v-card>
     </v-row>
-    <v-row>
-      <v-col sm="10" offset-sm="1" lg="8" offset-lg="2">
-        <v-row>
-          <v-col
-            sm="6"
-            md="4"
-            v-for="recommendation in allRecommendations.slice(2, 9)"
-            :key="recommendation.id"
-          >
-            <VerticalProduct :product="recommendation" />
-          </v-col>
-        </v-row>
-      </v-col>
+    <v-row
+      v-for="recommendation in allRecommendations"
+      :key="recommendation.id"
+      sm="6"
+      md="4"
+    >
+      <v-card elevation="2">
+        <VerticalProduct :product="recommendation" />
+      </v-card>
     </v-row>
   </v-container>
 </template>

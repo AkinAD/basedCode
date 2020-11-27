@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   data: function () {
     return {
@@ -98,8 +98,8 @@ export default {
 
       if (!search) return this.getStores;
 
-      return this.getStores.filter((item) => {
-        const text = item.text.toLowerCase();
+      return this.getStores.filter((store) => {
+        const text = store.text.toLowerCase();
         return text.indexOf(search) > -1;
       });
     },
@@ -118,7 +118,8 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["setSelectedStore", "setDialog"]),
+    ...mapMutations(["setDialog"]),
+    ...mapActions(["setSelectedStore"]),
 
     next() {
       this.loading = true;

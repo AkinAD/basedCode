@@ -1,36 +1,41 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <Banner text="Your Shopping Cart" size="100px" />
-    <CartList />
-    <!-- <v-row>
-      <v-col sm="8" md="5" offset-md="2" lg="4" offset-lg="3">
-        <CartList />
-      </v-col>
-      <v-col sm="4" md="3">
-        <OptimumRoute />
-      </v-col>
-    </v-row> -->
-    <v-tooltip top>
-      <template v-slot:activator="{on, attrs}">
-        <v-btn fab fixed right bottom large dark color="blue" elevation="6" to="/browse" v-bind="attrs" v-on="on">
-          <v-icon> mdi-plus </v-icon>
-        </v-btn>
-      </template>
-      <span>Add Item to Cart</span>
-    </v-tooltip>
+    <v-layout>
+      <v-row align="center" justify="center">
+        <h2>{{ subtotal }}</h2>
+      </v-row>
+    </v-layout>
+    <v-row>
+      <OptimumRoute />
+    </v-row>
+    <v-row>
+      <CartList />
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import CartList from "../components/cart/CartList.vue";
 import Banner from "../components/layout/Banner.vue";
+import OptimumRoute from "../components/OptimumRoute";
+import { mapGetters } from "vuex";
 
 export default {
-  components: { 
+  components: {
     CartList,
-    Banner
+    Banner,
+    OptimumRoute
+  },
+  computed: {
+    ...mapGetters(["getCart"]),
+
+    subtotal() {
+      var sum = 0;
+      this.getCart.forEach((element) => (sum += element.price));
+      return "Your Subtotal is: $" + sum.toFixed(2);
     },
-  
+  },
 };
 </script>
 

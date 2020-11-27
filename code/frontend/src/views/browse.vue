@@ -1,10 +1,16 @@
 <template>
-  <v-container v-show="nonNull" fluid transition="slide-x-transition">
+  <v-container v-show="storeIsSelected" fluid>
     <Banner :text="msg" size="100px" />
-    <SearchBar />
     <v-row>
-      <v-col md="3" offset-lg="1"><ProductFilter /></v-col>
-      <v-col md="9" lg="7"> <ProductDisplay /> </v-col>
+      <v-col md="3" offset-lg="1">
+        <ProductFilter />
+        <Recommendations />
+      </v-col>
+      <v-col md="9" lg="7">
+        <v-card elevation="3">
+          <ProductDisplay />
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -13,16 +19,16 @@
 import ProductFilter from "../components/ProductFilter";
 import ProductDisplay from "../components/browse/ProductDisplay";
 import Banner from "../components/layout/Banner";
+import Recommendations from "../components/Recommendations";
 import { mapGetters, mapMutations } from "vuex";
-import SearchBar from "../components/browse/SearchBar.vue";
 
 export default {
   name: "browse",
   components: {
     ProductFilter,
     ProductDisplay,
+    Recommendations,
     Banner,
-    SearchBar,
   },
   mounted() {
     if (this.getSelectedStore === null) {
@@ -38,7 +44,7 @@ export default {
         return "";
       }
     },
-    nonNull() {
+    storeIsSelected() {
       return this.getSelectedStore !== null;
     },
   },

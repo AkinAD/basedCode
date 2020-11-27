@@ -1,52 +1,28 @@
 <template>
   <v-container>
     <Banner :text="msg" size="100px" />
-    <v-row>
-      <v-col md="3" offset-lg="1"><UserCardWithPastPurchases /></v-col>
-      <v-col md="9" lg="7">
-        <v-col>
-          <v-card
-            ><v-col sm="10" lg="8">
-              <h2>Frequent Purchases</h2>
-            </v-col>
-            <!--past purchases to be displayed here -> get across all stores -->
-          </v-card>
-        </v-col>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <Recommendations />
-    </v-row>
+    <v-row> </v-row>
   </v-container>
 </template>
 
 <script>
-import UserCardWithPastPurchases from "../components/cards/UserCardWithPastPurchases";
-import Recommendations from "../components/Recommendations";
 import Banner from "../components/layout/Banner";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "account",
   components: {
-    UserCardWithPastPurchases,
-    Recommendations,
     Banner,
   },
-  methods: {
-    ...mapActions(["fetchPurchasedItems"]),
-  },
   computed: {
-    ...mapGetters(["allPurchasedItems"]),
-    ...mapGetters(["getUser", "getUserGroups"]),
+    ...mapGetters(["getUser"]),
     msg() {
       try {
-        return "Hello, ".concat(`${this.getUser.attributes.email}`)
+        return "Hello, ".concat(`${this.getUser.attributes.email}`);
       } catch (err) {
-        return ""
+        return "";
       }
-    }
+    },
   },
 };
 </script>
