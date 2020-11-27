@@ -38,7 +38,7 @@
         <StoreSelector />
       </v-btn>
 
-      <v-btn class="ma-2" text icon v-show="signedIn"> 
+      <v-btn class="ma-2" text icon v-show="signedIn" to="/cart"> 
         <v-icon>mdi-cart</v-icon>
       </v-btn>
       <amplify-sign-out v-show="signedIn"></amplify-sign-out>

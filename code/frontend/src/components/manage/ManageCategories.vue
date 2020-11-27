@@ -1,6 +1,6 @@
 <template>
   <v-card fluid transition="slide-x-transition">
-    <ManagementList title="All Employees" type="Employee" :showImage="false" />
+    <ManagementList title="All Categories" type="Category" :showImage="false" />
   </v-card>
 </template>
 
@@ -8,7 +8,7 @@
 import ManagementList from "./ManagementList";
 
 export default {
-  name: "manageEmployees",
+  name: "ManageCategories",
   components: {
     ManagementList,
   },
