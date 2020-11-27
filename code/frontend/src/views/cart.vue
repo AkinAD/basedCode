@@ -10,10 +10,14 @@
         <OptimumRoute />
       </v-col>
     </v-row> -->
-    <v-btn fab fixed right bottom large dark color="blue" elevation="6" to="/browse">
-        <!--{{btnText}}-->
-        <v-icon> mdi-plus </v-icon>
-    </v-btn>
+    <v-tooltip top>
+      <template v-slot:activator="{on, attrs}">
+        <v-btn fab fixed right bottom large dark color="blue" elevation="6" to="/browse" v-bind="attrs" v-on="on">
+          <v-icon> mdi-plus </v-icon>
+        </v-btn>
+      </template>
+      <span>Add Item to Cart</span>
+    </v-tooltip>
   </v-container>
 </template>
 
@@ -26,6 +30,7 @@ export default {
     CartList,
     Banner
     },
+  
 };
 </script>
 

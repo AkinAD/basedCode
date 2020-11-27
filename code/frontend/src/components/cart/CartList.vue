@@ -23,15 +23,12 @@ export default {
     CartCard,
   },
   methods: {
-    ...mapActions(["fetchSavedCart",]),
     ...mapMutations(["removeFromCart"]),
   },
-  computed: 
-    mapGetters(["cartItems"]),
-    created() {
-      this.fetchSavedCart();
-    },
-  
+  computed: {
+    ...mapGetters(["cartItems"]),
+    ...mapActions(["fetchSavedCart",]),
+},
 };
 </script>
 
