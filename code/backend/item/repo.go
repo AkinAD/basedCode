@@ -29,5 +29,12 @@ func newDatabase(config string) *gorm.DB {
 }
 
 func (r *itemRepo) getItem(ID int) (*Item, error) {
-	return nil, nil
+	var items []Item
+	result := r.db.First(&items, ID)
+	err := result.Error
+
+	if err != nil {
+		return nil, err
+	}
+	return &items[0], err
 }

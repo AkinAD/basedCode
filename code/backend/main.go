@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	auth "github.com/AkinAD/basedCode/auth"
@@ -141,7 +142,7 @@ var corsMiddleware = cors.New(cors.Config{
 func homeHandler(c *gin.Context) {
 	c.JSON(
 		200,
-		gin.H{"message": "hello"},
+		gin.H{"message": "whats poppin"},
 	)
 }
 
@@ -310,11 +311,22 @@ func promoteTo(c *gin.Context, group string) {
 }
 
 func getItems(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	c.JSON(200, gin.H{"message": "yo"})
 }
 
 func getItem(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	item, itemError := itemSrv.GetItem(id)
+	if itemError != nil {
+		c.JSON(500, itemError)
+	}
+
+	c.JSON(200, gin.H{"message": "yo yo", "item ID": c.Param("id"), "item": item})
 }
 
 func addItem(c *gin.Context) {
