@@ -1,29 +1,28 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col> <h3>Products</h3> </v-col>
-      <v-col sm="6" md="4"
-        ><v-container>
+      <v-col md="2"> <h3>Products</h3></v-col>
+      <v-col md="15" class="stayBinch">
+        <v-container>
           <v-toolbar flat color="transparent">
             <v-toolbar-title class="smallFont"
-              >Search for your favorite items</v-toolbar-title
-            >
+              >Search our items ............
+            </v-toolbar-title>
             <v-btn icon @click="setSearchBoxVisibility(!searchBoxVisible)">
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
+            <v-container class="py-0">
+              <v-text-field
+                ref="search"
+                v-model="search"
+                full-width
+                hide-details
+                label="Search"
+                single-line
+                v-show="searchBoxVisible"
+              ></v-text-field>
+            </v-container>
           </v-toolbar>
-
-          <v-container class="py-0">
-            <v-text-field
-              ref="search"
-              v-model="search"
-              full-width
-              hide-details
-              label="Search"
-              single-line
-              v-show="searchBoxVisible"
-            ></v-text-field>
-          </v-container>
         </v-container>
       </v-col>
     </v-row>
@@ -80,4 +79,13 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.smallFont {
+  font-size: 0.8em;
+}
+.stayBinch {
+  position: relative;
+  bottom: 1.6em;
+  left: -1.6em;
+}
+</style>
