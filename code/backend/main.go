@@ -18,6 +18,7 @@ import (
 var (
 	userSrv user.UserService
 	itemSrv item.ItemService
+	//storeSrv db.DbService
 	// authSrv auth.AuthService
 
 	port               string
@@ -34,7 +35,7 @@ func main() {
 
 	router.Use(corsMiddleware)
 
-	userSrv = user.NewService(awsRegion, awsID, awsSecret)
+	userSrv = user.NewService(awsRegion, awsID, awsSecret, connString)
 	itemSrv = item.NewService(connString)
 	// authSrv = auth.NewService()
 
@@ -205,9 +206,24 @@ func getAccount(c *gin.Context) {
 }
 
 func updateAccount(c *gin.Context) {
-	// what is an update
-	//allen 25 nov - it will be to change preffered store
-	c.JSON(200, gin.H{"message": "hello"})
+	//get the user's account id and their preferred store id
+	type updateReqest struct {
+		username       string
+		preferredStore int
+	}
+	var update updateReqest
+	err := c.ShouldBind(&update)
+	if err != nil {
+		c.JSON(401, err)
+	}
+	// grab the username and connect to the userDB to find them
+	// then update the db with the preferred location
+	//err = itemSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
+	err = userSrv.updatePreferredStore(update.username, update.preferredStore)
+	if err != nil {
+		c.JSON(401, err)
+	}
+
 }
 
 func getGroupUser(c *gin.Context) {

@@ -9,9 +9,14 @@ import (
 
 type userService struct {
 	cognito *cognito.CognitoIdentityProvider
+	db      UserRepo
 }
 
+<<<<<<< HEAD
+func NewService(awsRegion, awsID, awsSecret string, conn string) UserService {
+=======
 func NewService(awsRegion, awsID, awsSecret string) UserService {
+>>>>>>> backend
 	mySession, err := awsSession(awsRegion, awsID, awsSecret)
 	if err != nil {
 		panic(err)
@@ -21,6 +26,10 @@ func NewService(awsRegion, awsID, awsSecret string) UserService {
 
 	return &userService{
 		cognito: svc,
+<<<<<<< HEAD
+		db:      NewDatabase(conn),
+=======
+>>>>>>> backend
 	}
 }
 
