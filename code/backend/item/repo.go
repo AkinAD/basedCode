@@ -1,6 +1,8 @@
 package item
 
 import (
+	"fmt"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -36,5 +38,6 @@ func (r *itemRepo) getItem(ID int) (*Item, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(items[0])
 	return &items[0], err
 }

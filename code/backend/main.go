@@ -317,13 +317,15 @@ func getItems(c *gin.Context) {
 func getItem(c *gin.Context) {
 	idString := c.Param("id")
 	id, err := strconv.Atoi(idString)
+
 	if err != nil {
 		c.JSON(500, err)
 	}
 
-	item, itemError := itemSrv.GetItem(id)
-	if itemError != nil {
-		c.JSON(500, itemError)
+	item, err := itemSrv.GetItem(id)
+
+	if err != nil {
+		c.JSON(500, err)
 	}
 
 	c.JSON(200, gin.H{"message": "yo yo", "item ID": c.Param("id"), "item": item})
