@@ -40,7 +40,7 @@ func main() {
 
 	// heartbeat
 	router.GET("/", homeHandler)
-	router.GET("/heartbeat", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user"}), heartbeat)
+	router.GET("/heartbeat", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), heartbeat)
 
 	//login
 	router.POST("/login", login)
