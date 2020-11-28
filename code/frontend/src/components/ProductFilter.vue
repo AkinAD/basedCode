@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card v-if="$vuetify.breakpoint.mdAndUp" elevation="3" class="pa-8">
-      <h3>Categories</h3>
+      <h3>Price Filter</h3>
       <v-radio-group v-model="selection" :mandatory="true">
         <v-radio
           v-for="(price, i) in this.getFilters"

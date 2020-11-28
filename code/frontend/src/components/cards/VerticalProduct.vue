@@ -4,7 +4,7 @@
     <v-card-title>{{ product.title }} </v-card-title>
     <v-card-subtitle>$ {{ product.price }} </v-card-subtitle>
     <v-spacer></v-spacer>
-    <v-card-actions class="card-actions">
+    <v-card-actions class="card-actions" v-show="signedIn">
       <v-btn
         color="success"
         :disabled="!notAdded"

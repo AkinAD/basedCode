@@ -64,6 +64,7 @@ const actions = {
       commit("updateStores", []);
     }
   },
+  
   async setSelectedStore({ commit }, store) {
     try {
       const res = await axios.get("https://fakestoreapi.com/products/"); //selected store's items

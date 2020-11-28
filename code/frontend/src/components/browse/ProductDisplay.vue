@@ -67,7 +67,6 @@ export default {
 
     searchFilteredItems() {
       const search = this.search.toLowerCase();
-      console.log(search);
       return this.filteredItems.filter((item) => {
         return item.title.toLowerCase().includes(search);
       });
