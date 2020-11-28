@@ -9,6 +9,11 @@ type UserService interface {
 	RemoveUserFromGroup(input *cognito.AdminRemoveUserFromGroupInput) (*cognito.AdminRemoveUserFromGroupOutput, error)
 	GetUser(input *cognito.AdminGetUserInput) (*cognito.AdminGetUserOutput, error)
 	ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error)
+<<<<<<< Updated upstream
+=======
+	Login(*cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error)
+	updatePreferredStore(username string, preferredStore int) error
+>>>>>>> Stashed changes
 }
 
 //cognito = CognitoIdentityProvider
@@ -90,3 +95,22 @@ func (s *userService) ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*c
 	}
 	return output, nil
 }
+<<<<<<< Updated upstream
+=======
+
+func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error) {
+	output, err := s.cognito.InitiateAuth(input)
+	if err != nil {
+		return nil, err
+	}
+	return output, err
+}
+
+func (r *userRepo) updatePreferredStore(username string, preferredStore int) error {
+	err := r.db.Table("account").Where("username = ?", username).Update("storeID", preferredStore)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+>>>>>>> Stashed changes

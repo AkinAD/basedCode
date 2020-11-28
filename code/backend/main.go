@@ -15,6 +15,7 @@ import (
 var (
 	userSrv user.UserService
 	itemSrv item.ItemService
+	//storeSrv db.DbService
 	// authSrv auth.AuthService
 
 	port       string
@@ -30,7 +31,7 @@ func main() {
 
 	router.Use(corsMiddleware)
 
-	userSrv = user.NewService(awsRegion, awsID, awsSecret)
+	userSrv = user.NewService(awsRegion, awsID, awsSecret, connString)
 	itemSrv = item.NewService(connString)
 	// authSrv = auth.NewService()
 
@@ -119,10 +120,77 @@ func homeHandler(c *gin.Context) {
 	)
 }
 
+<<<<<<< Updated upstream
 func getAccount(c *gin.Context) {
 	var accountID string
 	bindedVar := c.ShouldBind(&accountID)
 	resp, err := userSrv.GetUser(bindedVar)
+=======
+func heartbeatUser(c *gin.Context) {
+	heartbeat(c, "user")
+}
+func heartbeatEmployee(c *gin.Context) {
+	heartbeat(c, "employee")
+}
+func heartbeatManager(c *gin.Context) {
+	heartbeat(c, "manager")
+}
+func heartbeatAdmin(c *gin.Context) {
+	heartbeat(c, "admin")
+}
+
+func heartbeat(c *gin.Context, group string) {
+	c.JSON(
+		200,
+		gin.H{"group": group},
+	)
+}
+
+func login(c *gin.Context) {
+	type LoginRequest struct {
+		Username string
+		Password string
+	}
+	var login LoginRequest
+	err := c.ShouldBind(&login)
+
+	if err != nil {
+		c.JSON(401, err)
+	}
+
+	authParams := make(map[string]*string)
+	authParams["USERNAME"] = aws.String(login.Username)
+	authParams["PASSWORD"] = aws.String(login.Password)
+
+	input := &cognito.InitiateAuthInput{
+		AuthFlow:       aws.String("USER_PASSWORD_AUTH"),
+		AuthParameters: authParams,
+		ClientId:       aws.String(cognitoAppClientID),
+	}
+
+	res, err := userSrv.Login(input)
+	if err != nil {
+		c.JSON(401, err)
+	}
+
+	c.JSON(200, res)
+}
+
+func getAccount(c *gin.Context) {
+	var username string
+
+	err := c.ShouldBind(&username)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	input := &cognito.AdminGetUserInput{
+		Username:   aws.String(username),
+		UserPoolId: aws.String(userPoolID),
+	}
+
+	resp, err := userSrv.GetUser(input)
+>>>>>>> Stashed changes
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -131,8 +199,29 @@ func getAccount(c *gin.Context) {
 }
 
 func updateAccount(c *gin.Context) {
+<<<<<<< Updated upstream
 	// what is an update
 	c.JSON(200, gin.H{"message": "hello"})
+=======
+	//get the user's account id and their preferred store id
+	type updateReqest struct {
+		username       string
+		preferredStore int
+	}
+	var update updateReqest
+	err := c.ShouldBind(&update)
+	if err != nil {
+		c.JSON(401, err)
+	}
+	// grab the username and connect to the userDB to find them
+	// then update the db with the preferred location
+	//err = itemSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
+	err = userSrv.updatePreferredStore(update.username, update.preferredStore)
+	if err != nil {
+		c.JSON(401, err)
+	}
+
+>>>>>>> Stashed changes
 }
 
 func getEmployees(c *gin.Context) {

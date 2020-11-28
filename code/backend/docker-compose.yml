@@ -7,6 +7,7 @@ services:
       - "8081:8081"
     environment:
       - PORT=8081
+<<<<<<< Updated upstream
     # depends_on:
     #   - db
   # frontend:
@@ -19,3 +20,15 @@ services:
   #     - POSTGRES_DB=postgres
   #     - POSTGRES_USER=postgres
   #     - POSTGRES_PASSWORD=postgres
+=======
+      - AWS_REGION=us-east-2
+      - AWS_ID=AKIAJJ4QS2CUBT4MWM3Q
+      - AWS_SECRET=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
+      - COGNITO_USER_POOL_ID=us-east-2_X1JjcuCeN
+      - COGNITO_APP_CLIENT_ID=f00pt0p4ciea7grn7m1onrlp1
+      - PG_HOST=smartshopper.cn5svapfwwkj.us-east-2.rds.amazonaws.com
+      - PG_PORT=5432
+      - PG_USER=postgres
+      - PG_PASS=Oa$$dN35qw!L7
+      - PG_NAME=postgres
+>>>>>>> Stashed changes
