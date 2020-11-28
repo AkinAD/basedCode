@@ -7,11 +7,6 @@ type userService struct {
 	db      UserRepo
 }
 
-<<<<<<< Updated upstream
-func NewService() UserService {
-	return &userService{
-		cognito: &cognito.CognitoIdentityProvider{},
-=======
 func NewService(awsRegion, awsID, awsSecret string, conn string) UserService {
 	mySession, err := awsSession(awsRegion, awsID, awsSecret)
 	if err != nil {
@@ -34,6 +29,5 @@ func awsSession(awsRegion, awsID, awsSecret string) (*session.Session, error) {
 
 	if err != nil {
 		return nil, err
->>>>>>> Stashed changes
 	}
 }

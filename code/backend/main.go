@@ -120,12 +120,6 @@ func homeHandler(c *gin.Context) {
 	)
 }
 
-<<<<<<< Updated upstream
-func getAccount(c *gin.Context) {
-	var accountID string
-	bindedVar := c.ShouldBind(&accountID)
-	resp, err := userSrv.GetUser(bindedVar)
-=======
 func heartbeatUser(c *gin.Context) {
 	heartbeat(c, "user")
 }
@@ -190,7 +184,6 @@ func getAccount(c *gin.Context) {
 	}
 
 	resp, err := userSrv.GetUser(input)
->>>>>>> Stashed changes
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -199,10 +192,6 @@ func getAccount(c *gin.Context) {
 }
 
 func updateAccount(c *gin.Context) {
-<<<<<<< Updated upstream
-	// what is an update
-	c.JSON(200, gin.H{"message": "hello"})
-=======
 	//get the user's account id and their preferred store id
 	type updateReqest struct {
 		username       string
@@ -221,7 +210,6 @@ func updateAccount(c *gin.Context) {
 		c.JSON(401, err)
 	}
 
->>>>>>> Stashed changes
 }
 
 func getEmployees(c *gin.Context) {

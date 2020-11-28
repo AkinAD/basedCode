@@ -95,8 +95,6 @@ func (s *userService) ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*c
 	}
 	return output, nil
 }
-<<<<<<< Updated upstream
-=======
 
 func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error) {
 	output, err := s.cognito.InitiateAuth(input)
@@ -113,4 +111,3 @@ func (r *userRepo) updatePreferredStore(username string, preferredStore int) err
 	}
 	return nil
 }
->>>>>>> Stashed changes
