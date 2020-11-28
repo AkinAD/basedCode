@@ -11,19 +11,16 @@ func NewService(conn string) ItemService {
 }
 
 type Item struct {
-	ID       int
+	ID       int `gorm:"<-:false"`
 	Name     string
 	Category Category
 	Price    int
 }
 
 type Store struct {
-	ID        int
-	Name      string
-	Address   string //?
-	Latitude  int
-	Longitude int
-	Items     map[Item]Location
+	ID      int `gorm:"<-:false"`
+	Address string
+	Items   map[Item]Location
 }
 
 type Location struct {
@@ -35,9 +32,9 @@ type ShoppingCart []Item
 
 type SearchResult []Item
 
-type Category string
+type Category int
 
 const (
-	CAT1 Category = "CAT1"
-	CAT2 Category = "CAT2"
+	Shirts Category = 1
+	Shoes  Category = 2
 )

@@ -8,8 +8,11 @@ import (
 	auth "github.com/AkinAD/basedCode/auth"
 	item "github.com/AkinAD/basedCode/item"
 	user "github.com/AkinAD/basedCode/user"
+	cognito "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	"github.com/aws/aws-sdk-go/aws"
 )
 
 var (
@@ -18,12 +21,13 @@ var (
 	//storeSrv db.DbService
 	// authSrv auth.AuthService
 
-	port       string
-	connString string
-	userPoolID string
-	awsRegion  string
-	awsID      string
-	awsSecret  string
+	port               string
+	connString         string
+	userPoolID         string
+	awsRegion          string
+	awsID              string
+	awsSecret          string
+	cognitoAppClientID string
 )
 
 func main() {
@@ -37,34 +41,54 @@ func main() {
 
 	// heartbeat
 	router.GET("/", homeHandler)
-	router.GET("/", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), homeHandler)
+	router.GET("/heartbeat", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user"}), heartbeat)
 
-	//users
+	//login
+	router.POST("/login", login)
+
+	//all account types
 	router.GET("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
 	router.PUT("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
 
+	//users
+	router.GET("/user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupUser)
+
 	//employees
-	router.GET("/employee", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), getEmployees)
+	router.GET("/employee", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), getGroupEmployee)
 	router.POST("/employee", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), createEmployee)
 	// router.PUT("/employee", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"employee", "manager", "admin"}), updateEmployee)
 	// router.DELETE("/employee", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{manager", "admin"}), deleteEmployee)
 
 	//managers
-	router.GET("/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), getManagers)
-	router.POST("/manager/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToManager)
+	router.GET("/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), getGroupManager)
+	router.POST("/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToManager)
 	// router.DELETE("manager/:id", deleteManager)
 
 	//admin
-	router.GET("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getAdmins)
-	router.POST("/admin/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
+	router.GET("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupAdmin)
+	router.POST("/admin)", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
 	// router.DELTE("admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}) ,deleteFromAdmin)
 
 	//items
-	router.GET("/item", getItems)
+	router.GET("/item", getItems) //?storeID= to get the items/stock for a specific store
 	router.GET("/item/:id", getItem)
 	router.POST("/item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), addItem)
 	router.PUT("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), updateItem)
 	router.DELETE("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteItem)
+
+	//store
+	router.GET("/store", getStores)
+	router.POST("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), createStore)
+	router.PUT("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), updateStore)
+	router.DELETE("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
+
+	//stock
+	router.POST("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), addItemToStock)
+	router.PUT("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editItemInStock)
+	router.DELETE("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteItemInStock)
+	router.POST("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adimnAddItemToStock)
+	router.PUT("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminEditItemInStock)
+	router.DELETE("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminDeleteItemInStock)
 
 	if port == "443" {
 		router.RunTLS(":"+port, "add cert here", "add key here")
@@ -80,18 +104,20 @@ func init() {
 	awsID = defaulter("AWS_ID", "")
 	awsSecret = defaulter("AWS_SECRET", "")
 	userPoolID = defaulter("COGNITO_USER_POOL_ID", "")
+	cognitoAppClientID = defaulter("COGNITO_APP_CLIENT_ID", "")
 }
 
 func initPostgres() string {
+	// PGHost := defaulter("PG_HOST", "localhost")
 	PGHost := defaulter("PG_HOST", "localhost")
 	PGPort := defaulter("PG_PORT", "5432")
 	PGUser := defaulter("PG_USER", "postgres")
-	PGPass := defaulter("PG_PASS", "postgres")
-	PGName := defaulter("PG_NAME", "smartshopper")
-	PGSSL := defaulter("PG_SSLMODE", "disable")
+	PGPass := defaulter("PG_PASS", "")
+	PGName := defaulter("PG_NAME", "postgres")
+	// PGSSL := defaulter("PG_SSLMODE", "disable")
 
-	return fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=%s",
-		PGUser, PGPass, PGHost, PGPort, PGName, PGSSL)
+	return fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",
+		PGUser, PGPass, PGName, PGHost, PGPort)
 }
 
 func defaulter(envName, defaultValue string) string {
@@ -120,23 +146,12 @@ func homeHandler(c *gin.Context) {
 	)
 }
 
-func heartbeatUser(c *gin.Context) {
-	heartbeat(c, "user")
-}
-func heartbeatEmployee(c *gin.Context) {
-	heartbeat(c, "employee")
-}
-func heartbeatManager(c *gin.Context) {
-	heartbeat(c, "manager")
-}
-func heartbeatAdmin(c *gin.Context) {
-	heartbeat(c, "admin")
-}
+func heartbeat(c *gin.Context) {
+	groups, _ := c.Get("groups")
 
-func heartbeat(c *gin.Context, group string) {
 	c.JSON(
 		200,
-		gin.H{"group": group},
+		gin.H{"groups": groups},
 	)
 }
 
@@ -147,7 +162,6 @@ func login(c *gin.Context) {
 	}
 	var login LoginRequest
 	err := c.ShouldBind(&login)
-
 	if err != nil {
 		c.JSON(401, err)
 	}
@@ -179,8 +193,8 @@ func getAccount(c *gin.Context) {
 	}
 
 	input := &cognito.AdminGetUserInput{
-		Username:   aws.String(username),
 		UserPoolId: aws.String(userPoolID),
+		Username:   aws.String(username),
 	}
 
 	resp, err := userSrv.GetUser(input)
@@ -212,11 +226,37 @@ func updateAccount(c *gin.Context) {
 
 }
 
-func getEmployees(c *gin.Context) {
+func getGroupUser(c *gin.Context) {
+	getGroup(c, "user")
+}
+
+func getGroupEmployee(c *gin.Context) {
+	getGroup(c, "employee")
+}
+
+func getGroupManager(c *gin.Context) {
+	getGroup(c, "manager")
+}
+
+func getGroupAdmin(c *gin.Context) {
+	getGroup(c, "admin")
+}
+
+func getGroup(c *gin.Context, group string) {
 	// employee UserPoolId = 3
-	var groupName string
-	bindedVar := c.ShouldBind(&groupName)
-	resp, err := userSrv.ListUsersInGroup(bindedVar)
+	// var groupName string
+	// err := c.ShouldBind(&groupName)
+	// if err != nil {
+	// 	c.JSON(500, err)
+	// }
+
+	input := &cognito.ListUsersInGroupInput{
+		GroupName:  aws.String(group),
+		NextToken:  aws.String("1"),
+		UserPoolId: aws.String(userPoolID),
+	}
+
+	resp, err := userSrv.ListUsersInGroup(input)
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -226,22 +266,27 @@ func getEmployees(c *gin.Context) {
 
 func createEmployee(c *gin.Context) {
 	//binded variables change depending on what is being sent from front-end
-	var name string
-	bindedVar := c.ShouldBind(&name)
-	resp, err := userSrv.CreateEmployee(bindedVar)
+	type CreateEmployeeInput struct {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+	}
+
+	var input CreateEmployeeInput
+
+	err := c.ShouldBind(&input)
 	if err != nil {
 		c.JSON(500, err)
 	}
 
-	c.JSON(200, resp)
-}
+	payload := &cognito.AdminCreateUserInput{
+		DesiredDeliveryMediums: []*string{aws.String("email")},
+		// ForceAliasCreation:     aws.Bool(true),
+		UserAttributes: []*cognito.AttributeType{&cognito.AttributeType{Name: aws.String(cognito.UsernameAttributeTypeEmail), Value: aws.String(input.Email)}},
+		UserPoolId:     aws.String(userPoolID),
+		Username:       aws.String(input.Username),
+	}
 
-func getManagers(c *gin.Context) {
-	//binded variables change depending on what is being sent from front-end
-	// managers UserPoolId = 2
-	var groupName string
-	bindedVar := c.ShouldBind(&groupName)
-	resp, err := userSrv.ListUsersInGroup(bindedVar)
+	resp, err := userSrv.CreateEmployee(payload)
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -251,35 +296,28 @@ func getManagers(c *gin.Context) {
 
 func promoteToManager(c *gin.Context) {
 	// need user to be promoted, changing their UserPoolId to 2 (manager)
-	//
-	var accountID string
-	bindedVar := c.ShouldBind(&accountID)
-	resp, err := userSrv.AddUserToGroup(bindedVar)
-	if err != nil {
-		c.JSON(500, err)
-	}
+	promoteTo(c, "manager")
 
-	c.JSON(200, resp)
-
-}
-
-func getAdmins(c *gin.Context) {
-	// admin - UserPoolId = 1
-	var groupName string
-	bindedVar := c.ShouldBind(&groupName)
-	resp, err := userSrv.ListUsersInGroup(bindedVar)
-	if err != nil {
-		c.JSON(500, err)
-	}
-
-	c.JSON(200, resp)
 }
 
 func promoteToAdmin(c *gin.Context) {
 	// need user to be promoted, changing their UserPoolId to 1 (admin)
-	var accountID string
-	bindedVar := c.ShouldBind(&accountID)
-	resp, err := userSrv.AddUserToGroup(bindedVar)
+	promoteTo(c, "admin")
+}
+
+func promoteTo(c *gin.Context, group string) {
+	var username string
+	err := c.ShouldBind(&username)
+	if err != nil {
+		c.JSON(500, err)
+	}
+	input := &cognito.AdminAddUserToGroupInput{
+		GroupName:  aws.String(group),
+		UserPoolId: aws.String(userPoolID),
+		Username:   aws.String(username),
+	}
+
+	resp, err := userSrv.AddUserToGroup(input)
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -304,5 +342,45 @@ func updateItem(c *gin.Context) {
 }
 
 func deleteItem(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func getStores(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func createStore(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func updateStore(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func deleteStore(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func addItemToStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func editItemInStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func deleteItemInStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func adimnAddItemToStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func adminEditItemInStock(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func adminDeleteItemInStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }

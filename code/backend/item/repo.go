@@ -1,6 +1,9 @@
 package item
 
-import "database/sql"
+import (
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
 
 type ItemRepo interface {
 	getItem(ID int) (*Item, error)
@@ -8,7 +11,7 @@ type ItemRepo interface {
 }
 
 type itemRepo struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
 func NewDatabase(config string) ItemRepo {
@@ -17,15 +20,12 @@ func NewDatabase(config string) ItemRepo {
 	}
 }
 
-func newDatabase(config string) *sql.DB {
-	// configStr := "user=" + viper.GetString("PGDB.user") +
-	// 	" password=" + viper.GetString("PGDB.password") +
-	// 	" host=" + viper.GetString("PGDB.host") +
-	// 	" port=" + viper.GetString("PGDB.port") +
-	// 	" dbname=" + viper.GetString("PGDB.dbname") +
-	// 	" sslmode=" + viper.GetString("PGDB.sslmode")
-
-	return nil
+func newDatabase(config string) *gorm.DB {
+	db, err := gorm.Open(postgres.Open(config), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	return db
 }
 
 func (r *itemRepo) getItem(ID int) (*Item, error) {

@@ -21,14 +21,14 @@ func AuthMiddleware(region, userPoolID string, authedGroups []string) gin.Handle
 
 	// 1. Download and store the JSON Web Key (JWK) for your user pool.
 	jwkURL := fmt.Sprintf("https://cognito-idp.%v.amazonaws.com/%v/.well-known/jwks.json", region, userPoolID)
-	fmt.Println(jwkURL)
+	// fmt.Println(jwkURL)
 	jwk := getJWK(jwkURL)
 
 	for key, val := range getJWK("https://www.googleapis.com/oauth2/v3/certs") {
 		jwk[key] = val
 	}
 
-	fmt.Println(jwk)
+	// fmt.Println(jwk)
 
 	return func(c *gin.Context) {
 		tokenString, ok := getBearer(c.Request.Header["Authorization"])
@@ -38,24 +38,29 @@ func AuthMiddleware(region, userPoolID string, authedGroups []string) gin.Handle
 			return
 		}
 
-		token, err := validateToken(tokenString, region, userPoolID, jwk, authedGroups)
-		if err != nil || !token.Valid {
-			fmt.Printf("token is not valid\n%v", err)
+		token, username, groups, err := validateToken(tokenString, region, userPoolID, jwk, authedGroups)
+		if !token.Valid {
+			fmt.Printf("token is not valid\n")
+			c.AbortWithStatusJSON(401, res{Text: fmt.Sprintf("token is not valid")})
+		} else if err != nil {
+			fmt.Printf("token is not valid\n%v\n", err)
 			c.AbortWithStatusJSON(401, res{Text: fmt.Sprintf("token is not valid%v", err)})
 		} else {
 			c.Set("token", token)
+			c.Set("username", username)
+			c.Set("groups", groups)
 			c.Next()
 		}
 	}
 }
 
-func validateAWSJwtClaims(claims jwt.MapClaims, region, userPoolID string, authedGroups []string) error {
+func validateAWSJwtClaims(claims jwt.MapClaims, region, userPoolID string, authedGroups []string) (string, []string, error) {
 	var err error
 	// 3. Check the iss claim. It should match your user pool.
 	issShoudBe := fmt.Sprintf("https://cognito-idp.%v.amazonaws.com/%v", region, userPoolID)
 	err = validateClaimItem("iss", []string{issShoudBe}, claims)
 	if err != nil {
-		return err
+		return "", nil, err
 	}
 
 	// 4. Check the token_use claim.
@@ -72,35 +77,60 @@ func validateAWSJwtClaims(claims jwt.MapClaims, region, userPoolID string, authe
 
 	err = validateTokenUse()
 	if err != nil {
-		return err
+		return "", nil, err
 	}
 
-	validateValidGroup := func() error {
-		if groupsFromClaims, ok := claims["cognito:groups"]; ok {
-			if groupsFromClaimsStr, ok := groupsFromClaims.(string); ok {
+	getUsername := func() (string, error) {
+		if username, ok := claims["username"]; ok {
+			if usernameStr, ok := username.(string); ok {
+				return usernameStr, nil
+			}
+		}
+		return "", errors.New("could not retrieve username")
+	}
 
-				for _, group := range authedGroups {
-					if strings.Index(groupsFromClaimsStr, group) > -1 {
-						return nil
+	username, err := getUsername()
+	if err != nil {
+		return "", nil, err
+	}
+
+	validateValidGroup := func() ([]string, error) {
+		if groupsFromClaims, ok := claims["cognito:groups"]; ok {
+			// log.Printf("Groups1 | %t | %v\n", groupsFromClaims, groupsFromClaims)
+			groups := groupsToStringArray(groupsFromClaims)
+			// log.Printf("Groups2 | %v\n", groupsFromClaimsStr)
+			for _, group := range authedGroups {
+				for _, grp := range groups {
+					if strings.Index(grp, group) > -1 {
+						return groups, nil
 					}
+
 				}
 			}
 		}
-		return errors.New("User unauthorized to perform this action")
+		return nil, errors.New("user unauthorized to perform this action")
 	}
 
-	err = validateValidGroup()
+	groups, err := validateValidGroup()
 	if err != nil {
-		return err
+		return username, nil, err
 	}
 
 	// 7. Check the exp claim and make sure the token is not expired.
 	err = validateExpired(claims)
 	if err != nil {
-		return err
+		return username, groups, err
 	}
 
-	return nil
+	return username, groups, nil
+}
+
+func groupsToStringArray(t ...interface{}) []string {
+	s := make([]string, len(t))
+	for i, v := range t {
+		s[i] = fmt.Sprint(v)
+	}
+	return s
 }
 
 // // validateAWSJwtClaims validates Google JWT
@@ -141,8 +171,8 @@ func validateExpired(claims jwt.MapClaims) error {
 	if tokenExp, ok := claims["exp"]; ok {
 		if exp, ok := tokenExp.(float64); ok {
 			now := time.Now().Unix()
-			fmt.Printf("current unixtime : %v\n", now)
-			fmt.Printf("expire unixtime  : %v\n", int64(exp))
+			// fmt.Printf("current unixtime : %v\n", now)
+			// fmt.Printf("expire unixtime  : %v\n", int64(exp))
 			if int64(exp) > now {
 				return nil
 			}
@@ -152,7 +182,7 @@ func validateExpired(claims jwt.MapClaims) error {
 	return errors.New("token is expired")
 }
 
-func validateToken(tokenStr, region, userPoolID string, jwk map[string]JWKKey, authedGroups []string) (*jwt.Token, error) {
+func validateToken(tokenStr, region, userPoolID string, jwk map[string]JWKKey, authedGroups []string) (*jwt.Token, string, []string, error) {
 
 	// 2. Decode the token string into JWT format.
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
@@ -177,33 +207,29 @@ func validateToken(tokenStr, region, userPoolID string, jwk map[string]JWKKey, a
 	})
 
 	if err != nil {
-		return token, err
+		return token, "", nil, err
 	}
 
 	claims := token.Claims.(jwt.MapClaims)
-
+	// log.Printf("CLAIMS | %v\n", claims)
 	iss, ok := claims["iss"]
 	if !ok {
-		return token, fmt.Errorf("token does not contain issuer")
+		return token, "", nil, fmt.Errorf("token does not contain issuer")
 	}
 	issStr := iss.(string)
 	if strings.Contains(issStr, "cognito-idp") {
 		// 3. 4. 7.のチェックをまとめて
-		err = validateAWSJwtClaims(claims, region, userPoolID, authedGroups)
+		username, groups, err := validateAWSJwtClaims(claims, region, userPoolID, authedGroups)
 		if err != nil {
-			return token, err
+			return token, username, groups, err
 		}
-		// } else if strings.Contains(issStr, "accounts.google.com") {
-		// 	err = validateGoogleJwtClaims(claims)
-		// 	if err != nil {
-		// 		return token, err
-		// 	}
+
+		if token.Valid {
+			return token, username, groups, nil
+		}
 	}
 
-	if token.Valid {
-		return token, nil
-	}
-	return token, err
+	return token, "", nil, err
 }
 
 func getBearer(auth []string) (jwt string, ok bool) {

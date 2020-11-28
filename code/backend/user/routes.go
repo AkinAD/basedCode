@@ -9,11 +9,8 @@ type UserService interface {
 	RemoveUserFromGroup(input *cognito.AdminRemoveUserFromGroupInput) (*cognito.AdminRemoveUserFromGroupOutput, error)
 	GetUser(input *cognito.AdminGetUserInput) (*cognito.AdminGetUserOutput, error)
 	ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error)
-<<<<<<< Updated upstream
-=======
 	Login(*cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error)
 	updatePreferredStore(username string, preferredStore int) error
->>>>>>> Stashed changes
 }
 
 //cognito = CognitoIdentityProvider
