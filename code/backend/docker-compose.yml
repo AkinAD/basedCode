@@ -7,20 +7,6 @@ services:
       - "8081:8081"
     environment:
       - PORT=8081
-<<<<<<< Updated upstream
-    # depends_on:
-    #   - db
-  # frontend:
-  #     image: smartshopper-frontend:latest
-  #     ports:
-  #       - "8080:80"
-  # db:
-  #   image: postgres
-  #   environment:
-  #     - POSTGRES_DB=postgres
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres
-=======
       - AWS_REGION=us-east-2
       - AWS_ID=AKIAJJ4QS2CUBT4MWM3Q
       - AWS_SECRET=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
@@ -31,4 +17,3 @@ services:
       - PG_USER=postgres
       - PG_PASS=Oa$$dN35qw!L7
       - PG_NAME=postgres
->>>>>>> Stashed changes

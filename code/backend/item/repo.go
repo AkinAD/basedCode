@@ -1,6 +1,8 @@
 package item
 
 import (
+	"fmt"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -29,5 +31,13 @@ func newDatabase(config string) *gorm.DB {
 }
 
 func (r *itemRepo) getItem(ID int) (*Item, error) {
-	return nil, nil
+	var items []Item
+	result := r.db.First(&items, ID)
+	err := result.Error
+
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(items[0])
+	return &items[0], err
 }

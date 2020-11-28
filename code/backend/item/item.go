@@ -11,10 +11,11 @@ func NewService(conn string) ItemService {
 }
 
 type Item struct {
-	ID       int `gorm:"<-:false"`
-	Name     string
-	Category Category
-	Price    int
+	ID          int `gorm:"<-:false"`
+	Name        string
+	Description string
+	Category    Category
+	Price       float64
 }
 
 type Store struct {
