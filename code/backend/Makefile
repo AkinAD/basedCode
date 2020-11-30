@@ -1,5 +1,5 @@
 build:
-	docker build -t smartshopper-backend .
+	DOCKER_BUILDKIT=1 docker build -t smartshopper-backend .
 
 pull:
 	sudo docker pull eecs4312basedcode/smartshopper-backend
