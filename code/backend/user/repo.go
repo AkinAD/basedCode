@@ -6,8 +6,6 @@ import (
 )
 
 type UserRepo interface {
-	//getItem(ID int) (*Item, error)
-	//add more
 	updatePreferredStore(username string, preferredStore int) error
 }
 
@@ -30,9 +28,9 @@ func newDatabase(config string) *gorm.DB {
 }
 
 func (r *userRepo) updatePreferredStore(username string, preferredStore int) error {
-	err := r.db.Table("account").Where("username = ?", username).Update("storeID", preferredStore)
-	if err != nil {
-		return err
+	result := r.db.Table("account").Where("username = ?", username).Update("storeID", preferredStore)
+	if result.Error != nil {
+		return result.Error
 	}
 	return nil
 }

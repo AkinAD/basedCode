@@ -101,8 +101,8 @@ func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.Initiate
 	return output, err
 }
 
-func (r *userRepo) updatePreferredStore(username string, preferredStore int) error {
-	err := r.db.Table("account").Where("username = ?", username).Update("storeID", preferredStore)
+func (r *userService) updatePreferredStore(username string, preferredStore int) error {
+	err := r.db.updatePreferredStore(username, preferredStore)
 	if err != nil {
 		return err
 	}
