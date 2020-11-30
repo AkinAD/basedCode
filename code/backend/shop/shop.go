@@ -149,11 +149,22 @@ func DeleteStore(int) (bool, error) {
 func GetStock(int) (*Stock, error) {
 	return nil, nil
 }
-func AddStock(int, *Item) (*Stock, error) {
-	return nil, nil
-}
-func UpdateStock(int, int, *Location) (*Stock, error) {
-	return nil, nil
+func AddStock(request *ItemInStock) (*Stock, error) {
+	item, err := s.db.addStock(request)
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
+
+	return item, nil}
+func UpdateStock(request *ItemInStock) (*Stock, error) {
+	item, err := s.db.updateStock(request)
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
+
+	return item, nil
 }
 func DeleteAddStock(int, int) (*Stock, error) {
 	return nil, nil
