@@ -13,8 +13,8 @@ type ShopService interface {
 	UpdateStore(*Store) (*Store, error)
 	DeleteStore(int) (bool, error)
 	GetStock(int) (*Stock, error)
-	AddStock(int, *Item) (*Stock, error)
-	UpdateStock(int, int, *Location) (*Stock, error)
+	AddStock(*ItemInStock) (*Stock, error)
+	UpdateStock(*ItemInStock) (*Stock, error)
 	DeleteAddStock(int, int) (*Stock, error)
 }
 

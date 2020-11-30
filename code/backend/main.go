@@ -89,7 +89,7 @@ func main() {
 
 	//store
 	router.GET("/store", getStores)
-	router.POST("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), createStore)
+	router.POST("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), addStore)
 	router.PUT("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), updateStore)
 	router.DELETE("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
 
@@ -336,11 +336,18 @@ func promoteTo(c *gin.Context, group string) {
 	c.JSON(200, resp)
 }
 
-
 func getItems(c *gin.Context) {
+	var resp []*shop.Item
+
 	idString := c.Param("shop")
-	if idString == nil || idString = ""{	
-		resp, err := shopSrv.GetItems()	
+	if idString == "" {
+		resp, err := shopSrv.GetItems()
+
+		if err != nil {
+			c.JSON(500, err)
+		}
+
+		c.JSON(200, &resp)
 	} else {
 
 		id, err := strconv.Atoi(idString)
@@ -348,14 +355,15 @@ func getItems(c *gin.Context) {
 		if err != nil {
 			c.JSON(500, err)
 		}
-		resp, err := shopSrv.GetItemsFromStore(id)	
-	}
-	
-	if err != nil {
-		c.JSON(500, err)
+
+		resp, err = shopSrv.GetItemsFromStore(id)
+
+		if err != nil {
+			c.JSON(500, err)
+		}
+		c.JSON(200, &resp)
 	}
 
-	c.JSON(200, &resp)
 }
 
 func getItem(c *gin.Context) {
@@ -388,7 +396,7 @@ func deleteItem(c *gin.Context) {
 }
 
 func getStores(c *gin.Context) {
-	resp, err := shopSrv.GetStores(id)
+	resp, err := shopSrv.GetStores()
 
 	if err != nil {
 		c.JSON(500, err)
@@ -448,16 +456,17 @@ func deleteStore(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-
 func addStock(c *gin.Context) {
-	var request ItemInStock
+	var request *shop.ItemInStock
 
 	err := c.ShouldBind(&request)
 	if err != nil {
 		c.JSON(500, err)
 	}
 
-	resp, err := shopSrv.addItemToStock(request)
+	request.ShopID = 1 //change to user's shop
+
+	resp, err := shopSrv.AddStock(request)
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -466,14 +475,28 @@ func addStock(c *gin.Context) {
 }
 
 func editStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	var request *shop.ItemInStock
+
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	request.ShopID = 1 //change to user's shop
+
+	resp, err := shopSrv.UpdateStock(request)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
 func deleteStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func adimnAddStock(c *gin.Context) {
+func adminAddStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
