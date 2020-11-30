@@ -1,19 +1,24 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-smartshopper-dev-152705-authRole",
-      "UnauthRoleArn": "arn:aws:iam::522367160482:role/amplify-smartshopper-dev-152705-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::522367160482:role/amplify-smartshopper-dev-152705-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-smartshopper-dev-152705-deployment",
-      "UnauthRoleName": "amplify-smartshopper-dev-152705-unauthRole",
-      "StackName": "amplify-smartshopper-dev-152705",
-      "StackId": "arn:aws:cloudformation:us-east-1:522367160482:stack/amplify-smartshopper-dev-152705/eaff85d0-2c37-11eb-8a46-0acf59e535ed",
-      "AmplifyAppId": "d2go4tylvuzctm"
+      "AuthRoleName": "amplify-frontend-dev-165357-authRole",
+      "UnauthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-165357-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::121498509612:role/amplify-frontend-dev-165357-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-frontend-dev-165357-deployment",
+      "UnauthRoleName": "amplify-frontend-dev-165357-unauthRole",
+      "StackName": "amplify-frontend-dev-165357",
+      "StackId": "arn:aws:cloudformation:us-east-2:121498509612:stack/amplify-frontend-dev-165357/b9b0ad40-2f68-11eb-9edd-06a68ce6af12",
+      "AmplifyAppId": "d3fwm3n5tyag1w"
     },
     "categories": {
+      "function": {
+        "frontend0464a612PostConfirmation": {
+          "GROUP": "user"
+        }
+      },
       "auth": {
-        "smartshoppera93a5040": {}
+        "frontend0464a612": {}
       }
     }
   }
