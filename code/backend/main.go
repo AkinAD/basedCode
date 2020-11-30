@@ -517,7 +517,10 @@ func adminAddStock(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, err)
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/shopservice-akin
 	resp, err := shopSrv.AddStock(request)
 	if err != nil {
 		c.JSON(500, err)
@@ -527,7 +530,19 @@ func adminAddStock(c *gin.Context) {
 }
 
 func adminEditStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	var request *shop.ItemInStock
+
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	resp, err := shopSrv.UpdateStock(request)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
 func adminDeleteStock(c *gin.Context) {
