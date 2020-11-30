@@ -1,7 +1,7 @@
 package shop
 
 type ShopService interface {
-	GetItems() (*Item, error)
+	GetItems() ([]*Item, error)
 	GetItemsFromStore(ID int) (*Item, error)
 	GetItem(ID int) (*Item, error)
 	AddItem(*Item) (*Item, error)
