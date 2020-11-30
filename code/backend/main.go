@@ -220,7 +220,7 @@ func updateAccount(c *gin.Context) {
 	// grab the username and connect to the userDB to find them
 	// then update the db with the preferred location
 	//err = itemSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
-	err = userSrv.updatePreferredStore(update.username, update.preferredStore)
+	err = userSrv.UpdatePreferredStore(update.username, update.preferredStore)
 	if err != nil {
 		c.JSON(401, err)
 	}

@@ -10,7 +10,7 @@ type UserService interface {
 	GetUser(input *cognito.AdminGetUserInput) (*cognito.AdminGetUserOutput, error)
 	ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error)
 	Login(*cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error)
-	updatePreferredStore(username string, preferredStore int) error
+	UpdatePreferredStore(username string, preferredStore int) error
 }
 
 //cognito = CognitoIdentityProvider
@@ -101,7 +101,7 @@ func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.Initiate
 	return output, err
 }
 
-func (r *userService) updatePreferredStore(username string, preferredStore int) error {
+func (r *userService) UpdatePreferredStore(username string, preferredStore int) error {
 	err := r.db.updatePreferredStore(username, preferredStore)
 	if err != nil {
 		return err
