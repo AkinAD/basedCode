@@ -126,3 +126,28 @@ func (s *shopService) UpdateStore(store *Store) (*Store, error) {
 
 	return item, nil
 }
+
+func AddItem(*Item) (*Item, error) {
+	return nil, nil
+}
+func UpdateItem(*Item) (*Item, error) {
+	return nil, nil
+}
+func DeleteItem(int) (bool, error) {
+	return false, nil
+}
+func DeleteStore(int) (bool, error) {
+	return false, nil
+}
+func GetStock(int) (*Stock, error) {
+	return nil, nil
+}
+func AddStock(int, *Item) (*Stock, error) {
+	return nil, nil
+}
+func UpdateStock(int, int, *Location) (*Stock, error) {
+	return nil, nil
+}
+func DeleteAddStock(int, int) (*Stock, error) {
+	return nil, nil
+}
