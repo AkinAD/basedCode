@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -32,6 +34,14 @@ var (
 )
 
 func main() {
+	// Logging to a file.
+	f, _ := os.Create("smartshopper.log")
+	defer f.Close()
+	// Use the following code if you need to write the logs to file and console at the same time.
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	log.SetPrefix("[DEBUG] ")
+	log.SetOutput(io.MultiWriter(f, os.Stdout))
+
 	router := gin.Default()
 
 	router.Use(corsMiddleware)
