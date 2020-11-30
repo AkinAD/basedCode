@@ -50,3 +50,11 @@ func (r *shopRepo) addStock(input *ItemInStock) (*ItemInStock, error) {
 	}
 	return input, nil
 }
+
+func (r *shopRepo) deleteStock(storeID, itemID int) (bool, error) {
+	result := r.db.Table("stock").Where("storeID = ? AND itemID = ?", storeID, itemID).Delete(&ItemInStock{})
+	if result.Error != nil {
+		return false, result.Error
+	}
+	return true, nil
+}

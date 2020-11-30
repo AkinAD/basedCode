@@ -519,5 +519,22 @@ func adminEditStock(c *gin.Context) {
 }
 
 func adminDeleteStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	
+	type Request struct{
+		StoreID int
+		ItemID int
+	}
+	var request *Request
+
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	resp, err := shopSrv.DeleteStock(request.StoreID, request.ItemID)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }

@@ -162,5 +162,9 @@ func UpdateStock(int, int, *Location) (*Stock, error) {
 	return nil, nil
 }
 func DeleteStock(int, int) (*Stock, error) {
-	return nil, nil
+	item, err := s.db.deleteStock(request)
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
 }
