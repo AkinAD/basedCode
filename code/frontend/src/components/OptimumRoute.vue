@@ -1,5 +1,5 @@
 <template>
-  <v-app> </v-app>
+  <div>Just walk bro</div>
 </template>
 
 <script>

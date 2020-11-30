@@ -1,9 +1,34 @@
 {
+<<<<<<< .merge_file_bLdHQX
   "auth": {
     "smartshoppera93a5040": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
+=======
+  "function": {
+    "frontend0464a612PostConfirmation": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "auth": {
+    "frontend0464a612": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "frontend0464a612PostConfirmation",
+          "triggerProvider": "Cognito",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        }
+      ],
+>>>>>>> .merge_file_7Z1w04
       "customAuth": false
     }
   }
