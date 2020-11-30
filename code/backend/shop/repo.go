@@ -9,6 +9,7 @@ import (
 
 type ShopRepo interface {
 	getItem(ID int) (*Item, error)
+	addItem(*ItemInStock) (*ItemInStock, error)
 	//add more
 }
 
@@ -40,4 +41,12 @@ func (r *shopRepo) getItem(ID int) (*Item, error) {
 	}
 	fmt.Println(items[0])
 	return &items[0], err
+}
+
+func (r *shopRepo) addStock(input *ItemInStock) (*ItemInStock, error) {
+	result := r.db.Table("stock").Create(&input)
+	if result.Error != nil {
+		return nil, err
+	}
+	return input, nil
 }
