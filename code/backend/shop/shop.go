@@ -46,6 +46,13 @@ type Stock struct {
 	Stock   map[int]Location
 }
 
+type ItemInStock struct {
+	StoreID int `json:"storeID"`
+	ItemID  int `json:"itemID"`
+	Row     int `json:"row"`
+	Col     int `json:"col"`
+}
+
 type Location struct {
 	row int
 	col int

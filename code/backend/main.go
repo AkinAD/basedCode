@@ -450,7 +450,19 @@ func deleteStore(c *gin.Context) {
 
 
 func addStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	var request ItemInStock
+
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	resp, err := shopSrv.addItemToStock(request)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
 func editStock(c *gin.Context) {
