@@ -1,4 +1,4 @@
-module item
+module shop
 
 go 1.15
 

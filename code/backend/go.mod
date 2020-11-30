@@ -6,11 +6,11 @@ replace github.com/AkinAD/basedCode/user => ./user
 
 replace github.com/AkinAD/basedCode/auth => ./auth
 
-replace github.com/AkinAD/basedCode/item => ./item
+replace github.com/AkinAD/basedCode/shop => ./shop
 
 require (
 	github.com/AkinAD/basedCode/auth v1.0.0
-	github.com/AkinAD/basedCode/item v1.0.0
+	github.com/AkinAD/basedCode/shop v1.0.0
 	github.com/AkinAD/basedCode/user v1.0.0
 	github.com/aws/aws-sdk-go v1.35.35
 	github.com/gin-contrib/cors v1.3.1

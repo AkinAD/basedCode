@@ -1,4 +1,4 @@
-package item
+package shop
 
 import (
 	"fmt"
@@ -7,17 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type ItemRepo interface {
+type ShopRepo interface {
 	getItem(ID int) (*Item, error)
 	//add more
 }
 
-type itemRepo struct {
+type shopRepo struct {
 	db *gorm.DB
 }
 
-func NewDatabase(config string) ItemRepo {
-	return &itemRepo{
+func NewDatabase(config string) ShopRepo {
+	return &shopRepo{
 		db: newDatabase(config),
 	}
 }
@@ -30,7 +30,7 @@ func newDatabase(config string) *gorm.DB {
 	return db
 }
 
-func (r *itemRepo) getItem(ID int) (*Item, error) {
+func (r *shopRepo) getItem(ID int) (*Item, error) {
 	var items []Item
 	result := r.db.First(&items, ID)
 	err := result.Error

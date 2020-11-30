@@ -9,7 +9,7 @@ import (
 	"time"
 
 	auth "github.com/AkinAD/basedCode/auth"
-	item "github.com/AkinAD/basedCode/item"
+	shop "github.com/AkinAD/basedCode/shop"
 	user "github.com/AkinAD/basedCode/user"
 	cognito "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 	"github.com/gin-contrib/cors"
@@ -20,7 +20,7 @@ import (
 
 var (
 	userSrv user.UserService
-	itemSrv item.ItemService
+	shopSrv shop.ShopService
 	//storeSrv db.DbService
 	// authSrv auth.AuthService
 
@@ -47,7 +47,7 @@ func main() {
 	router.Use(corsMiddleware)
 
 	userSrv = user.NewService(awsRegion, awsID, awsSecret, connString)
-	itemSrv = item.NewService(connString)
+	shopSrv = shop.NewService(connString)
 	// authSrv = auth.NewService()
 
 	// heartbeat
@@ -77,13 +77,13 @@ func main() {
 
 	//admin
 	router.GET("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupAdmin)
-	router.POST("/admin)", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
+	router.POST("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
 	// router.DELTE("admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}) ,deleteFromAdmin)
 
-	//items
-	router.GET("/item", getItems) //?storeID= to get the items/stock for a specific store
+	//item
+	router.GET("/item", getItems) //?storeID= to get the shops/stock for a specific store
 	router.GET("/item/:id", getItem)
-	router.POST("/item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), addItem)
+	router.POST("itemp", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), addItem)
 	router.PUT("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), updateItem)
 	router.DELETE("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteItem)
 
@@ -94,12 +94,12 @@ func main() {
 	router.DELETE("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
 
 	//stock
-	router.POST("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), addItemToStock)
-	router.PUT("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editItemInStock)
-	router.DELETE("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteItemInStock)
-	router.POST("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adimnAddItemToStock)
-	router.PUT("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminEditItemInStock)
-	router.DELETE("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminDeleteItemInStock)
+	router.POST("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), addshopToStock)
+	router.PUT("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editshopInStock)
+	router.DELETE("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteshopInStock)
+	router.POST("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adimnAddshopToStock)
+	router.PUT("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminEditshopInStock)
+	router.DELETE("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminDeleteshopInStock)
 
 	if port == "443" {
 		router.RunTLS(":"+port, "add cert here", "add key here")
@@ -229,7 +229,7 @@ func updateAccount(c *gin.Context) {
 	}
 	// grab the username and connect to the userDB to find them
 	// then update the db with the preferred location
-	//err = itemSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
+	//err = shopSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
 	err = userSrv.UpdatePreferredStore(update.username, update.preferredStore)
 	if err != nil {
 		c.JSON(401, err)
@@ -336,8 +336,86 @@ func promoteTo(c *gin.Context, group string) {
 	c.JSON(200, resp)
 }
 
+func getStores(c *gin.Context) {
+	resp, err := shopSrv.GetStores(id)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, &resp)
+}
+
+func getStore(c *gin.Context) {
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	resp, err := shopSrv.GetStore(id)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, &resp)
+}
+
+func addStore(c *gin.Context) {
+	var request *shop.Store
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	resp, err := shopSrv.AddStore(request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	c.JSON(200, &resp)
+}
+
+func updateStore(c *gin.Context) {
+	var request *shop.Store
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	resp, err := shopSrv.UpdateStore(request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	c.JSON(200, &resp)
+}
+
+func deleteStore(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
 func getItems(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "yo"})
+	idString := c.Param("shop")
+	if idString == nil || idString = ""{	
+		resp, err := shopSrv.GetItems()	
+	} else {
+
+		id, err := strconv.Atoi(idString)
+
+		if err != nil {
+			c.JSON(500, err)
+		}
+		resp, err := shopSrv.GetItemsFromStore(id)	
+	}
+	
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, &resp)
 }
 
 func getItem(c *gin.Context) {
@@ -348,13 +426,13 @@ func getItem(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	item, err := itemSrv.GetItem(id)
+	resp, err := shopSrv.GetItem(id)
 
 	if err != nil {
 		c.JSON(500, err)
 	}
 
-	c.JSON(200, gin.H{"message": "yo yo", "item ID": c.Param("id"), "item": item})
+	c.JSON(200, &resp)
 }
 
 func addItem(c *gin.Context) {
@@ -369,42 +447,26 @@ func deleteItem(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func getStores(c *gin.Context) {
+func addshopToStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func createStore(c *gin.Context) {
+func editshopInStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func updateStore(c *gin.Context) {
+func deleteshopInStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func deleteStore(c *gin.Context) {
+func adimnAddshopToStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func addItemToStock(c *gin.Context) {
+func adminEditshopInStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func editItemInStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
-}
-
-func deleteItemInStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
-}
-
-func adimnAddItemToStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
-}
-
-func adminEditItemInStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
-}
-
-func adminDeleteItemInStock(c *gin.Context) {
+func adminDeleteshopInStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
