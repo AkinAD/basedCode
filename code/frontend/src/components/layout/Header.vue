@@ -19,11 +19,6 @@
         Cart
       </v-tab>
 
-      <v-tab v-show="this.signedIn" to="/account">
-        <v-icon left dark> mdi-account </v-icon>
-        Account
-      </v-tab>
-
       <v-tab v-show="!this.signedIn" to="/login">
         <v-icon left dark> mdi-lock </v-icon>
         Login
