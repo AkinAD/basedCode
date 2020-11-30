@@ -1,11 +1,21 @@
-FROM golang:latest
-WORKDIR /go/src/SmartShopper
-RUN go get -d -v golang.org/x/net/html  
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+# syntax = docker/dockerfile:experimental
 
-FROM alpine:latest  
+FROM golang:latest AS base
+WORKDIR /src
+ENV CGO_ENABLED=0
+COPY go.* .
+COPY auth/go.* .
+COPY item/go.* .
+COPY user/go.* .
+RUN go mod download
+COPY . .
+
+FROM base AS build
+ENV GOOS=linux
+RUN --mount=type=cache,target=/root/.cache/go-build go build -o app .
+
+FROM alpine:latest  AS bin
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
-COPY --from=0 /go/src/SmartShopper .
+COPY --from=build /src .
 CMD ["./app"]  
