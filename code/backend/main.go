@@ -94,12 +94,12 @@ func main() {
 	router.DELETE("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
 
 	//stock
-	router.POST("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), addshopToStock)
-	router.PUT("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editshopInStock)
-	router.DELETE("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteshopInStock)
-	router.POST("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adimnAddshopToStock)
-	router.PUT("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminEditshopInStock)
-	router.DELETE("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminDeleteshopInStock)
+	router.POST("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), addStock)
+	router.PUT("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editStock)
+	router.DELETE("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteStock)
+	router.POST("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminAddStock)
+	router.PUT("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminEditStock)
+	router.DELETE("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminDeleteStock)
 
 	if port == "443" {
 		router.RunTLS(":"+port, "add cert here", "add key here")
@@ -336,6 +336,57 @@ func promoteTo(c *gin.Context, group string) {
 	c.JSON(200, resp)
 }
 
+
+func getItems(c *gin.Context) {
+	idString := c.Param("shop")
+	if idString == nil || idString = ""{	
+		resp, err := shopSrv.GetItems()	
+	} else {
+
+		id, err := strconv.Atoi(idString)
+
+		if err != nil {
+			c.JSON(500, err)
+		}
+		resp, err := shopSrv.GetItemsFromStore(id)	
+	}
+	
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, &resp)
+}
+
+func getItem(c *gin.Context) {
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	resp, err := shopSrv.GetItem(id)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, &resp)
+}
+
+func addItem(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func updateItem(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
+func deleteItem(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "hello"})
+}
+
 func getStores(c *gin.Context) {
 	resp, err := shopSrv.GetStores(id)
 
@@ -397,76 +448,27 @@ func deleteStore(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func getItems(c *gin.Context) {
-	idString := c.Param("shop")
-	if idString == nil || idString = ""{	
-		resp, err := shopSrv.GetItems()	
-	} else {
 
-		id, err := strconv.Atoi(idString)
-
-		if err != nil {
-			c.JSON(500, err)
-		}
-		resp, err := shopSrv.GetItemsFromStore(id)	
-	}
-	
-	if err != nil {
-		c.JSON(500, err)
-	}
-
-	c.JSON(200, &resp)
-}
-
-func getItem(c *gin.Context) {
-	idString := c.Param("id")
-	id, err := strconv.Atoi(idString)
-
-	if err != nil {
-		c.JSON(500, err)
-	}
-
-	resp, err := shopSrv.GetItem(id)
-
-	if err != nil {
-		c.JSON(500, err)
-	}
-
-	c.JSON(200, &resp)
-}
-
-func addItem(c *gin.Context) {
+func addStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func updateItem(c *gin.Context) {
+func editStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func deleteItem(c *gin.Context) {
+func deleteStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func addshopToStock(c *gin.Context) {
+func adimnAddStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func editshopInStock(c *gin.Context) {
+func adminEditStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func deleteshopInStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
-}
-
-func adimnAddshopToStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
-}
-
-func adminEditshopInStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
-}
-
-func adminDeleteshopInStock(c *gin.Context) {
+func adminDeleteStock(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }

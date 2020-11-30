@@ -1,7 +1,21 @@
 package shop
 
 type ShopService interface {
-	GetItem(int) (*Item, error)
+	GetItems() (*Item, error)
+	GetItemsFromStore(ID int) (*Item, error)
+	GetItem(ID int) (*Item, error)
+	AddItem(*Item) (*Item, error)
+	UpdateItem(*Item) (*Item, error)
+	DeleteItem(int) (bool, error)
+	GetStores(ID int) (*Store, error)
+	GetStore(ID int) (*Store, error)
+	AddStore(*Store) (*Store, error)
+	UpdateStore(*Store) (*Store, error)
+	DeleteStore(int) (bool, error)
+	GetStock(int) (*Stock, error)
+	AddStock(int, *Item) (*Stock, error)
+	UpdateStock(int, int, *Location) (*Stock, error)
+	DeleteAddStock(int, int) (*Stock, error)
 }
 
 type shopService struct {
