@@ -461,7 +461,7 @@ func createStock(c *gin.Context) {
 	}
 
 	if !isAdmin(c) {
-		username := c.Keys["username"].(string)
+		username := c.MustGet("username").(string)
 		user, err := userSrv.GetProfile(username) //change to user's shop
 		if err != nil {
 			c.JSON(500, err)
@@ -486,7 +486,7 @@ func editStock(c *gin.Context) {
 	}
 
 	if !isAdmin(c) {
-		username := c.Keys["username"].(string)
+		username := c.MustGet("username").(string)
 		user, err := userSrv.GetProfile(username) //change to user's shop
 		if err != nil {
 			c.JSON(500, err)
@@ -515,7 +515,7 @@ func deleteStock(c *gin.Context) {
 	}
 
 	if !isAdmin(c) {
-		username := c.Keys["username"].(string)
+		username := c.MustGet("username").(string)
 		user, err := userSrv.GetProfile(username) //change to user's shop
 		if err != nil {
 			c.JSON(500, err)
