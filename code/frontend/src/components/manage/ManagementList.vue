@@ -2,10 +2,6 @@
   <v-container fluid full-width>
     <div>
       <h3>{{ title }}</h3>
-      <v-btn fab fixed right bottom large dark color="blue" elevation="6">
-        <!--{{btnText}}-->
-        <v-icon> mdi-plus </v-icon>
-      </v-btn>
       <v-row>
         <v-col
           md="12"
@@ -19,6 +15,14 @@
           />
         </v-col>
       </v-row>
+      <v-tooltip top>
+        <template v-slot:activator="{on, attrs}">
+          <v-btn v-bind="attrs" v-on="on" fab fixed right bottom large dark color="blue" elevation="6">
+            <v-icon> mdi-plus </v-icon>
+          </v-btn>
+        </template>
+        <span>Add {{type}}</span>
+      </v-tooltip>
     </div>
   </v-container>
 </template>
