@@ -239,6 +239,7 @@ func getAccountByUsername(c *gin.Context) {
 
 	resp, err := userSrv.GetUser(input)
 	if err != nil {
+
 		c.AbortWithError(500, err)
 		return
 	}
@@ -486,7 +487,7 @@ func deleteStore(c *gin.Context) {
 func createStock(c *gin.Context) {
 	//get user group from params thanks to auth wrapper
 
-	var request *shop.ItemInStock
+	var request *shop.StockRequest
 
 	err := c.ShouldBind(&request)
 	if err != nil {
@@ -511,7 +512,7 @@ func createStock(c *gin.Context) {
 }
 
 func editStock(c *gin.Context) {
-	var request *shop.ItemInStock
+	var request *shop.StockRequest
 
 	err := c.ShouldBind(&request)
 	if err != nil {

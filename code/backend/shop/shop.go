@@ -7,14 +7,13 @@ type ShopService interface {
 	CreateItem(*Item) (*Item, error)
 	UpdateItem(*Item) (*Item, error)
 	DeleteItem(int) (bool, error)
-	GetStores() (*Store, error)
-	GetStore(ID int) (*Store, error)
+	GetStores() ([]*Store, error)
+	GetStore(ID int) ([]*ItemInStock, error)
 	CreateStore(*Store) (*Store, error)
 	UpdateStore(*Store) (*Store, error)
 	DeleteStore(int) (bool, error)
-	GetStock(int) (*Stock, error)
-	CreateStock(*ItemInStock) (*ItemInStock, error)
-	UpdateStock(*ItemInStock) (*ItemInStock, error)
+	CreateStock(*StockRequest) (*StockRequest, error)
+	UpdateStock(*StockRequest) (*StockRequest, error)
 	DeleteStock(int, int) (bool, error)
 }
 
@@ -29,41 +28,37 @@ func NewService(conn string) ShopService {
 }
 
 type Item struct {
-	ID          int `gorm:"<-:false"`
-	Name        string
-	Description string
-	Category    Category
-	Price       float64
+	ItemID      int     `json:"itemID" gorm:"column:itemid"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	Category
 }
 
 type Store struct {
-	ID         int `gorm:"<-:false"`
-	Createress string
-}
-
-type Stock struct {
-	StoreID int `gorm:"<-:false"`
-	Stock   map[int]Location
+	StoreID int    `json:"storeID" gorm:"column:storeid"`
+	Address string `json:"address"`
 }
 
 type ItemInStock struct {
-	StoreID int `json:"storeID"`
-	ItemID  int `json:"itemID"`
-	Row     int `json:"row"`
-	Col     int `json:"col"`
+	Item
+	Location
+}
+
+type StockRequest struct {
+	StoreID int
+	*ItemInStock
 }
 
 type Location struct {
-	row int
-	col int
+	Row int `json:"row"`
+	Col int `json:"col"`
 }
 
-type Category int
-
-const (
-	Shirts Category = 1
-	Shoes  Category = 2
-)
+type Category struct {
+	CategoryID int    `json:"categoryID" gorm:"column:categoryid"`
+	Name       string `json:"category" gorm:"column:category"`
+}
 
 func (s *shopService) GetItems() ([]*Item, error) {
 	item, err := s.db.getItems()
@@ -104,24 +99,24 @@ func (s *shopService) CreateItem(item *Item) (*Item, error) {
 	return item, nil
 }
 
-func (s *shopService) GetStores() (*Store, error) {
-	item, err := s.db.getStores()
+func (s *shopService) GetStores() ([]*Store, error) {
+	stores, err := s.db.getStores()
 	if err != nil {
 		// log.Printf("%v", err)
 		return nil, err
 	}
 
-	return item, nil
+	return stores, nil
 }
 
-func (s *shopService) GetStore(ID int) (*Store, error) {
-	item, err := s.db.getStore(ID)
+func (s *shopService) GetStore(ID int) ([]*ItemInStock, error) {
+	stock, err := s.db.getStore(ID)
 	if err != nil {
 		// log.Printf("%v", err)
 		return nil, err
 	}
 
-	return item, nil
+	return stock, nil
 }
 
 func (s *shopService) CreateStore(store *Store) (*Store, error) {
@@ -144,19 +139,16 @@ func (s *shopService) UpdateStore(store *Store) (*Store, error) {
 	return item, nil
 }
 
-func (s *shopService) UpdateItem(*Item) (*Item, error) {
+func (s *shopService) UpdateItem(item *Item) (*Item, error) {
 	return nil, nil
 }
-func (s *shopService) DeleteItem(int) (bool, error) {
+func (s *shopService) DeleteItem(itemID int) (bool, error) {
 	return false, nil
 }
-func (s *shopService) DeleteStore(int) (bool, error) {
+func (s *shopService) DeleteStore(storeID int) (bool, error) {
 	return false, nil
 }
-func (s *shopService) GetStock(int) (*Stock, error) {
-	return nil, nil
-}
-func (s *shopService) CreateStock(request *ItemInStock) (*ItemInStock, error) {
+func (s *shopService) CreateStock(request *StockRequest) (*StockRequest, error) {
 	item, err := s.db.addStock(request)
 	if err != nil {
 		// log.Printf("%v", err)
@@ -166,7 +158,7 @@ func (s *shopService) CreateStock(request *ItemInStock) (*ItemInStock, error) {
 	return item, nil
 }
 
-func (s *shopService) UpdateStock(request *ItemInStock) (*ItemInStock, error) {
+func (s *shopService) UpdateStock(request *StockRequest) (*StockRequest, error) {
 	item, err := s.db.updateStock(request)
 	if err != nil {
 		// log.Printf("%v", err)
