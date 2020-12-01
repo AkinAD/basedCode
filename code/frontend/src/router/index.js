@@ -6,14 +6,6 @@ Vue.use(VueRouter);
 
 const routerOptions = [
   {
-    path: "/account",
-    component: "account",
-    meta: {
-      requiresAuth: true,
-      group: "user",
-    },
-  },
-  {
     path: "/browse",
     component: "browse",
   },

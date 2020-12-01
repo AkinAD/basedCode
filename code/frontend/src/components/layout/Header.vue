@@ -31,6 +31,10 @@
       </v-tab>
 
       <v-btn class="ma-2" text icon>
+        <OptimumRoute />
+      </v-btn>
+
+      <v-btn class="ma-2" text icon>
         <StoreSelector />
       </v-btn>
 
@@ -42,11 +46,13 @@
 <script>
 import StoreSelector from "../../components/browse/StoreSelector";
 import { mapGetters } from "vuex";
+import OptimumRoute from "../../components/OptimumRoute";
 
 export default {
   name: "Header",
   components: {
     StoreSelector,
+    OptimumRoute
   },
   data() {
     //needs to be modified to be dynamic based on router links maybe
@@ -67,6 +73,10 @@ export default {
       );
     },
   },
+  watch: {
+    signedIn() {
+    }
+  }
 };
 </script>
 

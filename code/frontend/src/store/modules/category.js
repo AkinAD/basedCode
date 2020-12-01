@@ -1,11 +1,13 @@
 import axios from 'axios'
 
 const state = {
-    categories: []
+    categories: ["Shirts", "Shoes", "Stuff"],
+    //categories: [],
+    selectedCatorgory: []
 }
 
 const getters = {
-    getcategories() {
+    getCategories() {
         return state.categories;
     },
 
@@ -66,6 +68,9 @@ const mutations = {
             }
         }
     },
+    setSelectedCategory: (state, category) => {
+        state.selectedCatorgory = category;
+    }
 }
 
 export default {

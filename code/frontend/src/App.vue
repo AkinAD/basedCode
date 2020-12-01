@@ -51,7 +51,7 @@ export default {
       const { payload } = data;
       if (payload.event === "signIn") {
         this.signIn();
-        this.$router.push("/account"); //might cause issues
+        this.$router.push("/home"); 
       }
       if (payload.event === "signOut") {
         this.signOut();

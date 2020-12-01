@@ -11,10 +11,6 @@
         >
       </v-row>
     </v-container>
-
-    <v-row>
-      <OptimumRoute />
-    </v-row>
     <v-row>
       <CartList />
     </v-row>
@@ -24,14 +20,12 @@
 <script>
 import CartList from "../components/cart/CartList.vue";
 import Banner from "../components/layout/Banner.vue";
-import OptimumRoute from "../components/OptimumRoute";
 import { mapGetters, mapMutations } from "vuex";
 
 export default {
   components: {
     CartList,
     Banner,
-    OptimumRoute,
   },
   methods: {
     ...mapMutations(["emptyCart"]),
