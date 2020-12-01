@@ -337,7 +337,13 @@ func promoteTo(c *gin.Context, group string) {
 }
 
 func getItems(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "yo"})
+	items, err := itemSrv.GetItems()
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, gin.H{"message": "getItems", "items": items})
 }
 
 func getItem(c *gin.Context) {
@@ -354,7 +360,7 @@ func getItem(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	c.JSON(200, gin.H{"message": "yo yo", "item ID": c.Param("id"), "item": item})
+	c.JSON(200, gin.H{"message": "getItem", "item ID": c.Param("id"), "item": item})
 }
 
 func addItem(c *gin.Context) {
