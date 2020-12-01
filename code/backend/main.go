@@ -60,7 +60,7 @@ func main() {
 
 	//all account types
 	router.GET("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
-	router.POST("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getAccountByUsername)
+	router.GET("/account/:user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getAccountByUsername)
 	router.PUT("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
 
 	//users
@@ -195,18 +195,18 @@ func login(c *gin.Context) {
 }
 
 func getAccount(c *gin.Context) {
-	username, exists := c.Get("username")
-	if !exists {
+	username := c.GetString("username")
+	if username == "" {
 		c.AbortWithError(500, errors.New("Could not get username from token"))
 		return
 	}
-	usernameStr := username.(string)
+	// usernameStr := username.(string)
 
-	log.Printf("[Gateway] [GetAccount] %s", usernameStr)
+	log.Printf("[Gateway] [GetAccount] %s", username)
 
 	input := &cognito.AdminGetUserInput{
 		UserPoolId: aws.String(userPoolID),
-		Username:   aws.String(usernameStr),
+		Username:   aws.String(username),
 	}
 
 	resp, err := userSrv.GetUser(input)
@@ -219,21 +219,22 @@ func getAccount(c *gin.Context) {
 }
 
 func getAccountByUsername(c *gin.Context) {
-	type Request struct {
-		Username string `json:"username"`
-	}
-	var request Request
-	err := c.ShouldBind(&request)
-	if err != nil {
-		c.AbortWithError(500, err)
-		return
-	}
+	// type Request struct {
+	// 	Username string `json:"username"`
+	// }
+	// var request Request
+	// err := c.ShouldBind(&request)
+	username := c.Param("user")
+	// if err != nil {
+	// 	c.AbortWithError(500, err)
+	// 	return
+	// }
 
-	log.Printf("[Gateway] [GetAccountByUsername] %s", request.Username)
+	log.Printf("[Gateway] [GetAccountByUsername] %s", username)
 
 	input := &cognito.AdminGetUserInput{
 		UserPoolId: aws.String(userPoolID),
-		Username:   aws.String(request.Username),
+		Username:   aws.String(username),
 	}
 
 	resp, err := userSrv.GetUser(input)
