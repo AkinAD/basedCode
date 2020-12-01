@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -58,8 +59,9 @@ func main() {
 	router.POST("/login", login)
 
 	//all account types
-	router.GET("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
-	router.PUT("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
+	router.GET("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
+	router.POST("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccountByUsername)
+	router.PUT("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
 
 	//users
 	router.GET("/user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupUser)
@@ -193,11 +195,30 @@ func login(c *gin.Context) {
 }
 
 func getAccount(c *gin.Context) {
-	var username string
+	username, exists := c.Get("username")
+	if !exists {
+		c.AbortWithError(500, errors.New("Could not get username from token"))
+	}
+	usernameStr := username.(string)
 
-	err := c.ShouldBind(&username)
+	input := &cognito.AdminGetUserInput{
+		UserPoolId: aws.String(userPoolID),
+		Username:   aws.String(usernameStr),
+	}
+
+	resp, err := userSrv.GetUser(input)
 	if err != nil {
 		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
+}
+
+func getAccountByUsername(c *gin.Context) {
+	var username string
+	err := c.ShouldBind(&username)
+	if err != nil {
+		c.AbortWithError(500, err)
 	}
 
 	input := &cognito.AdminGetUserInput{
