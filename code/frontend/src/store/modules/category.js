@@ -1,26 +1,25 @@
 import axios from 'axios'
 
 const state = {
-    Categories: []
+    categories: []
 }
 
 const getters = {
-    getCategories() {
-        return state.Categories;
+    getcategories() {
+        return state.categories;
     },
 
 }
 
 const actions = {
 
-    async addCategory({ commit }, id) {
+    async addCategory({ commit }, category) {
         await axios.post("...").then( (response) => {
             
-            let Category  = {};
             response;
             //do something
 
-            commit('addCategoryToState', Category);
+            commit('addCategoryToState', category);
         }).catch({
           //do something else  
         });
@@ -37,13 +36,13 @@ const actions = {
         });
         
     },
-    async updateCategory({ commit }, Category) {
+    async updateCategory({ commit }, category) {
         await axios.put("...").then( (response) => {
             
 
             //do something
             response;
-            commit('updateCategoryInState', Category);
+            commit('updateCategoryInState', category);
         }).catch({
           //do something else  
         });
@@ -52,19 +51,26 @@ const actions = {
 
 
 const mutations = {
-    addCategoryToState : (state, Category) => {
-        state.Categories.push(Category);
+    addCategoryToState : (state, category) => {
+        state.categories.push(category);
     },
     deleteCategoryFromState: (state, id) => {
-        state.Categories = state.Categories.filter((i) => i.id != id);
+        state.categories = state.categories.filter((i) => i.id != id);
     },
-    updateCategoryInState: (state, Category) => {
-        for(var c of state.Categories) {
-            if (c.id == Category.id)
+    updateCategoryInState: (state, category) => {
+        for(var c of state.categories) {
+            if (c.id == category.id)
             {
-                c = Category;
+                c = category;
                 break;
             }
         }
     },
 }
+
+export default {
+    state,
+    getters,
+    actions,
+    mutations,
+  };

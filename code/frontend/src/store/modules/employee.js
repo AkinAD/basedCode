@@ -13,10 +13,9 @@ const getters = {
 
 const actions = {
 
-    async addEmployee({ commit }, id) {
+    async addEmployee({ commit }, employee) {
         await axios.post("...").then( (response) => {
             
-            let employee  = {};
             response;
             //do something
 
@@ -68,3 +67,10 @@ const mutations = {
         }
     },
 }
+
+export default {
+    state,
+    getters,
+    actions,
+    mutations,
+  };
