@@ -198,8 +198,11 @@ func getAccount(c *gin.Context) {
 	username, exists := c.Get("username")
 	if !exists {
 		c.AbortWithError(500, errors.New("Could not get username from token"))
+		return
 	}
 	usernameStr := username.(string)
+
+	log.Printf("[Gateway] [GetAccount] %s", usernameStr)
 
 	input := &cognito.AdminGetUserInput{
 		UserPoolId: aws.String(userPoolID),
@@ -208,30 +211,38 @@ func getAccount(c *gin.Context) {
 
 	resp, err := userSrv.GetUser(input)
 	if err != nil {
-		c.JSON(500, err)
+		c.AbortWithError(500, err)
+		return
 	}
 
 	c.JSON(200, resp)
 }
 
 func getAccountByUsername(c *gin.Context) {
-	var username string
-	err := c.ShouldBind(&username)
+	type Request struct {
+		Username string `json:"username"`
+	}
+	var request Request
+	err := c.ShouldBind(&request)
 	if err != nil {
 		c.AbortWithError(500, err)
+		return
 	}
+
+	log.Printf("[Gateway] [GetAccountByUsername] %s", request.Username)
 
 	input := &cognito.AdminGetUserInput{
 		UserPoolId: aws.String(userPoolID),
-		Username:   aws.String(username),
+		Username:   aws.String(request.Username),
 	}
 
 	resp, err := userSrv.GetUser(input)
 	if err != nil {
-		c.JSON(500, err)
+		c.AbortWithError(500, err)
+		return
 	}
 
-	c.JSON(200, resp)
+	c.JSON(200, &resp)
 }
 
 func updateAccount(c *gin.Context) {
