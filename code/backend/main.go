@@ -60,7 +60,7 @@ func main() {
 
 	//all account types
 	router.GET("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
-	router.POST("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccountByUsername)
+	router.POST("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getAccountByUsername)
 	router.PUT("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
 
 	//users
