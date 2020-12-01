@@ -26,6 +26,13 @@ func NewService(awsRegion, awsID, awsSecret string, conn string) UserService {
 	}
 }
 
+type User struct {
+	Username  string
+	StoreID   int
+	FirstName string
+	LastName  string
+}
+
 func awsSession(awsRegion, awsID, awsSecret string) (*session.Session, error) {
 	session, err := session.NewSession(&aws.Config{
 		Region:      aws.String(awsRegion),

@@ -1,10 +1,6 @@
 package shop
 
 type ShopService interface {
-	CreateUser(user *User) (*User, error)
-	GetUser(username string) (*User, error)
-	UpdateUser(user *User) (*User, error)
-	// DeleteUser(username string) (bool, error)
 	GetItems() ([]*Item, error)
 	GetItemsFromStore(ID int) ([]*Item, error)
 	GetItem(ID int) (*Item, error)
@@ -30,13 +26,6 @@ func NewService(conn string) ShopService {
 	return &shopService{
 		db: newDatabase(conn),
 	}
-}
-
-type User struct {
-	Username  string
-	StoreID   int
-	FirstName string
-	LastName  string
 }
 
 type Item struct {
@@ -75,16 +64,6 @@ const (
 	Shirts Category = 1
 	Shoes  Category = 2
 )
-
-func (s *shopService) CreateUser(user *User) (*User, error) {
-	return nil, nil
-}
-func (s *shopService) GetUser(username string) (*User, error) {
-	return nil, nil
-}
-func (s *shopService) UpdateUser(user *User) (*User, error) {
-	return nil, nil
-}
 
 func (s *shopService) GetItems() ([]*Item, error) {
 	item, err := s.db.getItems()

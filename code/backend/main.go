@@ -214,23 +214,20 @@ func getAccount(c *gin.Context) {
 }
 
 func updateAccount(c *gin.Context) {
-	//get the user's account id and their preferred store id
-	type updateReqest struct {
-		username       string
-		preferredStore int
-	}
-	var update updateReqest
-	err := c.ShouldBind(&update)
+	var user *user.User
+	err := c.ShouldBind(&user)
 	if err != nil {
 		c.JSON(401, err)
 	}
+
 	// grab the username and connect to the userDB to find them
 	// then update the db with the preferred location
 	//err = shopSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
-	err = userSrv.UpdatePreferredStore(update.username, update.preferredStore)
+	resp, err := userSrv.UpdateProfile(user)
 	if err != nil {
 		c.JSON(401, err)
 	}
+	c.JSON(200, &resp)
 
 }
 
@@ -465,7 +462,7 @@ func createStock(c *gin.Context) {
 
 	if !isAdmin(c) {
 		username := c.Keys["username"].(string)
-		user, err := shopSrv.GetUser(username) //change to user's shop
+		user, err := userSrv.GetProfile(username) //change to user's shop
 		if err != nil {
 			c.JSON(500, err)
 		}
@@ -490,7 +487,7 @@ func editStock(c *gin.Context) {
 
 	if !isAdmin(c) {
 		username := c.Keys["username"].(string)
-		user, err := shopSrv.GetUser(username) //change to user's shop
+		user, err := userSrv.GetProfile(username) //change to user's shop
 		if err != nil {
 			c.JSON(500, err)
 		}
@@ -519,7 +516,7 @@ func deleteStock(c *gin.Context) {
 
 	if !isAdmin(c) {
 		username := c.Keys["username"].(string)
-		user, err := shopSrv.GetUser(username) //change to user's shop
+		user, err := userSrv.GetProfile(username) //change to user's shop
 		if err != nil {
 			c.JSON(500, err)
 		}
