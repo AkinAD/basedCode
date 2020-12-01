@@ -83,26 +83,23 @@ func main() {
 	//item
 	router.GET("/item", getItems) //?storeID= to get the shops/stock for a specific store
 	router.GET("/item/:id", getItem)
-	router.POST("itemp", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), addItem)
+	router.POST("itemp", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), createItem)
 	router.PUT("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), updateItem)
 	router.DELETE("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteItem)
 
 	//store
 	router.GET("/store", getStores)
-	router.POST("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), addStore)
+	router.GET("/store/:id", getStore) //return store + stock
+	router.POST("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), createStore)
 	router.PUT("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), updateStore)
 	router.DELETE("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
 
 	//stock
-	router.POST("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), addStock)
-	router.PUT("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editStock)
-	router.DELETE("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteStock)
-	router.POST("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminAddStock)
-	router.PUT("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminEditStock)
-	router.DELETE("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminDeleteStock)
-
+	router.POST("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), createStock)
+	router.PUT("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editStock)
+	router.DELETE("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteStock)
 	if port == "443" {
-		router.RunTLS(":"+port, "add cert here", "add key here")
+		router.RunTLS(":"+port, "create cert here", "create key here")
 	} else {
 		router.Run(":" + port)
 	}
@@ -383,7 +380,7 @@ func getItem(c *gin.Context) {
 	c.JSON(200, &resp)
 }
 
-func addItem(c *gin.Context) {
+func createItem(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
@@ -422,14 +419,14 @@ func getStore(c *gin.Context) {
 	c.JSON(200, &resp)
 }
 
-func addStore(c *gin.Context) {
+func createStore(c *gin.Context) {
 	var request *shop.Store
 	err := c.ShouldBind(&request)
 	if err != nil {
 		c.AbortWithError(502, err)
 	}
 
-	resp, err := shopSrv.AddStore(request)
+	resp, err := shopSrv.CreateStore(request)
 	if err != nil {
 		c.AbortWithError(502, err)
 	}
@@ -456,7 +453,9 @@ func deleteStore(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
-func addStock(c *gin.Context) {
+func createStock(c *gin.Context) {
+	//get user group from params thanks to auth wrapper
+
 	var request *shop.ItemInStock
 
 	err := c.ShouldBind(&request)
@@ -464,9 +463,16 @@ func addStock(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	request.StoreID = 1 //change to user's shop
+	if !isAdmin(c) {
+		username := c.Keys["username"].(string)
+		user, err := shopSrv.GetUser(username) //change to user's shop
+		if err != nil {
+			c.JSON(500, err)
+		}
+		request.StoreID = user.StoreID
+	}
 
-	resp, err := shopSrv.AddStock(request)
+	resp, err := shopSrv.CreateStock(request)
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -482,7 +488,14 @@ func editStock(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	request.StoreID = 1 //change to user's shop
+	if !isAdmin(c) {
+		username := c.Keys["username"].(string)
+		user, err := shopSrv.GetUser(username) //change to user's shop
+		if err != nil {
+			c.JSON(500, err)
+		}
+		request.StoreID = user.StoreID
+	}
 
 	resp, err := shopSrv.UpdateStock(request)
 	if err != nil {
@@ -493,64 +506,24 @@ func editStock(c *gin.Context) {
 }
 
 func deleteStock(c *gin.Context) {
-	var request int
-
-	err := c.ShouldBind(&request)
-	if err != nil {
-		c.JSON(500, err)
-	}
-
-	storeID := 1 //change to user's shop
-
-	resp, err := shopSrv.DeleteStock(storeID, request)
-	if err != nil {
-		c.JSON(500, err)
-	}
-
-	c.JSON(200, resp)
-}
-
-func adminAddStock(c *gin.Context) {
-	var request *shop.ItemInStock
-
-	err := c.ShouldBind(&request)
-	if err != nil {
-		c.JSON(500, err)
-	}
-	resp, err := shopSrv.AddStock(request)
-	if err != nil {
-		c.JSON(500, err)
-	}
-
-	c.JSON(200, resp)
-}
-
-func adminEditStock(c *gin.Context) {
-	var request *shop.ItemInStock
-
-	err := c.ShouldBind(&request)
-	if err != nil {
-		c.JSON(500, err)
-	}
-
-	resp, err := shopSrv.UpdateStock(request)
-	if err != nil {
-		c.JSON(500, err)
-	}
-
-	c.JSON(200, resp)
-}
-
-func adminDeleteStock(c *gin.Context) {
 	type Request struct {
-		StoreID int
-		ItemID  int
+		StoreID int `json:"storeID"`
+		ItemID  int `json:"itemID"`
 	}
-	var request *Request
+	var request Request
 
 	err := c.ShouldBind(&request)
 	if err != nil {
 		c.JSON(500, err)
+	}
+
+	if !isAdmin(c) {
+		username := c.Keys["username"].(string)
+		user, err := shopSrv.GetUser(username) //change to user's shop
+		if err != nil {
+			c.JSON(500, err)
+		}
+		request.StoreID = user.StoreID
 	}
 
 	resp, err := shopSrv.DeleteStock(request.StoreID, request.ItemID)
@@ -558,5 +531,16 @@ func adminDeleteStock(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	c.JSON(200, &resp)
+	c.JSON(200, resp)
+}
+
+func isAdmin(c *gin.Context) bool {
+	groups := c.Keys["groups"].([]string)
+
+	for _, group := range groups {
+		if group == "admin" {
+			return true
+		}
+	}
+	return false
 }

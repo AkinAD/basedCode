@@ -1,19 +1,23 @@
 package shop
 
 type ShopService interface {
+	CreateUser(user *User) (*User, error)
+	GetUser(username string) (*User, error)
+	UpdateUser(user *User) (*User, error)
+	// DeleteUser(username string) (bool, error)
 	GetItems() ([]*Item, error)
 	GetItemsFromStore(ID int) ([]*Item, error)
 	GetItem(ID int) (*Item, error)
-	AddItem(*Item) (*Item, error)
+	CreateItem(*Item) (*Item, error)
 	UpdateItem(*Item) (*Item, error)
 	DeleteItem(int) (bool, error)
 	GetStores() (*Store, error)
 	GetStore(ID int) (*Store, error)
-	AddStore(*Store) (*Store, error)
+	CreateStore(*Store) (*Store, error)
 	UpdateStore(*Store) (*Store, error)
 	DeleteStore(int) (bool, error)
 	GetStock(int) (*Stock, error)
-	AddStock(*ItemInStock) (*ItemInStock, error)
+	CreateStock(*ItemInStock) (*ItemInStock, error)
 	UpdateStock(*ItemInStock) (*ItemInStock, error)
 	DeleteStock(int, int) (bool, error)
 }
@@ -28,6 +32,13 @@ func NewService(conn string) ShopService {
 	}
 }
 
+type User struct {
+	Username  string
+	StoreID   int
+	FirstName string
+	LastName  string
+}
+
 type Item struct {
 	ID          int `gorm:"<-:false"`
 	Name        string
@@ -37,8 +48,8 @@ type Item struct {
 }
 
 type Store struct {
-	ID      int `gorm:"<-:false"`
-	Address string
+	ID         int `gorm:"<-:false"`
+	Createress string
 }
 
 type Stock struct {
@@ -64,6 +75,16 @@ const (
 	Shirts Category = 1
 	Shoes  Category = 2
 )
+
+func (s *shopService) CreateUser(user *User) (*User, error) {
+	return nil, nil
+}
+func (s *shopService) GetUser(username string) (*User, error) {
+	return nil, nil
+}
+func (s *shopService) UpdateUser(user *User) (*User, error) {
+	return nil, nil
+}
 
 func (s *shopService) GetItems() ([]*Item, error) {
 	item, err := s.db.getItems()
@@ -94,7 +115,7 @@ func (s *shopService) GetItem(ID int) (*Item, error) {
 	return item, nil
 }
 
-func (s *shopService) AddItem(item *Item) (*Item, error) {
+func (s *shopService) CreateItem(item *Item) (*Item, error) {
 	item, err := s.db.addItem(item)
 	if err != nil {
 		// log.Printf("%v", err)
@@ -124,7 +145,7 @@ func (s *shopService) GetStore(ID int) (*Store, error) {
 	return item, nil
 }
 
-func (s *shopService) AddStore(store *Store) (*Store, error) {
+func (s *shopService) CreateStore(store *Store) (*Store, error) {
 	item, err := s.db.addStore(store)
 	if err != nil {
 		// log.Printf("%v", err)
@@ -156,7 +177,7 @@ func (s *shopService) DeleteStore(int) (bool, error) {
 func (s *shopService) GetStock(int) (*Stock, error) {
 	return nil, nil
 }
-func (s *shopService) AddStock(request *ItemInStock) (*ItemInStock, error) {
+func (s *shopService) CreateStock(request *ItemInStock) (*ItemInStock, error) {
 	item, err := s.db.addStock(request)
 	if err != nil {
 		// log.Printf("%v", err)
