@@ -21,7 +21,7 @@ require (
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/ugorji/go v1.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392 // indirect
-	golang.org/x/sys v0.0.0-20201119102817-f84b799fce68 // indirect
+	golang.org/x/sys v0.0.0-20201130171929-760e229fe7c5 // indirect
 	golang.org/x/text v0.3.4 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect

@@ -22,7 +22,7 @@ func NewService(awsRegion, awsID, awsSecret string, conn string) UserService {
 
 	return &userService{
 		cognito: svc,
-		db:      NewDatabase(conn),
+		db:      newDatabase(conn),
 	}
 }
 

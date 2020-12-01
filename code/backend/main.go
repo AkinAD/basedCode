@@ -464,7 +464,7 @@ func addStock(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	request.ShopID = 1 //change to user's shop
+	request.StoreID = 1 //change to user's shop
 
 	resp, err := shopSrv.AddStock(request)
 	if err != nil {
@@ -482,7 +482,7 @@ func editStock(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	request.ShopID = 1 //change to user's shop
+	request.StoreID = 1 //change to user's shop
 
 	resp, err := shopSrv.UpdateStock(request)
 	if err != nil {
@@ -500,9 +500,9 @@ func deleteStock(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	shopID = 1 //change to user's shop
+	storeID := 1 //change to user's shop
 
-	resp, err := shopSrv.DeleteStock(shopID, request)
+	resp, err := shopSrv.DeleteStock(storeID, request)
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -517,10 +517,6 @@ func adminAddStock(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, err)
 	}
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/shopservice-akin
 	resp, err := shopSrv.AddStock(request)
 	if err != nil {
 		c.JSON(500, err)
