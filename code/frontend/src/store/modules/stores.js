@@ -72,10 +72,46 @@ const actions = {
     } catch {
       commit("setSelectedStore", store, []); //no items found
     }
-  }
+  },
+  //items
+  async addItem({ commit }, item) {
+    await axios.post("...").then( (response) => {
+
+      response;
+      //do something
+
+      commit('addItemToState', item);
+    }).catch({
+      //do something else  
+    });
+    
+},
+async deleteItem({ commit }, id) {
+    await axios.delete("...").then( (response) => {
+      response;
+      //do something
+
+      commit('deleteItemFromState', id);
+    }).catch({
+      //do something else  
+    });
+    
+},
+async updateItem({ commit }, item) {
+    await axios.put("...").then( (response) => {
+        
+      response;
+      //do something
+
+      commit('updateItemInState', item);
+    }).catch({
+      //do something else  
+    });
+}
 };
 
 const mutations = {
+  //stores
   updateStores: (state, newStores) => {
     state.stores = newStores;
   },
@@ -85,7 +121,24 @@ const mutations = {
   },
   setDialog: (state, bool) => {
     state.dialog = bool;
+  },
+  //items
+  addItemToState: (state, item) => {
+    state.items.push(item);
+  },
+  deleteItemFromState: (state, id) => {
+    state.items = state.items.filter((i) => i.id != id);
+  },
+  updateItemInState: (state, item) => {
+    for(var i of state.items) {
+      if (i.id == item.id)
+      {
+          i = item;
+          break;
+      }
   }
+  }
+
 };
 
 export default {
