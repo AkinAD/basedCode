@@ -75,6 +75,7 @@ const actions = {
   },
   //items
   async addItem({ commit }, item) {
+    
     await axios.post("...").then( (response) => {
 
       response;
@@ -98,12 +99,13 @@ async deleteItem({ commit }, id) {
     
 },
 async updateItem({ commit }, item) {
+   
     await axios.put("...").then( (response) => {
         
       response;
       //do something
 
-      commit('updateItemInState', item);
+       commit('updateItemInState', item);
     }).catch({
       //do something else  
     });
