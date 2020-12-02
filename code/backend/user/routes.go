@@ -110,6 +110,11 @@ func (s *userService) CreateProfile(user *User) (*User, error) {
 }
 
 func (s *userService) GetProfile(username string) (*User, error) {
+	// output, err := s.db.getProfile(username)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// return output, nil
 	return nil, nil
 }
 

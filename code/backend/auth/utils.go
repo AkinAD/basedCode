@@ -95,13 +95,18 @@ func validateAWSJwtClaims(claims jwt.MapClaims, region, userPoolID string, authe
 	}
 
 	validateValidGroup := func() ([]string, error) {
-		if groupsFromClaims, ok := claims["cognito:groups"]; ok {
+		if groupsFromClaims, ok := claims["cognito:groups"].([]interface{}); ok {
 			// log.Printf("Groups1 | %t | %v\n", groupsFromClaims, groupsFromClaims)
-			groups := groupsToStringArray(groupsFromClaims)
+			var groups []string
+			for _, grp := range groupsFromClaims {
+				groups = append(groups, grp.(string))
+			}
+
+			// groups := groupsToStringArray(groupsFromClaims)
 			// log.Printf("Groups2 | %v\n", groupsFromClaimsStr)
 			for _, group := range authedGroups {
 				for _, grp := range groups {
-					if strings.Index(grp, group) > -1 {
+					if grp == group {
 						return groups, nil
 					}
 
