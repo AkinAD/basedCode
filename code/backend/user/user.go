@@ -22,8 +22,15 @@ func NewService(awsRegion, awsID, awsSecret string, conn string) UserService {
 
 	return &userService{
 		cognito: svc,
-		db:      NewDatabase(conn),
+		db:      newDatabase(conn),
 	}
+}
+
+type User struct {
+	Username  string `json:"username" gorm:"column:username"`
+	StoreID   int    `json:"storeID" gorm:"column:storeid"`
+	FirstName string `json:"firstName" gorm:"column:firstname"`
+	LastName  string `json:"lastName" gorm:"column:lastname"`
 }
 
 func awsSession(awsRegion, awsID, awsSecret string) (*session.Session, error) {

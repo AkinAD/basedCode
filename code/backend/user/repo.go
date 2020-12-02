@@ -13,13 +13,13 @@ type userRepo struct {
 	db *gorm.DB
 }
 
-func NewDatabase(config string) UserRepo {
+func newDatabase(config string) UserRepo {
 	return &userRepo{
-		db: newDatabase(config),
+		db: initDatabase(config),
 	}
 }
 
-func newDatabase(config string) *gorm.DB {
+func initDatabase(config string) *gorm.DB {
 	db, err := gorm.Open(postgres.Open(config), &gorm.Config{})
 	if err != nil {
 		panic(err)
@@ -28,7 +28,7 @@ func newDatabase(config string) *gorm.DB {
 }
 
 func (r *userRepo) updatePreferredStore(username string, preferredStore int) error {
-	result := r.db.Table("account").Where("username = ?", username).Update("storeID", preferredStore)
+	result := r.db.Table("accounts").Where("username = ?", username).Update("storeID", preferredStore)
 	if result.Error != nil {
 		return result.Error
 	}

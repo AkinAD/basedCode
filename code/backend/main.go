@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -9,7 +10,7 @@ import (
 	"time"
 
 	auth "github.com/AkinAD/basedCode/auth"
-	item "github.com/AkinAD/basedCode/item"
+	shop "github.com/AkinAD/basedCode/shop"
 	user "github.com/AkinAD/basedCode/user"
 	cognito "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 	"github.com/gin-contrib/cors"
@@ -20,7 +21,7 @@ import (
 
 var (
 	userSrv user.UserService
-	itemSrv item.ItemService
+	shopSrv shop.ShopService
 	//storeSrv db.DbService
 	// authSrv auth.AuthService
 
@@ -47,7 +48,7 @@ func main() {
 	router.Use(corsMiddleware)
 
 	userSrv = user.NewService(awsRegion, awsID, awsSecret, connString)
-	itemSrv = item.NewService(connString)
+	shopSrv = shop.NewService(connString)
 	// authSrv = auth.NewService()
 
 	// heartbeat
@@ -58,8 +59,9 @@ func main() {
 	router.POST("/login", login)
 
 	//all account types
-	router.GET("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
-	router.PUT("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
+	router.GET("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
+	router.GET("/account/:user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getAccountByUsername)
+	router.PUT("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
 
 	//users
 	router.GET("/user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupUser)
@@ -77,32 +79,29 @@ func main() {
 
 	//admin
 	router.GET("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupAdmin)
-	router.POST("/admin)", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
+	router.POST("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
 	// router.DELTE("admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}) ,deleteFromAdmin)
 
-	//items
-	router.GET("/item", getItems) //?storeID= to get the items/stock for a specific store
+	//item
+	router.GET("/item", getItems) //?storeID= to get the shops/stock for a specific store
 	router.GET("/item/:id", getItem)
-	router.POST("/item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), addItem)
+	router.POST("itemp", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), createItem)
 	router.PUT("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), updateItem)
 	router.DELETE("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteItem)
 
 	//store
 	router.GET("/store", getStores)
+	router.GET("/store/:id", getStore) //return store + stock
 	router.POST("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), createStore)
 	router.PUT("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), updateStore)
-	router.DELETE("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
+	router.DELETE("/store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
 
 	//stock
-	router.POST("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), addItemToStock)
-	router.PUT("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editItemInStock)
-	router.DELETE("/stock/mystore/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteItemInStock)
-	router.POST("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adimnAddItemToStock)
-	router.PUT("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminEditItemInStock)
-	router.DELETE("/stock/admin/:store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), adminDeleteItemInStock)
-
+	router.POST("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), createStock)
+	router.PUT("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), editStock)
+	router.DELETE("/stock/:store/:item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteStock)
 	if port == "443" {
-		router.RunTLS(":"+port, "add cert here", "add key here")
+		router.RunTLS(":"+port, "create cert here", "create key here")
 	} else {
 		router.Run(":" + port)
 	}
@@ -196,12 +195,14 @@ func login(c *gin.Context) {
 }
 
 func getAccount(c *gin.Context) {
-	var username string
-
-	err := c.ShouldBind(&username)
-	if err != nil {
-		c.JSON(500, err)
+	username := c.GetString("username")
+	if username == "" {
+		c.AbortWithError(500, errors.New("Could not get username from token"))
+		return
 	}
+	// usernameStr := username.(string)
+
+	log.Printf("[Gateway] [GetAccount] %s\n", username)
 
 	input := &cognito.AdminGetUserInput{
 		UserPoolId: aws.String(userPoolID),
@@ -210,30 +211,56 @@ func getAccount(c *gin.Context) {
 
 	resp, err := userSrv.GetUser(input)
 	if err != nil {
-		c.JSON(500, err)
+		c.AbortWithError(500, err)
+		return
 	}
 
 	c.JSON(200, resp)
 }
 
-func updateAccount(c *gin.Context) {
-	//get the user's account id and their preferred store id
-	type updateReqest struct {
-		username       string
-		preferredStore int
+func getAccountByUsername(c *gin.Context) {
+	// type Request struct {
+	// 	Username string `json:"username"`
+	// }
+	// var request Request
+	// err := c.ShouldBind(&request)
+	username := c.Param("user")
+	// if err != nil {
+	// 	c.AbortWithError(500, err)
+	// 	return
+	// }
+
+	log.Printf("[Gateway] [GetAccountByUsername] %s\n", username)
+
+	input := &cognito.AdminGetUserInput{
+		UserPoolId: aws.String(userPoolID),
+		Username:   aws.String(username),
 	}
-	var update updateReqest
-	err := c.ShouldBind(&update)
+
+	resp, err := userSrv.GetUser(input)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	c.JSON(200, &resp)
+}
+
+func updateAccount(c *gin.Context) {
+	var user *user.User
+	err := c.ShouldBind(&user)
 	if err != nil {
 		c.JSON(401, err)
 	}
+
 	// grab the username and connect to the userDB to find them
 	// then update the db with the preferred location
-	//err = itemSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
-	err = userSrv.UpdatePreferredStore(update.username, update.preferredStore)
+	//err = shopSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
+	resp, err := userSrv.UpdateProfile(user)
 	if err != nil {
 		c.JSON(401, err)
 	}
+	c.JSON(200, &resp)
 
 }
 
@@ -343,7 +370,7 @@ func getItems(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	c.JSON(200, gin.H{"message": "GetItems", "items": items})
+	c.JSON(200, &items)
 }
 
 func getItem(c *gin.Context) {
@@ -354,16 +381,16 @@ func getItem(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	item, err := itemSrv.GetItem(id)
+	resp, err := shopSrv.GetItem(id)
 
 	if err != nil {
 		c.JSON(500, err)
 	}
 
-	c.JSON(200, gin.H{"message": "GetItem", "item ID": c.Param("id"), "item": item})
+	c.JSON(200, &resp)
 }
 
-func addItem(c *gin.Context) {
+func createItem(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
@@ -402,41 +429,190 @@ func deleteItem(c *gin.Context) {
 }
 
 func getStores(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	resp, err := shopSrv.GetStores()
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, &resp)
+}
+
+func getStore(c *gin.Context) {
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	resp, err := shopSrv.GetStore(id)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, &resp)
 }
 
 func createStore(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	var request *shop.Store
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	resp, err := shopSrv.CreateStore(request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	c.JSON(200, &resp)
 }
 
 func updateStore(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	var request *shop.Store
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	resp, err := shopSrv.UpdateStore(request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	c.JSON(200, &resp)
 }
 
 func deleteStore(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	id := c.Param("id")
+	storeID, err := strconv.Atoi(id)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	resp, err := shopSrv.DeleteStore(storeID)
+
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	c.JSON(200, &resp)
 }
 
-func addItemToStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+func createStock(c *gin.Context) {
+	//get user group from params thanks to auth wrapper
+
+	var request *shop.StockRequest
+
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.JSON(500, err)
+		return
+	}
+
+	if !isAdmin(c) {
+		username := c.MustGet("username").(string)
+		user, err := userSrv.GetProfile(username) //change to user's shop
+		log.Printf("[Gateway] [CreateStock] [GetUser] %s - %v\n", username, user)
+		if err != nil {
+			c.AbortWithError(500, err)
+			return
+		}
+		// request.StoreID = user.StoreID
+		request.StoreID = 2 //@CHUN WAH THE ABOVE DOES NOT WORK
+	}
+
+	log.Printf("[Main] [CreateStock] %v", request)
+
+	resp, err := shopSrv.CreateStock(request)
+	if err != nil {
+		c.JSON(500, err)
+		return
+	}
+
+	c.JSON(200, resp)
 }
 
-func editItemInStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+func editStock(c *gin.Context) {
+	var request *shop.StockRequest
+
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	if !isAdmin(c) {
+		username := c.MustGet("username").(string)
+		user, err := userSrv.GetProfile(username) //change to user's shop
+		log.Printf("[Gateway] [EditStock] [GetUser] %s - %v\n", username, user)
+		if err != nil {
+			c.AbortWithError(500, err)
+			return
+		}
+		// request.StoreID = user.StoreID
+		request.StoreID = 2 //@CHUN WAH THE ABOVE DOES NOT WORK
+	}
+
+	resp, err := shopSrv.UpdateStock(request)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	c.JSON(200, resp)
 }
 
-func deleteItemInStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+func deleteStock(c *gin.Context) {
+	// type Request struct {
+	// 	StoreID int `json:"storeID"`
+	// 	ItemID  int `json:"itemID"`
+	// }
+	// var request Request
+
+	// err := c.ShouldBind(&request)
+
+	storeParam := c.Param("store")
+	itemParam := c.Param("item")
+
+	storeID, err := strconv.Atoi(storeParam)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	itemID, err := strconv.Atoi(itemParam)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	if !isAdmin(c) {
+		username := c.MustGet("username").(string)
+		user, err := userSrv.GetProfile(username) //change to user's shop
+		if err != nil {
+			c.JSON(500, err)
+		}
+		storeID = user.StoreID
+	}
+
+	resp, err := shopSrv.DeleteStock(storeID, itemID)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, resp)
 }
 
-func adimnAddItemToStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
-}
-
-func adminEditItemInStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
-}
-
-func adminDeleteItemInStock(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+func isAdmin(c *gin.Context) bool {
+	groups := c.GetStringSlice("groups")
+	// log.Printf("[Main] [isAdmin] %s - %v", c.GetString("username"), groups)
+	for _, group := range groups {
+		if group == "admin" {
+			return true
+		}
+	}
+	return false
 }
