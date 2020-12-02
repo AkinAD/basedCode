@@ -61,7 +61,7 @@ func main() {
 	//all account types
 	router.GET("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
 	router.GET("/account/:user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getAccountByUsername)
-	router.PUT("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
+	router.PUT("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
 
 	//users
 	router.GET("/user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupUser)
@@ -247,21 +247,20 @@ func getAccountByUsername(c *gin.Context) {
 }
 
 func updateAccount(c *gin.Context) {
-	var user *user.User
-	err := c.ShouldBind(&user)
+	var userInput user.User
+	err := c.ShouldBind(&userInput)
 	if err != nil {
-		c.JSON(401, err)
+		c.JSON(500, err)
 	}
+	//c.JSON(500, gin.H{"input": userInput})
 
-	// grab the username and connect to the userDB to find them
-	// then update the db with the preferred location
-	//err = shopSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
-	resp, err := userSrv.UpdateProfile(user)
+	//userInput = user.User{Username: input.Username, StoreID: input.StoreID, FirstName: input.FirstName, LastName: input.LastName}
+
+	resp, err := userSrv.UpdateProfile(&userInput)
 	if err != nil {
 		c.JSON(401, err)
 	}
 	c.JSON(200, &resp)
-
 }
 
 func getGroupUser(c *gin.Context) {
@@ -289,8 +288,8 @@ func getGroup(c *gin.Context, group string) {
 	// }
 
 	input := &cognito.ListUsersInGroupInput{
-		GroupName:  aws.String(group),
-		NextToken:  aws.String("1"),
+		GroupName: aws.String(group),
+		//NextToken:  aws.String("1"),
 		UserPoolId: aws.String(userPoolID),
 	}
 
@@ -317,7 +316,7 @@ func createEmployee(c *gin.Context) {
 	}
 
 	payload := &cognito.AdminCreateUserInput{
-		DesiredDeliveryMediums: []*string{aws.String("email")},
+		DesiredDeliveryMediums: []*string{aws.String("EMAIL")},
 		// ForceAliasCreation:     aws.Bool(true),
 		UserAttributes: []*cognito.AttributeType{&cognito.AttributeType{Name: aws.String(cognito.UsernameAttributeTypeEmail), Value: aws.String(input.Email)}},
 		UserPoolId:     aws.String(userPoolID),
@@ -344,16 +343,23 @@ func promoteToAdmin(c *gin.Context) {
 }
 
 func promoteTo(c *gin.Context, group string) {
-	var username string
-	err := c.ShouldBind(&username)
+	type userInfo struct {
+		Username string `json:"username"`
+	}
+	var userInputInfo userInfo
+
+	err := c.ShouldBind(&userInputInfo)
 	if err != nil {
 		c.JSON(500, err)
 	}
+	//c.JSON(200, gin.H{"username": userInputInfo.Username})
+
 	input := &cognito.AdminAddUserToGroupInput{
 		GroupName:  aws.String(group),
 		UserPoolId: aws.String(userPoolID),
-		Username:   aws.String(username),
+		Username:   aws.String(userInputInfo.Username),
 	}
+	//c.JSON(200, gin.H{"input": input})
 
 	resp, err := userSrv.AddUserToGroup(input)
 	if err != nil {
