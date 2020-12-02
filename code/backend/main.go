@@ -343,7 +343,7 @@ func getItems(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	c.JSON(200, gin.H{"message": "getItems", "items": items})
+	c.JSON(200, gin.H{"message": "GetItems", "items": items})
 }
 
 func getItem(c *gin.Context) {
@@ -360,7 +360,7 @@ func getItem(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	c.JSON(200, gin.H{"message": "getItem", "item ID": c.Param("id"), "item": item})
+	c.JSON(200, gin.H{"message": "GetItem", "item ID": c.Param("id"), "item": item})
 }
 
 func addItem(c *gin.Context) {
@@ -368,11 +368,37 @@ func addItem(c *gin.Context) {
 }
 
 func updateItem(c *gin.Context) {
+	type ItemRequest struct {
+		ID          int `gorm:"<-:false"`
+		Name        string
+		Description string
+		Category    Category
+		Price       float64
+	}
+	var item ItemRequest
+	err := c.ShouldBind(&item)
+	if err != nil {
+		c.JSON(401, err)
+	}
+
 	c.JSON(200, gin.H{"message": "hello"})
 }
 
 func deleteItem(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	deleteResult, err := itemSrv.DeleteItem(id)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, gin.H{"message": "DeleteItem", "item ID": c.Param("id"), "deleteResult": deleteResult})
 }
 
 func getStores(c *gin.Context) {
