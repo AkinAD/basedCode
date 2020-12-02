@@ -7,6 +7,7 @@ import (
 
 type UserRepo interface {
 	updatePreferredStore(username string, preferredStore int) error
+	updateProfile(input *User) (*User, error)
 }
 
 type userRepo struct {
@@ -33,4 +34,16 @@ func (r *userRepo) updatePreferredStore(username string, preferredStore int) err
 		return result.Error
 	}
 	return nil
+}
+
+func (r *userRepo) updateProfile(input *User) (*User, error) {
+	result := r.db.Table("accounts").Where("username = ?", input.Username).Update("storeid", input.StoreID)
+	//result := r.db.Model(&User{StoreID: input.StoreID})
+	//var users []User
+	//result := r.db.Raw("update accounts set storeid = 1 where username = 'matthewwalk';").Scan(&users)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return input, nil
 }
