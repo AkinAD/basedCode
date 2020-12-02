@@ -119,5 +119,11 @@ func (s *userService) GetProfile(username string) (*User, error) {
 }
 
 func (s *userService) UpdateProfile(user *User) (*User, error) {
-	return nil, nil
+	user, err := s.db.updateProfile(user)
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
+
+	return user, nil
 }
