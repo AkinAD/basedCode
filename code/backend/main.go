@@ -397,7 +397,6 @@ func createItem(c *gin.Context) {
 		c.AbortWithError(502, err)
 	}
 	fmt.Println("createItem lots of boba")
-	c.JSON(200, gin.H{"cwc cwc": request})
 	// if POSTMAN request body doesn't have itemID then &resp is null
 	resp, err := shopSrv.CreateItem(request)
 	if err != nil {
@@ -414,7 +413,6 @@ func updateItem(c *gin.Context) {
 		c.AbortWithError(502, err)
 	}
 	fmt.Println("updateItem boba")
-	c.JSON(200, gin.H{"cwc request": request})
 	// if POSTMAN request body doesn't have itemID then &resp is null
 	resp, err := shopSrv.UpdateItem(request)
 	if err != nil {
@@ -438,7 +436,7 @@ func deleteItem(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	c.JSON(200, gin.H{"message": "DeleteItem", "item ID": c.Param("id"), "deleteResult": deleteResult})
+	c.JSON(200, &deleteResult)
 }
 
 func getStores(c *gin.Context) {
