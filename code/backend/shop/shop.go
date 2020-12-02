@@ -1,5 +1,7 @@
 package shop
 
+import "fmt"
+
 type ShopService interface {
 	GetItems() ([]*Item, error)
 	GetItemsFromStore(ID int) ([]*Item, error)
@@ -145,6 +147,8 @@ func (s *shopService) UpdateItem(item *Item) (*Item, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("shop.go UpdateItem")
+	fmt.Println(updatedItem)
 	return updatedItem, nil
 }
 

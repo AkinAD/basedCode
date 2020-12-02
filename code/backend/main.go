@@ -400,9 +400,9 @@ func updateItem(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(502, err)
 	}
-	fmt.Println("updateItem cwc hi")
+	fmt.Println("updateItem boba")
 	c.JSON(200, gin.H{"cwc request": request})
-
+	// if POSTMAN request body doesn't have itemID then &resp is null
 	resp, err := shopSrv.UpdateItem(request)
 	if err != nil {
 		c.AbortWithError(502, err)

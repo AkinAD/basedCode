@@ -117,7 +117,8 @@ func (r *shopRepo) updateItem(item *Item) (*Item, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
+	fmt.Println("repo.go updateItem")
+	fmt.Println(item)
 	return item, nil
 }
 
