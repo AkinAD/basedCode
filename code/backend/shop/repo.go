@@ -58,13 +58,16 @@ func (r *shopRepo) addItem(item *Item) (*Item, error) {
 	// insert into items (name, description, categoryid, price)
 	// values ('Nike React', 'running shoes',2,100.00)
 	// var item Item
-	result := r.db.Raw("DELETE from items WHERE itemid = ?", nil).Scan(&item)
+	// result := r.db.Raw("DELETE from items WHERE itemid = ?", nil).Scan(&item)
+	// result := r.db.Create(&item)
+	result := r.db.Exec("INSERT INTO items (name, description, categoryid, price) VALUES (?, ?, ?, ?)", item.Name, item.Description, item.CategoryID, item.Price)
+
 	err := result.Error
 
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("item")
+	fmt.Println("repo.go addItem")
 	fmt.Println(item)
 	fmt.Println("&item")
 	fmt.Println(&item)

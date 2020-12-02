@@ -85,7 +85,7 @@ func main() {
 	//item
 	router.GET("/item", getItems) //?storeID= to get the shops/stock for a specific store
 	router.GET("/item/:id", getItem)
-	router.POST("itemp", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), createItem)
+	router.POST("/item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), createItem)
 	router.PUT("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), updateItem)
 	router.DELETE("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteItem)
 
@@ -391,7 +391,20 @@ func getItem(c *gin.Context) {
 }
 
 func createItem(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	var request *shop.Item
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+	fmt.Println("createItem lots of boba")
+	c.JSON(200, gin.H{"cwc cwc": request})
+	// if POSTMAN request body doesn't have itemID then &resp is null
+	resp, err := shopSrv.CreateItem(request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	c.JSON(200, &resp)
 }
 
 func updateItem(c *gin.Context) {
