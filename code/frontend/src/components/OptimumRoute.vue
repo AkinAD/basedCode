@@ -11,7 +11,9 @@
           v-on="on"
           icon
         >
-          <v-icon>mdi-map</v-icon>
+          <v-badge color="primary" :content="cartCount" :value="cartCount">
+            <v-icon>mdi-map</v-icon>
+          </v-badge>
         </v-btn>
       </template>
 
@@ -65,6 +67,9 @@ export default {
       if (this.isEmpty) return "grey";
       return "primary";
     },
+    cartCount() {
+      return this.getCart.length;
+    }
   },
 
   methods: {
