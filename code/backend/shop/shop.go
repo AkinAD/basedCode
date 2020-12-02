@@ -28,7 +28,7 @@ func NewService(conn string) ShopService {
 }
 
 type Item struct {
-	ItemID      int     `json:"itemID" gorm:"column:itemid"`
+	ItemID      int     `json:"itemID" gorm:"->;primaryKey;column:itemid"`
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
@@ -36,7 +36,7 @@ type Item struct {
 }
 
 type Store struct {
-	StoreID int    `json:"storeID" gorm:"column:storeid"`
+	StoreID int    `json:"storeID" gorm:"->;primaryKey;column:storeid"`
 	Address string `json:"address"`
 }
 
@@ -46,8 +46,9 @@ type ItemInStock struct {
 }
 
 type StockRequest struct {
-	StoreID int
-	*ItemInStock
+	StoreID int `json:"storeID" gorm:"->;primaryKey;column:storeid"`
+	ItemID  int `json:"itemID" gorm:"->;primaryKey;column:itemid"`
+	Location
 }
 
 type Location struct {
@@ -56,7 +57,7 @@ type Location struct {
 }
 
 type Category struct {
-	CategoryID int    `json:"categoryID" gorm:"column:categoryid"`
+	CategoryID int    `json:"categoryID" gorm:"->;primaryKey;column:categoryid"`
 	Name       string `json:"category" gorm:"column:category"`
 }
 
@@ -146,7 +147,12 @@ func (s *shopService) DeleteItem(itemID int) (bool, error) {
 	return false, nil
 }
 func (s *shopService) DeleteStore(storeID int) (bool, error) {
-	return false, nil
+	result, err := s.db.deleteStore(storeID)
+	if err != nil {
+		// log.Printf("%v", err)
+		return false, err
+	}
+	return result, nil
 }
 func (s *shopService) CreateStock(request *StockRequest) (*StockRequest, error) {
 	item, err := s.db.addStock(request)

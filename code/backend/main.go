@@ -94,12 +94,12 @@ func main() {
 	router.GET("/store/:id", getStore) //return store + stock
 	router.POST("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), createStore)
 	router.PUT("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), updateStore)
-	router.DELETE("/store", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
+	router.DELETE("/store/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteStore)
 
 	//stock
-	router.POST("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), createStock)
-	router.PUT("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), editStock)
-	router.DELETE("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager"}), deleteStock)
+	router.POST("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), createStock)
+	router.PUT("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), editStock)
+	router.DELETE("/stock/:store/:item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteStock)
 	if port == "443" {
 		router.RunTLS(":"+port, "create cert here", "create key here")
 	} else {
@@ -202,7 +202,7 @@ func getAccount(c *gin.Context) {
 	}
 	// usernameStr := username.(string)
 
-	log.Printf("[Gateway] [GetAccount] %s", username)
+	log.Printf("[Gateway] [GetAccount] %s\n", username)
 
 	input := &cognito.AdminGetUserInput{
 		UserPoolId: aws.String(userPoolID),
@@ -230,7 +230,7 @@ func getAccountByUsername(c *gin.Context) {
 	// 	return
 	// }
 
-	log.Printf("[Gateway] [GetAccountByUsername] %s", username)
+	log.Printf("[Gateway] [GetAccountByUsername] %s\n", username)
 
 	input := &cognito.AdminGetUserInput{
 		UserPoolId: aws.String(userPoolID),
@@ -239,7 +239,6 @@ func getAccountByUsername(c *gin.Context) {
 
 	resp, err := userSrv.GetUser(input)
 	if err != nil {
-
 		c.AbortWithError(500, err)
 		return
 	}
@@ -481,7 +480,21 @@ func updateStore(c *gin.Context) {
 }
 
 func deleteStore(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	id := c.Param("id")
+	storeID, err := strconv.Atoi(id)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	resp, err := shopSrv.DeleteStore(storeID)
+
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	c.JSON(200, &resp)
 }
 
 func createStock(c *gin.Context) {
@@ -492,20 +505,27 @@ func createStock(c *gin.Context) {
 	err := c.ShouldBind(&request)
 	if err != nil {
 		c.JSON(500, err)
+		return
 	}
 
 	if !isAdmin(c) {
 		username := c.MustGet("username").(string)
 		user, err := userSrv.GetProfile(username) //change to user's shop
+		log.Printf("[Gateway] [CreateStock] [GetUser] %s - %v\n", username, user)
 		if err != nil {
-			c.JSON(500, err)
+			c.AbortWithError(500, err)
+			return
 		}
-		request.StoreID = user.StoreID
+		// request.StoreID = user.StoreID
+		request.StoreID = 2 //@CHUN WAH THE ABOVE DOES NOT WORK
 	}
+
+	log.Printf("[Main] [CreateStock] %v", request)
 
 	resp, err := shopSrv.CreateStock(request)
 	if err != nil {
 		c.JSON(500, err)
+		return
 	}
 
 	c.JSON(200, resp)
@@ -516,34 +536,49 @@ func editStock(c *gin.Context) {
 
 	err := c.ShouldBind(&request)
 	if err != nil {
-		c.JSON(500, err)
+		c.AbortWithError(500, err)
+		return
 	}
 
 	if !isAdmin(c) {
 		username := c.MustGet("username").(string)
 		user, err := userSrv.GetProfile(username) //change to user's shop
+		log.Printf("[Gateway] [EditStock] [GetUser] %s - %v\n", username, user)
 		if err != nil {
-			c.JSON(500, err)
+			c.AbortWithError(500, err)
+			return
 		}
-		request.StoreID = user.StoreID
+		// request.StoreID = user.StoreID
+		request.StoreID = 2 //@CHUN WAH THE ABOVE DOES NOT WORK
 	}
 
 	resp, err := shopSrv.UpdateStock(request)
 	if err != nil {
-		c.JSON(500, err)
+		c.AbortWithError(500, err)
+		return
 	}
 
 	c.JSON(200, resp)
 }
 
 func deleteStock(c *gin.Context) {
-	type Request struct {
-		StoreID int `json:"storeID"`
-		ItemID  int `json:"itemID"`
-	}
-	var request Request
+	// type Request struct {
+	// 	StoreID int `json:"storeID"`
+	// 	ItemID  int `json:"itemID"`
+	// }
+	// var request Request
 
-	err := c.ShouldBind(&request)
+	// err := c.ShouldBind(&request)
+
+	storeParam := c.Param("store")
+	itemParam := c.Param("item")
+
+	storeID, err := strconv.Atoi(storeParam)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	itemID, err := strconv.Atoi(itemParam)
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -554,10 +589,10 @@ func deleteStock(c *gin.Context) {
 		if err != nil {
 			c.JSON(500, err)
 		}
-		request.StoreID = user.StoreID
+		storeID = user.StoreID
 	}
 
-	resp, err := shopSrv.DeleteStock(request.StoreID, request.ItemID)
+	resp, err := shopSrv.DeleteStock(storeID, itemID)
 	if err != nil {
 		c.JSON(500, err)
 	}
@@ -566,8 +601,8 @@ func deleteStock(c *gin.Context) {
 }
 
 func isAdmin(c *gin.Context) bool {
-	groups := c.Keys["groups"].([]string)
-
+	groups := c.GetStringSlice("groups")
+	// log.Printf("[Main] [isAdmin] %s - %v", c.GetString("username"), groups)
 	for _, group := range groups {
 		if group == "admin" {
 			return true

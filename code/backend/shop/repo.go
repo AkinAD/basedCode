@@ -59,7 +59,9 @@ func (r *shopRepo) addItem(item *Item) (*Item, error) {
 }
 
 func (r *shopRepo) addStock(input *StockRequest) (*StockRequest, error) {
-	result := r.db.Table("stock").Create(&input)
+	// result := r.db.Table("stock").Create(&input)
+	result := r.db.Exec("INSERT INTO stock (storeid, itemid, row, col) VALUES (?, ?, ?, ?)", input.StoreID, input.ItemID, input.Row, input.Col)
+
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -67,7 +69,7 @@ func (r *shopRepo) addStock(input *StockRequest) (*StockRequest, error) {
 }
 
 func (r *shopRepo) deleteStock(storeID, itemID int) (bool, error) {
-	result := r.db.Table("stock").Where("storeID = ? AND itemID = ?", storeID, itemID).Delete(&ItemInStock{})
+	result := r.db.Exec("DELETE FROM stock WHERE storeID = ? AND itemID = ?", storeID, itemID)
 	if result.Error != nil {
 		return false, result.Error
 	}
@@ -100,27 +102,6 @@ func (r *shopRepo) getStores() ([]*Store, error) {
 
 func (r *shopRepo) getStore(storeID int) ([]*ItemInStock, error) {
 	var itemsInStore []*ItemInStock
-	// result := r.db.Table("stock").Where("storeID = ?", storeID).Find(&itemsInStore)
-	// if result.Error != nil {
-	// 	return nil, result.Error
-	// }
-
-	// itemsInStock := make(map[*Item]*Location)
-
-	// for _, entry := range itemsInStore {
-	// 	var item *Item
-	// 	result = r.db.Table("items").Where("itemID = ?", entry.ItemID).First(&item)
-	// 	if result.Error != nil {
-	// 		return nil, result.Error
-	// 	}
-	// 	itemsInStock[item] = &Location{Row: entry.Row, Col: entry.Col}
-	// }
-
-	// stock := &Stock{
-	// 	StoreID: storeID,
-	// 	Stock:   itemsInStock,
-	// }
-
 	stmt := "select i.itemid, i.name as name, description,  c.categoryid, c.name as category, price, row, col from stock join items i on stock.itemid = i.itemid join categories c on c.categoryid = i.categoryid where storeid = ?"
 	result := r.db.Raw(stmt, storeID).Scan(&itemsInStore)
 	if result.Error != nil {
@@ -131,15 +112,38 @@ func (r *shopRepo) getStore(storeID int) ([]*ItemInStock, error) {
 }
 
 func (r *shopRepo) addStore(store *Store) (*Store, error) {
-	return nil, nil
+	result := r.db.Table("stores").Create(&store)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return store, nil
+
 }
 
 func (r *shopRepo) updateStore(store *Store) (*Store, error) {
-	return nil, nil
+	result := r.db.Table("stores").Model(&store).Omit("storeid").Updates(&store)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return store, nil
 }
 
 func (r *shopRepo) deleteStore(ID int) (bool, error) {
-	return false, nil
+	result := r.db.Table("stores").Delete(&Store{StoreID: ID})
+	if result.Error != nil {
+		return false, result.Error
+	}
+
+	return true, nil
 }
 
-func (r *shopRepo) updateStock(item *StockRequest) (*StockRequest, error) { return nil, nil }
+func (r *shopRepo) updateStock(item *StockRequest) (*StockRequest, error) {
+	result := r.db.Table("stock").Model(&item).Omit("storeid", "itemid").Updates(&item)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return item, nil
+}

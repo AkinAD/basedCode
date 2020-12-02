@@ -27,10 +27,10 @@ func NewService(awsRegion, awsID, awsSecret string, conn string) UserService {
 }
 
 type User struct {
-	Username  string
-	StoreID   int
-	FirstName string
-	LastName  string
+	Username  string `json:"username" gorm:"column:username"`
+	StoreID   int    `json:"storeID" gorm:"column:storeid"`
+	FirstName string `json:"firstName" gorm:"column:firstname"`
+	LastName  string `json:"lastName" gorm:"column:lastname"`
 }
 
 func awsSession(awsRegion, awsID, awsSecret string) (*session.Session, error) {
