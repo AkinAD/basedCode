@@ -412,7 +412,18 @@ func updateItem(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(502, err)
 	}
-	fmt.Println("updateItem boba")
+
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+
+	request.ItemID = id
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	fmt.Println("updateItem request")
+	fmt.Printf("%+v\n", request)
 	// if POSTMAN request body doesn't have itemID then &resp is null
 	resp, err := shopSrv.UpdateItem(request)
 	if err != nil {

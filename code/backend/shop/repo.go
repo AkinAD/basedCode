@@ -55,11 +55,6 @@ func (r *shopRepo) getItem(ID int) (*Item, error) {
 }
 
 func (r *shopRepo) addItem(item *Item) (*Item, error) {
-	// insert into items (name, description, categoryid, price)
-	// values ('Nike React', 'running shoes',2,100.00)
-	// var item Item
-	// result := r.db.Raw("DELETE from items WHERE itemid = ?", nil).Scan(&item)
-	// result := r.db.Create(&item)
 	result := r.db.Exec("INSERT INTO items (name, description, categoryid, price) VALUES (?, ?, ?, ?)", item.Name, item.Description, item.CategoryID, item.Price)
 
 	err := result.Error
@@ -105,7 +100,7 @@ func (r *shopRepo) getItems() ([]*Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(items)
+
 	return items, err
 }
 
@@ -114,14 +109,23 @@ func (r *shopRepo) getItemsFromStore(ID int) ([]*Item, error) {
 }
 
 func (r *shopRepo) updateItem(item *Item) (*Item, error) {
+	// for fields that aren't in request body, it updates item to 0 or empty string. for categoryID, it uses that in WHERE clause instead of updating it
+	// result := r.db.Debug().Model(&item).Updates(map[string]interface{}{"itemid": item.ItemID, "name": item.Name, "description": item.Description, "categoryid": item.CategoryID, "price": item.Price})
+
 	result := r.db.Debug().Table("items").Model(&item).Omit("itemid").Updates(&item)
 
-	// result := r.db.Table("items").Where("itemid = ?", item.ItemID).Update("storeID", preferredStore)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	fmt.Println("repo.go updateItem")
-	fmt.Println(item)
+
+	if item.CategoryID != 0 {
+		result = r.db.Debug().Raw("update items set categoryid = ? where itemid = ?", item.CategoryID, item.ItemID).Scan(&item)
+	}
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
 	return item, nil
 }
 
@@ -133,8 +137,8 @@ func (r *shopRepo) deleteItem(ID int) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	fmt.Println(items)
-	return true, err
+
+	return true, nil
 }
 func (r *shopRepo) getStores() ([]*Store, error) {
 	var stores []*Store
@@ -142,6 +146,7 @@ func (r *shopRepo) getStores() ([]*Store, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
+
 	return stores, nil
 }
 
