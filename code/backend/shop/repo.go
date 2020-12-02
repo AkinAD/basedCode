@@ -57,7 +57,7 @@ func (r *shopRepo) getItem(ID int) (*Item, error) {
 func (r *shopRepo) addItem(item *Item) (*Item, error) {
 	// insert into items (name, description, categoryid, price)
 	// values ('Nike React', 'running shoes',2,100.00)
-	var item Item
+	// var item Item
 	result := r.db.Raw("DELETE from items WHERE itemid = ?", nil).Scan(&item)
 	err := result.Error
 
@@ -68,7 +68,7 @@ func (r *shopRepo) addItem(item *Item) (*Item, error) {
 	fmt.Println(item)
 	fmt.Println("&item")
 	fmt.Println(&item)
-	return &item, err
+	return item, err
 }
 
 func (r *shopRepo) addStock(input *StockRequest) (*StockRequest, error) {
@@ -90,7 +90,7 @@ func (r *shopRepo) deleteStock(storeID, itemID int) (bool, error) {
 }
 
 func (r *shopRepo) getItems() ([]*Item, error) {
-	var items []Item
+	var items []*Item
 	result := r.db.Find(&items)
 	fmt.Println("result")
 	fmt.Println(result)
@@ -103,7 +103,7 @@ func (r *shopRepo) getItems() ([]*Item, error) {
 		return nil, err
 	}
 	fmt.Println(items)
-	return &items, err
+	return items, err
 }
 
 func (r *shopRepo) getItemsFromStore(ID int) ([]*Item, error) {
@@ -111,7 +111,14 @@ func (r *shopRepo) getItemsFromStore(ID int) ([]*Item, error) {
 }
 
 func (r *shopRepo) updateItem(item *Item) (*Item, error) {
-	return nil, nil
+	result := r.db.Debug().Table("items").Model(&item).Omit("itemid").Updates(&item)
+
+	// result := r.db.Table("items").Where("itemid = ?", item.ItemID).Update("storeID", preferredStore)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return item, nil
 }
 
 func (r *shopRepo) deleteItem(ID int) (bool, error) {
@@ -156,7 +163,7 @@ func (r *shopRepo) addStore(store *Store) (*Store, error) {
 }
 
 func (r *shopRepo) updateStore(store *Store) (*Store, error) {
-	result := r.db.Table("stores").Model(&store).Omit("storeid").Updates(&store)
+	result := r.db.Debug().Table("stores").Model(&store).Omit("storeid").Updates(&store)
 	if result.Error != nil {
 		return nil, result.Error
 	}

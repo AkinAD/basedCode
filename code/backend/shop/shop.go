@@ -141,10 +141,15 @@ func (s *shopService) UpdateStore(store *Store) (*Store, error) {
 }
 
 func (s *shopService) UpdateItem(item *Item) (*Item, error) {
-	return nil, nil
+	updatedItem, err := s.db.updateItem(item)
+	if err != nil {
+		return nil, err
+	}
+	return updatedItem, nil
 }
+
 func (s *shopService) DeleteItem(itemID int) (bool, error) {
-	deleteResult, err := s.db.deleteItem(ID)
+	deleteResult, err := s.db.deleteItem(itemID)
 	if err != nil {
 		return false, err
 	}

@@ -364,7 +364,7 @@ func promoteTo(c *gin.Context, group string) {
 }
 
 func getItems(c *gin.Context) {
-	items, err := itemSrv.GetItems()
+	items, err := shopSrv.GetItems()
 
 	if err != nil {
 		c.JSON(500, err)
@@ -395,20 +395,20 @@ func createItem(c *gin.Context) {
 }
 
 func updateItem(c *gin.Context) {
-	type ItemRequest struct {
-		ID          int `gorm:"<-:false"`
-		Name        string
-		Description string
-		Category    Category
-		Price       float64
-	}
-	var item ItemRequest
-	err := c.ShouldBind(&item)
+	var request *shop.Item
+	err := c.ShouldBind(&request)
 	if err != nil {
-		c.JSON(401, err)
+		c.AbortWithError(502, err)
+	}
+	fmt.Println("updateItem cwc hi")
+	c.JSON(200, gin.H{"cwc request": request})
+
+	resp, err := shopSrv.UpdateItem(request)
+	if err != nil {
+		c.AbortWithError(502, err)
 	}
 
-	c.JSON(200, gin.H{"message": "hello"})
+	c.JSON(200, &resp)
 }
 
 func deleteItem(c *gin.Context) {
@@ -419,7 +419,7 @@ func deleteItem(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
-	deleteResult, err := itemSrv.DeleteItem(id)
+	deleteResult, err := shopSrv.DeleteItem(id)
 
 	if err != nil {
 		c.JSON(500, err)
