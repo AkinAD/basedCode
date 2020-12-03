@@ -381,6 +381,7 @@ func getItem(c *gin.Context) {
 		c.JSON(500, err)
 	}
 
+	log.Printf("[Main] [GetItem] %v", id)
 	resp, err := shopSrv.GetItem(id)
 
 	if err != nil {
