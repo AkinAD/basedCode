@@ -16,7 +16,7 @@
     </v-container>
 
     <v-row>
-      <v-col sm="6" md="4" v-for="item in searchFilteredItems" :key="item.id">
+      <v-col sm="6" md="4" v-for="item in searchFilteredItems" :key="item.itemID">
         <VerticalProduct :product="item" />
       </v-col>
     </v-row>
@@ -55,7 +55,7 @@ export default {
     searchFilteredItems() {
       const search = this.search.toLowerCase();
       return this.filteredItems.filter((item) => {
-        return item.title.toLowerCase().includes(search);
+        return item.name.toLowerCase().includes(search);
       });
     },
   },

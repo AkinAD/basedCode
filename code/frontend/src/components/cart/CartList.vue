@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid full-width>
+  <v-container>
     <v-row>
       <v-col md="12" v-for="item in getCart" :key="item.id">
         <CartCard

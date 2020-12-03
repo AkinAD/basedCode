@@ -28,15 +28,15 @@
               :key="item.title"
               :value="i"
             >
-              <v-list-item-avatar>
-                <v-img :src="item.image" contain></v-img>
-              </v-list-item-avatar>
               <v-list-item-content>
                 <h3>Visit Order: {{ i + 1 }}</h3>
-                <v-list-item-title v-text="item.title"></v-list-item-title>
-                <v-list-item-subtitle> ${{ item.price }} </v-list-item-subtitle>
+                <v-list-item-title v-text="item.name"></v-list-item-title>
                 <v-list-item-subtitle>
-                  Location: {{ item.location }}
+                  ${{ item.price }} <br />
+                  {{ item.category }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  Row: {{ item.row }} Column: {{ item.col }}
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -69,7 +69,7 @@ export default {
     },
     cartCount() {
       return this.getCart.length;
-    }
+    },
   },
 
   methods: {

@@ -43,7 +43,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getFilters", "getPriceFilter", "getCategories"]),
+    ...mapGetters(["getFilters", "getPriceFilter", "getCategories", "getSelectedCategory"]),
   },
 
   methods: {
@@ -58,7 +58,11 @@ export default {
     },
 
     setCategory() {
-
+      if (this.selectionCategory === 0) this.setSelectedCategory("");
+      if (this.selectionCategory === 1) this.setSelectedCategory("");
+      if (this.selectionCategory === 2) this.setSelectedCategory("");
+      if (this.selectionCategory === 3) this.setSelectedCategory("");
+      if (this.selectionCategory === 4) this.setSelectedCategory("");
     }
   },
 };

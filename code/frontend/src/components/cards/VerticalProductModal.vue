@@ -7,27 +7,28 @@
 
       <v-card>
         <v-container fluid mx-auto>
-          <v-card-title class="headline grey lighten-2">
-            {{ product.title }}
+          <v-card-title>
+            {{ product.name }}
           </v-card-title>
-          <v-card-subtitle> $ {{ product.price }} </v-card-subtitle>
 
-          <v-img :src="product.image" contain height="200px"> </v-img>
-
-          <v-card-text> Item description here </v-card-text>
-
-          <v-divider></v-divider>
-
-          <v-card-text> Location in store </v-card-text>
-
-          <!--in store location component here | pass product as prop-->
+          <v-card-subtitle>
+            Price: ${{ product.price }} <br />
+            Category: {{ product.category }}
+          </v-card-subtitle>
 
           <v-divider></v-divider>
 
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="dialog = false"> Close </v-btn>
-          </v-card-actions>
+          <v-card-text> <h4>Product description:</h4> </v-card-text>
+
+          <v-card-text> {{ product.description }}</v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-text> <h4>Location in store:</h4> </v-card-text>
+
+          <v-card-text>
+            Row: {{ product.row }} Column: {{ product.col }}</v-card-text
+          >
         </v-container>
       </v-card>
     </v-dialog>

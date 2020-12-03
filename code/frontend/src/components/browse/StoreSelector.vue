@@ -40,18 +40,15 @@
             <v-list-item
               v-for="item in categories"
               two-line
-              :key="item.text"
+              :key="item.itemID"
               :disabled="loading"
               @click="select(item)"
             >
               <v-list-item-avatar>
-                <v-icon :disabled="loading" v-text="item.icon"></v-icon>
+                <v-icon :disabled="loading">mdi-store</v-icon>
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title v-text="item.text"></v-list-item-title>
-                <v-list-item-subtitle
-                  v-text="item.location"
-                ></v-list-item-subtitle>
+                <v-list-item-title v-text="item.address"></v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
@@ -87,7 +84,6 @@ export default {
       selected: null,
     };
   },
-
   computed: {
     ...mapGetters(["getSelectedStore", "getStores", "getDialog"]),
     nonEmptyStore() {
@@ -99,7 +95,7 @@ export default {
       if (!search) return this.getStores;
 
       return this.getStores.filter((store) => {
-        const text = store.text.toLowerCase();
+        const text = store.address.toLowerCase();
         return text.indexOf(search) > -1;
       });
     },

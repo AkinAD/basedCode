@@ -51,7 +51,7 @@ export default {
       const { payload } = data;
       if (payload.event === "signIn") {
         this.signIn();
-        this.$router.push("/home"); 
+        this.$router.push("/home");
       }
       if (payload.event === "signOut") {
         this.signOut();
@@ -68,8 +68,11 @@ export default {
         this.$router.push("/home");
       });
   },
+  created() {
+    this.updateStores();
+  },
   methods: {
-    ...mapActions(["signIn", "signOut"]),
+    ...mapActions(["signIn", "signOut", "updateStores"]),
     onScroll(e) {
       if (typeof window === "undefined") return;
       const top = window.pageYOffset || e.target.scrollTop || 0;
