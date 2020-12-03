@@ -1,7 +1,5 @@
 package shop
 
-import "fmt"
-
 type ShopService interface {
 	GetItems() ([]*Item, error)
 	GetItemsFromStore(ID int) ([]*Item, error)
@@ -59,7 +57,7 @@ type Location struct {
 }
 
 type Category struct {
-	CategoryID int    `json:"categoryID" gorm:"->;primaryKey;column:categoryid"`
+	CategoryID int    `json:"categoryID" gorm:"column:categoryid"`
 	Name       string `json:"category" gorm:"column:category"`
 }
 
@@ -147,8 +145,8 @@ func (s *shopService) UpdateItem(item *Item) (*Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("shop.go UpdateItem")
-	fmt.Println(updatedItem)
+	// fmt.Println("shop.go UpdateItem")
+	// fmt.Println(updatedItem)
 	return updatedItem, nil
 }
 

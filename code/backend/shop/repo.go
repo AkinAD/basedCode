@@ -110,22 +110,13 @@ func (r *shopRepo) getItemsFromStore(ID int) ([]*Item, error) {
 
 func (r *shopRepo) updateItem(item *Item) (*Item, error) {
 	// for fields that aren't in request body, it updates item to 0 or empty string. for categoryID, it uses that in WHERE clause instead of updating it
-	// result := r.db.Debug().Model(&item).Updates(map[string]interface{}{"itemid": item.ItemID, "name": item.Name, "description": item.Description, "categoryid": item.CategoryID, "price": item.Price})
+	// result := r.db.Debug().Model(&item).Updates(map[string]interface{}{"name": item.Name, "description": item.Description, "categoryid": item.CategoryID, "price": item.Price})
 
 	result := r.db.Debug().Table("items").Model(&item).Omit("itemid").Updates(&item)
 
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
-	if item.CategoryID != 0 {
-		result = r.db.Debug().Raw("update items set categoryid = ? where itemid = ?", item.CategoryID, item.ItemID).Scan(&item)
-	}
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
 	return item, nil
 }
 
