@@ -1,7 +1,7 @@
 package shop
 
 import (
-	"fmt"
+	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -43,15 +43,18 @@ func initDatabase(config string) *gorm.DB {
 }
 
 func (r *shopRepo) getItem(ID int) (*Item, error) {
-	var items []Item
-	result := r.db.Raw("SELECT * from items WHERE itemid = ?", ID).Scan(&items)
+	var items []*Item
+	result := r.db.Raw("select itemid, i.name as name, description, i.categoryid as categoryid, price, c.name as category from items i join categories c on c.categoryid = i.categoryid where itemid = ?", ID).Scan(&items)
+
 	err := result.Error
 
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(items)
-	return &items[0], err
+
+	log.Printf("[Shop] [Repo] [GetItem] %v | %v", ID, items[0])
+
+	return items[0], nil
 }
 
 func (r *shopRepo) addItem(item *Item) (*Item, error) {
@@ -62,11 +65,8 @@ func (r *shopRepo) addItem(item *Item) (*Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("repo.go addItem")
-	fmt.Println(item)
-	fmt.Println("&item")
-	fmt.Println(&item)
-	return item, err
+
+	return item, nil
 }
 
 func (r *shopRepo) addStock(input *StockRequest) (*StockRequest, error) {
@@ -89,11 +89,7 @@ func (r *shopRepo) deleteStock(storeID, itemID int) (bool, error) {
 
 func (r *shopRepo) getItems() ([]*Item, error) {
 	var items []*Item
-	result := r.db.Find(&items)
-	fmt.Println("result")
-	fmt.Println(result)
-	fmt.Println("items")
-	fmt.Println(items)
+	result := r.db.Raw("select itemid, i.name as name, description, i.categoryid as categoryid, price, c.name as category from items i join categories c on c.categoryid = i.categoryid").Scan(&items)
 
 	err := result.Error
 
@@ -101,7 +97,7 @@ func (r *shopRepo) getItems() ([]*Item, error) {
 		return nil, err
 	}
 
-	return items, err
+	return items, nil
 }
 
 func (r *shopRepo) getItemsFromStore(ID int) ([]*Item, error) {
