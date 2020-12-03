@@ -57,7 +57,7 @@ type Location struct {
 }
 
 type Category struct {
-	CategoryID int    `json:"categoryID" gorm:"->;primaryKey;column:categoryid"`
+	CategoryID int    `json:"categoryID" gorm:"column:categoryid"`
 	Name       string `json:"category" gorm:"column:category"`
 }
 
@@ -141,10 +141,21 @@ func (s *shopService) UpdateStore(store *Store) (*Store, error) {
 }
 
 func (s *shopService) UpdateItem(item *Item) (*Item, error) {
-	return nil, nil
+	updatedItem, err := s.db.updateItem(item)
+	if err != nil {
+		return nil, err
+	}
+	// fmt.Println("shop.go UpdateItem")
+	// fmt.Println(updatedItem)
+	return updatedItem, nil
 }
+
 func (s *shopService) DeleteItem(itemID int) (bool, error) {
-	return false, nil
+	deleteResult, err := s.db.deleteItem(itemID)
+	if err != nil {
+		return false, err
+	}
+	return deleteResult, nil
 }
 func (s *shopService) DeleteStore(storeID int) (bool, error) {
 	result, err := s.db.deleteStore(storeID)

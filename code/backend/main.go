@@ -61,7 +61,7 @@ func main() {
 	//all account types
 	router.GET("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
 	router.GET("/account/:user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getAccountByUsername)
-	router.PUT("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
+	router.PUT("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
 
 	//users
 	router.GET("/user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupUser)
@@ -85,7 +85,7 @@ func main() {
 	//item
 	router.GET("/item", getItems) //?storeID= to get the shops/stock for a specific store
 	router.GET("/item/:id", getItem)
-	router.POST("itemp", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), createItem)
+	router.POST("/item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), createItem)
 	router.PUT("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), updateItem)
 	router.DELETE("/item/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteItem)
 
@@ -247,20 +247,21 @@ func getAccountByUsername(c *gin.Context) {
 }
 
 func updateAccount(c *gin.Context) {
-	var userInput user.User
-	err := c.ShouldBind(&userInput)
+	var user *user.User
+	err := c.ShouldBind(&user)
 	if err != nil {
-		c.JSON(500, err)
+		c.JSON(401, err)
 	}
-	//c.JSON(500, gin.H{"input": userInput})
 
-	//userInput = user.User{Username: input.Username, StoreID: input.StoreID, FirstName: input.FirstName, LastName: input.LastName}
-
-	resp, err := userSrv.UpdateProfile(&userInput)
+	// grab the username and connect to the userDB to find them
+	// then update the db with the preferred location
+	//err = shopSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
+	resp, err := userSrv.UpdateProfile(user)
 	if err != nil {
 		c.JSON(401, err)
 	}
 	c.JSON(200, &resp)
+
 }
 
 func getGroupUser(c *gin.Context) {
@@ -288,8 +289,8 @@ func getGroup(c *gin.Context, group string) {
 	// }
 
 	input := &cognito.ListUsersInGroupInput{
-		GroupName: aws.String(group),
-		//NextToken:  aws.String("1"),
+		GroupName:  aws.String(group),
+		NextToken:  aws.String("1"),
 		UserPoolId: aws.String(userPoolID),
 	}
 
@@ -316,7 +317,7 @@ func createEmployee(c *gin.Context) {
 	}
 
 	payload := &cognito.AdminCreateUserInput{
-		DesiredDeliveryMediums: []*string{aws.String("EMAIL")},
+		DesiredDeliveryMediums: []*string{aws.String("email")},
 		// ForceAliasCreation:     aws.Bool(true),
 		UserAttributes: []*cognito.AttributeType{&cognito.AttributeType{Name: aws.String(cognito.UsernameAttributeTypeEmail), Value: aws.String(input.Email)}},
 		UserPoolId:     aws.String(userPoolID),
@@ -343,23 +344,16 @@ func promoteToAdmin(c *gin.Context) {
 }
 
 func promoteTo(c *gin.Context, group string) {
-	type userInfo struct {
-		Username string `json:"username"`
-	}
-	var userInputInfo userInfo
-
-	err := c.ShouldBind(&userInputInfo)
+	var username string
+	err := c.ShouldBind(&username)
 	if err != nil {
 		c.JSON(500, err)
 	}
-	//c.JSON(200, gin.H{"username": userInputInfo.Username})
-
 	input := &cognito.AdminAddUserToGroupInput{
 		GroupName:  aws.String(group),
 		UserPoolId: aws.String(userPoolID),
-		Username:   aws.String(userInputInfo.Username),
+		Username:   aws.String(username),
 	}
-	//c.JSON(200, gin.H{"input": input})
 
 	resp, err := userSrv.AddUserToGroup(input)
 	if err != nil {
@@ -370,33 +364,13 @@ func promoteTo(c *gin.Context, group string) {
 }
 
 func getItems(c *gin.Context) {
-	var resp []*shop.Item
+	items, err := shopSrv.GetItems()
 
-	idString := c.Param("shop")
-	if idString == "" {
-		resp, err := shopSrv.GetItems()
-
-		if err != nil {
-			c.JSON(500, err)
-		}
-
-		c.JSON(200, &resp)
-	} else {
-
-		id, err := strconv.Atoi(idString)
-
-		if err != nil {
-			c.JSON(500, err)
-		}
-
-		resp, err = shopSrv.GetItemsFromStore(id)
-
-		if err != nil {
-			c.JSON(500, err)
-		}
-		c.JSON(200, &resp)
+	if err != nil {
+		c.JSON(500, err)
 	}
 
+	c.JSON(200, &items)
 }
 
 func getItem(c *gin.Context) {
@@ -417,15 +391,63 @@ func getItem(c *gin.Context) {
 }
 
 func createItem(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	var request *shop.Item
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+	fmt.Println("createItem lots of boba")
+	// if POSTMAN request body doesn't have itemID then &resp is null
+	resp, err := shopSrv.CreateItem(request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	c.JSON(200, &resp)
 }
 
 func updateItem(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	var request *shop.Item
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+
+	request.ItemID = id
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	fmt.Println("updateItem request")
+	fmt.Printf("%+v\n", request)
+	// if POSTMAN request body doesn't have itemID then &resp is null
+	resp, err := shopSrv.UpdateItem(request)
+	if err != nil {
+		c.AbortWithError(502, err)
+	}
+
+	c.JSON(200, &resp)
 }
 
 func deleteItem(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "hello"})
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	deleteResult, err := shopSrv.DeleteItem(id)
+
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	c.JSON(200, &deleteResult)
 }
 
 func getStores(c *gin.Context) {

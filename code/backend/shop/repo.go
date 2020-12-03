@@ -44,18 +44,29 @@ func initDatabase(config string) *gorm.DB {
 
 func (r *shopRepo) getItem(ID int) (*Item, error) {
 	var items []Item
-	result := r.db.First(&items, ID)
+	result := r.db.Raw("SELECT * from items WHERE itemid = ?", ID).Scan(&items)
 	err := result.Error
 
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(items[0])
+	fmt.Println(items)
 	return &items[0], err
 }
 
 func (r *shopRepo) addItem(item *Item) (*Item, error) {
-	return nil, nil
+	result := r.db.Exec("INSERT INTO items (name, description, categoryid, price) VALUES (?, ?, ?, ?)", item.Name, item.Description, item.CategoryID, item.Price)
+
+	err := result.Error
+
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("repo.go addItem")
+	fmt.Println(item)
+	fmt.Println("&item")
+	fmt.Println(&item)
+	return item, err
 }
 
 func (r *shopRepo) addStock(input *StockRequest) (*StockRequest, error) {
@@ -77,7 +88,20 @@ func (r *shopRepo) deleteStock(storeID, itemID int) (bool, error) {
 }
 
 func (r *shopRepo) getItems() ([]*Item, error) {
-	return nil, nil
+	var items []*Item
+	result := r.db.Find(&items)
+	fmt.Println("result")
+	fmt.Println(result)
+	fmt.Println("items")
+	fmt.Println(items)
+
+	err := result.Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return items, err
 }
 
 func (r *shopRepo) getItemsFromStore(ID int) ([]*Item, error) {
@@ -85,11 +109,27 @@ func (r *shopRepo) getItemsFromStore(ID int) ([]*Item, error) {
 }
 
 func (r *shopRepo) updateItem(item *Item) (*Item, error) {
-	return nil, nil
+	// for fields that aren't in request body, it updates item to 0 or empty string. for categoryID, it uses that in WHERE clause instead of updating it
+	// result := r.db.Debug().Model(&item).Updates(map[string]interface{}{"name": item.Name, "description": item.Description, "categoryid": item.CategoryID, "price": item.Price})
+
+	result := r.db.Debug().Table("items").Model(&item).Omit("itemid").Updates(&item)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return item, nil
 }
 
 func (r *shopRepo) deleteItem(ID int) (bool, error) {
-	return false, nil
+	var items []Item
+	result := r.db.Raw("DELETE from items WHERE itemid = ?", ID).Scan(&items)
+	err := result.Error
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 func (r *shopRepo) getStores() ([]*Store, error) {
 	var stores []*Store
@@ -97,6 +137,7 @@ func (r *shopRepo) getStores() ([]*Store, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
+
 	return stores, nil
 }
 
@@ -122,7 +163,7 @@ func (r *shopRepo) addStore(store *Store) (*Store, error) {
 }
 
 func (r *shopRepo) updateStore(store *Store) (*Store, error) {
-	result := r.db.Table("stores").Model(&store).Omit("storeid").Updates(&store)
+	result := r.db.Debug().Table("stores").Model(&store).Omit("storeid").Updates(&store)
 	if result.Error != nil {
 		return nil, result.Error
 	}
