@@ -18,13 +18,13 @@
       <v-row>
         <v-col
           md="12"
-          v-for="recommendation in allRecommendations"
-          :key="recommendation.id"
+          v-for="item in getItems"
+          :key="item.itemID"
         >
           <ManagementCard
             :fields="fields" 
             v-on:update-event="$emit('update-event', $event)"
-            :product="recommendation"
+            :product="item"
             :itemType="type"
             :visibleImage="showImage"
           />
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 import ManagementCard from "../cards/ManagementCard";
 import ManagementDialog from "./ManagementDialog";
@@ -57,13 +57,7 @@ export default {
       headline : `Add ${this.type}`
     }
   },
-  methods: {
-    ...mapActions(["fetchRecommendations"]),
-  },
-  computed: mapGetters(["allRecommendations"]),
-  created() {
-    this.fetchRecommendations();
-  },
+  computed: mapGetters(["getItems"]),
   
 };
 </script>

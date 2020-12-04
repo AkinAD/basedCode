@@ -1,19 +1,10 @@
 <template>
   <v-container outlined full-width>
     <v-row>
-      <!--Image-->
-      <v-col md="4">
-        <v-img
-          v-show="visibleImage"
-          :src="product.image"
-          contain
-          height="200px"
-        />
-      </v-col>
       <!--Info-->
       <v-col md="8">
-        <v-card-title>{{ product.title }} </v-card-title>
-        <v-card-subtitle>$ {{ product.price }} </v-card-subtitle>
+        <v-card-title>{{ product.name }} </v-card-title>
+        <v-card-subtitle>$ {{ product.price }} <br/> {{product.category}} </v-card-subtitle>
         <v-card-actions>
           <ManagementDialog 
             v-on:form-saved="$emit('update-event', $event)" 
@@ -51,10 +42,10 @@ export default {
     visibleImage: Boolean,
     fields: Array,
   },
-  data () {
+  data() {
     return {
-      headline : `Edit ${this.itemType}`
-    }
+      headline: `Edit ${this.itemType}`,
+    };
   },
 };
 </script>
