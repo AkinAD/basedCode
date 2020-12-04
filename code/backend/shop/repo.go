@@ -143,7 +143,7 @@ func (r *shopRepo) getStores() ([]*Store, error) {
 
 func (r *shopRepo) getStore(storeID int) ([]*ItemInStock, error) {
 	var itemsInStore []*ItemInStock
-	stmt := "select i.itemid, i.name as name, description,  c.categoryid, c.name as category, price, row, col from stock join items i on stock.itemid = i.itemid join categories c on c.categoryid = i.categoryid where storeid = ?"
+	stmt := "select i.itemid, i.name as name, description,  c.categoryid, c.category as category, price, row, col from stock join items i on stock.itemid = i.itemid join categories c on c.categoryid = i.categoryid where storeid = ?"
 	result := r.db.Raw(stmt, storeID).Scan(&itemsInStore)
 	if result.Error != nil {
 		return nil, result.Error
