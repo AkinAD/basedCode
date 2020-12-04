@@ -61,7 +61,8 @@ func main() {
 	//all account types
 	router.GET("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getAccount)
 	router.GET("/account/:user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getAccountByUsername)
-	router.PUT("/account", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
+	router.PUT("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), updateAccount)
+	//router.GET("/account/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"user", "employee", "manager", "admin"}), getProfile)
 
 	//users
 	router.GET("/user", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupUser)
@@ -216,19 +217,14 @@ func getAccount(c *gin.Context) {
 	}
 
 	c.JSON(200, resp)
+
+	getProfile(c, username)
+
 }
 
 func getAccountByUsername(c *gin.Context) {
-	// type Request struct {
-	// 	Username string `json:"username"`
-	// }
-	// var request Request
-	// err := c.ShouldBind(&request)
+
 	username := c.Param("user")
-	// if err != nil {
-	// 	c.AbortWithError(500, err)
-	// 	return
-	// }
 
 	log.Printf("[Gateway] [GetAccountByUsername] %s\n", username)
 
@@ -244,6 +240,7 @@ func getAccountByUsername(c *gin.Context) {
 	}
 
 	c.JSON(200, &resp)
+
 }
 
 func updateAccount(c *gin.Context) {
@@ -256,12 +253,23 @@ func updateAccount(c *gin.Context) {
 	// grab the username and connect to the userDB to find them
 	// then update the db with the preferred location
 	//err = shopSrv.db.Table("account").Where("username = ?", update.username).Update("storeID", update.preferredStore)
+
 	resp, err := userSrv.UpdateProfile(user)
 	if err != nil {
 		c.JSON(401, err)
 	}
 	c.JSON(200, &resp)
 
+}
+
+func getProfile(c *gin.Context, username string) {
+
+	resp, err := userSrv.GetProfile(username)
+	if err != nil {
+		c.JSON(401, err)
+		return
+	}
+	c.JSON(200, resp)
 }
 
 func getGroupUser(c *gin.Context) {
@@ -289,8 +297,8 @@ func getGroup(c *gin.Context, group string) {
 	// }
 
 	input := &cognito.ListUsersInGroupInput{
-		GroupName:  aws.String(group),
-		NextToken:  aws.String("1"),
+		GroupName: aws.String(group),
+		//	NextToken:  aws.String("1"),
 		UserPoolId: aws.String(userPoolID),
 	}
 
@@ -305,19 +313,20 @@ func getGroup(c *gin.Context, group string) {
 func createEmployee(c *gin.Context) {
 	//binded variables change depending on what is being sent from front-end
 	type CreateEmployeeInput struct {
-		Username string `json:"username"`
-		Email    string `json:"email"`
+		Username  string `json:"username"`
+		Email     string `json:"email"`
+		StoreID   int    `json:"storeid"`
+		FirstName string `json:"firstname"`
+		LastName  string `json:"lastname"`
 	}
-
 	var input CreateEmployeeInput
 
 	err := c.ShouldBind(&input)
 	if err != nil {
 		c.JSON(500, err)
 	}
-
 	payload := &cognito.AdminCreateUserInput{
-		DesiredDeliveryMediums: []*string{aws.String("email")},
+		DesiredDeliveryMediums: []*string{aws.String("EMAIL")},
 		// ForceAliasCreation:     aws.Bool(true),
 		UserAttributes: []*cognito.AttributeType{&cognito.AttributeType{Name: aws.String(cognito.UsernameAttributeTypeEmail), Value: aws.String(input.Email)}},
 		UserPoolId:     aws.String(userPoolID),
@@ -328,8 +337,13 @@ func createEmployee(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, err)
 	}
-
 	c.JSON(200, resp)
+
+	err2 := userSrv.CreateProfile(input.Username, input.StoreID, input.FirstName, input.LastName)
+	if err2 != nil {
+		c.JSON(500, err2)
+	}
+
 }
 
 func promoteToManager(c *gin.Context) {
@@ -344,16 +358,23 @@ func promoteToAdmin(c *gin.Context) {
 }
 
 func promoteTo(c *gin.Context, group string) {
-	var username string
-	err := c.ShouldBind(&username)
+	type userInfo struct {
+		Username string `json:"username"`
+	}
+	var userInputInfo userInfo
+
+	err := c.ShouldBind(&userInputInfo)
 	if err != nil {
 		c.JSON(500, err)
 	}
+	//c.JSON(200, gin.H{"username": userInputInfo.Username})
+
 	input := &cognito.AdminAddUserToGroupInput{
 		GroupName:  aws.String(group),
 		UserPoolId: aws.String(userPoolID),
-		Username:   aws.String(username),
+		Username:   aws.String(userInputInfo.Username),
 	}
+	//c.JSON(200, gin.H{"input": input})
 
 	resp, err := userSrv.AddUserToGroup(input)
 	if err != nil {
