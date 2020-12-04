@@ -28,7 +28,7 @@ func NewService(conn string) ShopService {
 }
 
 type Item struct {
-	ItemID      int     `json:"itemID" gorm:"->;primaryKey;column:itemid"`
+	ItemID      int     `json:"itemID" gorm:"primaryKey;column:itemid"`
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
@@ -36,7 +36,7 @@ type Item struct {
 }
 
 type Store struct {
-	StoreID int    `json:"storeID" gorm:"->;primaryKey;column:storeid"`
+	StoreID int    `json:"storeID" gorm:"primaryKey;column:storeid"`
 	Address string `json:"address"`
 }
 
@@ -46,8 +46,8 @@ type ItemInStock struct {
 }
 
 type StockRequest struct {
-	StoreID int `json:"storeID" gorm:"->;primaryKey;column:storeid"`
-	ItemID  int `json:"itemID" gorm:"->;primaryKey;column:itemid"`
+	StoreID int `json:"storeID" gorm:"primaryKey;column:storeid"`
+	ItemID  int `json:"itemID" gorm:"primaryKey;column:itemid"`
 	Location
 }
 
