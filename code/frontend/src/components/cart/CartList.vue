@@ -1,13 +1,11 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col md="12" v-for="item in getCart" :key="item.id">
-        <CartCard
-          :product="item"
-          visibleImage
-          v-on:remove-from-cart="removeFromCart($event)"
-        />
-      </v-col>
+    <v-row md="12" v-for="item in getCart" :key="item.id">
+      <CartCard
+        :product="item"
+        visibleImage
+        v-on:remove-from-cart="removeFromCart($event)"
+      />
     </v-row>
   </v-container>
 </template>
