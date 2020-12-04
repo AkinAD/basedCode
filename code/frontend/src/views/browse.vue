@@ -39,7 +39,7 @@ export default {
     ...mapGetters(["getSelectedStore"]),
     msg() {
       try {
-        return "Products from ".concat(`${this.getSelectedStore.text}`);
+        return "Products from ".concat(`${this.getSelectedStore.address}`);
       } catch (err) {
         return "";
       }

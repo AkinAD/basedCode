@@ -6,14 +6,6 @@ Vue.use(VueRouter);
 
 const routerOptions = [
   {
-    path: "/account",
-    component: "account",
-    meta: {
-      requiresAuth: true,
-      group: "user",
-    },
-  },
-  {
     path: "/browse",
     component: "browse",
   },
@@ -42,14 +34,6 @@ const routerOptions = [
     component: "login",
     meta: {
       requiresNonAuth: true,
-    },
-  },
-  {
-    path: "/cart",
-    component: "cart",
-    meta: {
-      requiresAuth: true,
-      group: "user",
     },
   },
   {

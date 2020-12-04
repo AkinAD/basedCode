@@ -1,11 +1,10 @@
 <template>
   <v-card outlined height="100%" elevation="1" class="d-flex flex-column">
-    <v-container fluid>
-      <v-img :src="product.image" contain height="200px" />
-    </v-container>
-
-    <v-card-title>{{ product.title }} </v-card-title>
-    <v-card-subtitle>$ {{ product.price }} </v-card-subtitle>
+    <v-card-title>{{ product.name }} </v-card-title>
+    <v-card-subtitle
+      >${{ product.price }} <br />
+      {{ product.category }}
+    </v-card-subtitle>
 
     <v-spacer></v-spacer>
 
@@ -45,7 +44,7 @@ export default {
 
     notAdded() {
       return !(
-        this.getCart.filter((product) => this.product.id === product.id)
+        this.getCart.filter((product) => this.product.itemID === product.itemID)
           .length === 1
       );
     },

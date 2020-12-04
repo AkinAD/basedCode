@@ -1,14 +1,16 @@
 <template>
   <v-container fluid>
     <Banner text="Your Shopping Cart" size="100px" />
-    <v-layout>
-      <v-row align="center" justify="center">
-        <h2>{{ subtotal }}</h2>
-      </v-row>
-    </v-layout>
-    <v-row>
-      <OptimumRoute />
+    <v-row align="center" justify="center">
+      <h2>{{ subtotal }}</h2>
     </v-row>
+    <v-container>
+      <v-row align="center" justify="center">
+        <v-btn color="red" outlined :disabled="noItems" v-on:click="emptyCart"
+          >Empty Cart</v-btn
+        >
+      </v-row>
+    </v-container>
     <v-row>
       <CartList />
     </v-row>
@@ -18,17 +20,22 @@
 <script>
 import CartList from "../components/cart/CartList.vue";
 import Banner from "../components/layout/Banner.vue";
-import OptimumRoute from "../components/OptimumRoute";
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   components: {
     CartList,
     Banner,
-    OptimumRoute
+  },
+  methods: {
+    ...mapMutations(["emptyCart"]),
   },
   computed: {
     ...mapGetters(["getCart"]),
+
+    noItems() {
+      return this.getCart.length === 0;
+    },
 
     subtotal() {
       var sum = 0;

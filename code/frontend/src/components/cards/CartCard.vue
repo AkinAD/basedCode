@@ -1,20 +1,11 @@
 <template>
   <v-container fluid>
-    <v-card class="card-outter" elevation="2">
+    <v-card class="card-outter" elevation="3">
       <v-row>
-        <!--Image-->
-        <v-col md="4">
-          <v-img
-            v-show="visibleImage"
-            :src="product.image"
-            contain
-            height="200px"
-          />
-        </v-col>
         <!--Info-->
-        <v-col md="8">
-          <v-card-title>{{ product.title }} </v-card-title>
-          <v-card-subtitle>$ {{ product.price }} </v-card-subtitle>
+        <v-col>
+          <v-card-title>{{ product.name }} </v-card-title>
+          <v-card-subtitle>${{ product.price }} <br/> {{product.category}} </v-card-subtitle>
           <v-card-actions class="card-actions">
             <v-btn
               color="red"
