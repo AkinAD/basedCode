@@ -10,10 +10,18 @@ const getters = {
   },
 };
 
+var domain;
+
+if (process.env.NODE_ENV === 'development') {
+  domain = 'http://localhost:8081';
+} else {
+  domain = 'https://thesmartshopper.online:8081';
+}
+
 const actions = {
   async addEmployee({ commit }, employee) {
     await axios
-      .post(`http://localhost:8081/employee/${employee}`)
+      .post(domain + `/employee/${employee}`)
       .then(commit("addEmployeeToState", employee))
       .catch(console.log("error adding employee"));
   },
@@ -43,7 +51,7 @@ const actions = {
   },
   async fetchEmployees({ commit }) {
     await axios
-      .get("http://localhost:8081/employee")
+      .get(domain + "/employee")
       .then((res) => commit("updateEmployees", res.data))
       .catch(console.log("error fetching employee list"));
   },

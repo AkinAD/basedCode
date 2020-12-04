@@ -109,7 +109,7 @@ func main() {
 	router.DELETE("/category/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteCategory)
 
 	if port == "443" {
-		router.RunTLS(":"+port, "create cert here", "create key here")
+		router.RunTLS(":"+port, "./certs/smartshopper_certificate.cer", "./certs/smartshopper_key.key")
 	} else {
 		router.Run(":" + port)
 	}
