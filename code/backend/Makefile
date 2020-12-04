@@ -6,7 +6,7 @@ pull:
 
 push:
 	sudo docker tag smartshopper-backend eecs4312basedcode/smartshopper-backend
-	sudo docker push eecs4312basedcode/smartshopper-backend
+	docker push eecs4312basedcode/smartshopper-backend
 
 run:
 	sudo docker run  --rm -d -p 8081:8081 -e PORT='8081' \

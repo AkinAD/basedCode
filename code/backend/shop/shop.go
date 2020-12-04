@@ -15,6 +15,10 @@ type ShopService interface {
 	CreateStock(*StockRequest) (*StockRequest, error)
 	UpdateStock(*StockRequest) (*StockRequest, error)
 	DeleteStock(int, int) (bool, error)
+	GetCategories() ([]*Category, error)
+	CreateCategory(string) (*Category, error)
+	UpdateCategory(*Category) (*Category, error)
+	DeleteCategory(int) (bool, error)
 }
 
 type shopService struct {
@@ -57,7 +61,7 @@ type Location struct {
 }
 
 type Category struct {
-	CategoryID int    `json:"categoryID" gorm:"column:categoryid"`
+	CategoryID int    `json:"categoryID" gorm:"primaryKey;column:categoryid"`
 	Name       string `json:"category" gorm:"column:category"`
 }
 
@@ -186,6 +190,39 @@ func (s *shopService) UpdateStock(request *StockRequest) (*StockRequest, error) 
 }
 func (s *shopService) DeleteStock(shopID int, itemID int) (bool, error) {
 	result, err := s.db.deleteStock(shopID, itemID)
+	if err != nil {
+		// log.Printf("%v", err)
+		return false, err
+	}
+	return result, nil
+}
+
+func (s *shopService) GetCategories() ([]*Category, error) {
+	result, err := s.db.getCategories()
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
+	return result, nil
+}
+func (s *shopService) CreateCategory(name string) (*Category, error) {
+	result, err := s.db.createCategory(name)
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
+	return result, nil
+}
+func (s *shopService) UpdateCategory(cat *Category) (*Category, error) {
+	result, err := s.db.editCategory(cat)
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
+	return result, nil
+}
+func (s *shopService) DeleteCategory(categoryID int) (bool, error) {
+	result, err := s.db.deleteCategory(categoryID)
 	if err != nil {
 		// log.Printf("%v", err)
 		return false, err
