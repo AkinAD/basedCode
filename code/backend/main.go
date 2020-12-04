@@ -101,6 +101,13 @@ func main() {
 	router.POST("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), createStock)
 	router.PUT("/stock", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), editStock)
 	router.DELETE("/stock/:store/:item", auth.AuthMiddleware(awsRegion, userPoolID, []string{"employee", "manager", "admin"}), deleteStock)
+
+	//item
+	router.GET("/category", getCategories)
+	router.POST("/category", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), createCategory)
+	router.PUT("/category", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), updateCategory)
+	router.DELETE("/category/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteCategory)
+
 	if port == "443" {
 		router.RunTLS(":"+port, "create cert here", "create key here")
 	} else {
@@ -659,4 +666,71 @@ func isAdmin(c *gin.Context) bool {
 		}
 	}
 	return false
+}
+
+func getCategories(c *gin.Context) {
+	resp, err := shopSrv.GetCategories()
+
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	c.JSON(200, &resp)
+}
+
+func createCategory(c *gin.Context) {
+	type Request struct {
+		Name string `json:"name"`
+	}
+	var request *Request
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(502, err)
+		return
+	}
+
+	resp, err := shopSrv.CreateCategory(request.Name)
+	if err != nil {
+		c.AbortWithError(502, err)
+		return
+	}
+
+	c.JSON(200, &resp)
+}
+
+func updateCategory(c *gin.Context) {
+	var request *shop.Category
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.AbortWithError(502, err)
+		return
+	}
+
+	log.Printf("[Main] [GetItem] %v", request)
+	resp, err := shopSrv.UpdateCategory(request)
+	if err != nil {
+		c.AbortWithError(502, err)
+		return
+	}
+
+	c.JSON(200, &resp)
+}
+
+func deleteCategory(c *gin.Context) {
+	id := c.Param("id")
+	storeID, err := strconv.Atoi(id)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	resp, err := shopSrv.DeleteCategory(storeID)
+
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	c.JSON(200, &resp)
 }

@@ -22,6 +22,10 @@ type ShopRepo interface {
 	addStock(*StockRequest) (*StockRequest, error)
 	updateStock(*StockRequest) (*StockRequest, error)
 	deleteStock(int, int) (bool, error)
+	getCategories() ([]*Category, error)
+	createCategory(string) (*Category, error)
+	editCategory(*Category) (*Category, error)
+	deleteCategory(int) (bool, error)
 }
 
 type shopRepo struct {
@@ -44,7 +48,7 @@ func initDatabase(config string) *gorm.DB {
 
 func (r *shopRepo) getItem(ID int) (*Item, error) {
 	var items []*Item
-	result := r.db.Raw("select itemid, i.name as name, description, i.categoryid as categoryid, price, c.name as category from items i join categories c on c.categoryid = i.categoryid where itemid = ?", ID).Scan(&items)
+	result := r.db.Raw("select itemid, i.name as name, description, i.categoryid as categoryid, price, c.category as category from items i join categories c on c.categoryid = i.categoryid where itemid = ?", ID).Scan(&items)
 
 	err := result.Error
 
@@ -89,7 +93,7 @@ func (r *shopRepo) deleteStock(storeID, itemID int) (bool, error) {
 
 func (r *shopRepo) getItems() ([]*Item, error) {
 	var items []*Item
-	result := r.db.Raw("select itemid, i.name as name, description, i.categoryid as categoryid, price, c.name as category from items i join categories c on c.categoryid = i.categoryid").Scan(&items)
+	result := r.db.Raw("select itemid, i.name as name, description, i.categoryid as categoryid, price, c.category as category from items i join categories c on c.categoryid = i.categoryid").Scan(&items)
 
 	err := result.Error
 
@@ -139,7 +143,7 @@ func (r *shopRepo) getStores() ([]*Store, error) {
 
 func (r *shopRepo) getStore(storeID int) ([]*ItemInStock, error) {
 	var itemsInStore []*ItemInStock
-	stmt := "select i.itemid, i.name as name, description,  c.categoryid, c.name as category, price, row, col from stock join items i on stock.itemid = i.itemid join categories c on c.categoryid = i.categoryid where storeid = ?"
+	stmt := "select i.itemid, i.name as name, description,  c.categoryid, c.category as category, price, row, col from stock join items i on stock.itemid = i.itemid join categories c on c.categoryid = i.categoryid where storeid = ?"
 	result := r.db.Raw(stmt, storeID).Scan(&itemsInStore)
 	if result.Error != nil {
 		return nil, result.Error
@@ -183,4 +187,48 @@ func (r *shopRepo) updateStock(item *StockRequest) (*StockRequest, error) {
 	}
 
 	return item, nil
+}
+
+func (r *shopRepo) getCategories() ([]*Category, error) {
+	var categories []*Category
+
+	result := r.db.Raw("SELECT * FROM categories").Scan(&categories)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return categories, nil
+}
+func (r *shopRepo) createCategory(name string) (*Category, error) {
+	// var cat *Category
+	// err := r.db.Exec("INSERT INTO categories (category) VALUES (?) RETURNING *", name).Row().Scan(&cat)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	cat := &Category{Name: name}
+
+	result := r.db.Create(&cat)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return cat, nil
+}
+func (r *shopRepo) editCategory(cat *Category) (*Category, error) {
+	result := r.db.Table("categories").Where("categoryid = ?", cat.CategoryID).Updates(map[string]interface{}{"category": cat.Name})
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return cat, nil
+}
+func (r *shopRepo) deleteCategory(categoryID int) (bool, error) {
+	result := r.db.Table("categories").Delete(&Category{CategoryID: categoryID})
+	if result.Error != nil {
+		return false, result.Error
+	}
+
+	return true, nil
 }
