@@ -114,11 +114,12 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["setDialog"]),
+    ...mapMutations(["setDialog", "emptyCart"]),
     ...mapActions(["setSelectedStore"]),
 
     next() {
       this.loading = true;
+      this.emptyCart();
       this.setSelectedStore(this.selected);
       this.search = "";
       this.loading = false;

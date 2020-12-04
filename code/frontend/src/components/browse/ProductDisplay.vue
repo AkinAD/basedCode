@@ -61,6 +61,10 @@ export default {
           return this.getItems.filter((item) => {
             return item.categoryID === category;
           });
+      } else if (category === 0) {
+        return this.getItems.filter((item) => {
+          return item.price <= filter[1] && item.price >= filter[0];
+        });
       } else
         return this.getItems
           .filter((item) => {

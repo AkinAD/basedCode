@@ -23,7 +23,7 @@
         <v-card-text>
           <v-list>
             <v-list-item
-              v-for="(item, i) in orderedItems(getCart)"
+              v-for="(item, i) in orderedItems"
               two-line
               :key="item.title"
               :value="i"
@@ -59,6 +59,16 @@ export default {
   computed: {
     ...mapGetters(["getCart"]),
 
+    orderedItems() {
+      let temp = this.getCart;
+      return temp.sort((a, b) => {
+        if (a.row == b.row) {
+          return a.col > b.col ? 1 : a.col < b.col ? -1 : 0;
+        }
+        return a.row > b.row ? 1 : -1;
+      });
+    },
+
     isEmpty() {
       return this.getCart.length === 0;
     },
@@ -72,13 +82,7 @@ export default {
     },
   },
 
-  methods: {
-    orderedItems(items) {
-      //cart
-      //do math
-      return items;
-    },
-  },
+  methods: {},
 };
 </script>
 
