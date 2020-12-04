@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
@@ -42,12 +42,21 @@ export default {
       selectionCategory: 0,
     };
   },
+  beforeCreated() {
+    this.fetchCategories();
+  },
   computed: {
-    ...mapGetters(["getFilters", "getPriceFilter", "getCategories", "getSelectedCategory"]),
+    ...mapGetters([
+      "getFilters",
+      "getPriceFilter",
+      "getCategories",
+      "getSelectedCategory",
+    ]),
   },
 
   methods: {
     ...mapMutations(["setSelectedFilter", "setSelectedCategory"]),
+    ...mapActions(["fetchCategories"]),
 
     setFilter() {
       if (this.selectionPrice === 0) this.setSelectedFilter(null);
@@ -63,7 +72,7 @@ export default {
       if (this.selectionCategory === 2) this.setSelectedCategory("");
       if (this.selectionCategory === 3) this.setSelectedCategory("");
       if (this.selectionCategory === 4) this.setSelectedCategory("");
-    }
+    },
   },
 };
 </script>

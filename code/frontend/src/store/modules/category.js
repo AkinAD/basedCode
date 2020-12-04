@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const state = {
-  categories: ["Any", "Shirts", "Shoes", "Stuff"],
-  //categories: [],
+  categories: [],
   selectedCatorgory: 0,
 };
 
@@ -18,40 +17,27 @@ const getters = {
 const actions = {
   async addCategory({ commit }, category) {
     await axios
-      .post("...")
-      .then((response) => {
-        response;
-        //do something
-
-        commit("addCategoryToState", category);
-      })
-      .catch({
-        //do something else
-      });
+      .post(`http://localhost:8081/category/${category}`)
+      .then(commit("addCategoryToState", category))
+      .catch(console.log("error adding category"));
   },
   async deleteCategory({ commit }, id) {
     await axios
-      .delete("...")
-      .then((response) => {
-        //do something
-        response;
-        commit("deleteCategoryFromState", id);
-      })
-      .catch({
-        //do something else
-      });
+      .delete(`http://localhost:8081/category/${id}`)
+      .then(commit("deleteCategoryFromState", id))
+      .catch(console.log("error deleting category"));
   },
   async updateCategory({ commit }, category) {
     await axios
-      .put("...")
-      .then((response) => {
-        //do something
-        response;
-        commit("updateCategoryInState", category);
-      })
-      .catch({
-        //do something else
-      });
+      .put(`http://localhost:8081/category/${category}`)
+      .then(commit("updateCategoryInState", category))
+      .catch(console.log("error updating category"));
+  },
+  async fetchCategories({ commit }) {
+    await axios
+      .get("http://localhost:8081/category")
+      .then((res) => commit("updateCategories", res.data))
+      .catch(console.log("error fetching categories"));
   },
 };
 
@@ -72,6 +58,9 @@ const mutations = {
   },
   setSelectedCategory: (state, category) => {
     state.selectedCatorgory = category;
+  },
+  updateCategories: (state, categories) => {
+    state.categories = categories;
   },
 };
 

@@ -27,9 +27,7 @@ const actions = {
   //todo: implement axios calls to get stores
   async updateStores({ commit }) {
     try {
-      console.log("i ran");
       const res = await axios.get("http://localhost:8081/store"); //stores endpoint
-      console.log(res.data);
       commit("updateStores", res.data);
     } catch {
       commit("updateStores", []);
@@ -38,7 +36,9 @@ const actions = {
 
   async setSelectedStore({ commit }, store) {
     try {
-      const res = await axios.get(`http://localhost:8081/store/${store.storeID}`); //selected store's items
+      const res = await axios.get(
+        `http://localhost:8081/store/${store.storeID}`
+      ); //selected store's items
       commit("setSelectedStore", [store, res.data]);
     } catch {
       commit("setSelectedStore", store, []); //no items found
@@ -47,42 +47,21 @@ const actions = {
   //items
   async addItem({ commit }, item) {
     await axios
-      .post("...")
-      .then((response) => {
-        response;
-        //do something
-
-        commit("addItemToState", item);
-      })
-      .catch({
-        //do something else
-      });
+      .post(`http://localhost:8081/item/${item}`)
+      .then(commit("addItemToState", item))
+      .catch(console.log("error writing item to db"));
   },
   async deleteItem({ commit }, id) {
     await axios
-      .delete("...")
-      .then((response) => {
-        response;
-        //do something
-
-        commit("deleteItemFromState", id);
-      })
-      .catch({
-        //do something else
-      });
+      .delete(`http://localhost:8081/item/${id}`)
+      .then(commit("deleteItemFromState", id))
+      .catch(console.log("error deleting item from db"));
   },
   async updateItem({ commit }, item) {
     await axios
-      .put("...")
-      .then((response) => {
-        response;
-        //do something
-
-        commit("updateItemInState", item);
-      })
-      .catch({
-        //do something else
-      });
+      .put(`http://localhost:8081/item/${item}`)
+      .then(commit("updateItemInState", item))
+      .catch(console.log("error updating item on db"));
   },
 };
 

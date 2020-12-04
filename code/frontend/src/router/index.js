@@ -37,14 +37,6 @@ const routerOptions = [
     },
   },
   {
-    path: "/cart",
-    component: "cart",
-    meta: {
-      requiresAuth: true,
-      group: "user",
-    },
-  },
-  {
     path: "*",
     component: "Home",
   },

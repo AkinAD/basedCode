@@ -35,9 +35,6 @@ export default {
       return this.getItems.filter((item) => !this.getCart.includes(item));
     },
   },
-  created() {
-    this.fetchRecommendations();
-  },
 };
 </script>
 
