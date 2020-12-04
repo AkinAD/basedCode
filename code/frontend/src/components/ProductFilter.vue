@@ -19,11 +19,11 @@
       <v-card-text>
         <v-radio-group v-model="selectionCategory" :mandatory="true">
           <v-radio
-            v-for="(price, i) in this.getCategories"
-            :key="i"
-            :label="price"
-            :value="i"
-            @click="setCategory"
+            v-for="cat in this.getCategories"
+            :key="cat.categoryID"
+            :label="cat.category"
+            :value="cat.categoryID"
+            @click="setSelectedCategory(selectionCategory)"
           />
         </v-radio-group>
       </v-card-text>
@@ -41,9 +41,6 @@ export default {
       selectionPrice: 0,
       selectionCategory: 0,
     };
-  },
-  beforeCreated() {
-    this.fetchCategories();
   },
   computed: {
     ...mapGetters([
@@ -64,14 +61,6 @@ export default {
       if (this.selectionPrice === 2) this.setSelectedFilter([25, 100]);
       if (this.selectionPrice === 3) this.setSelectedFilter([100, 500]);
       if (this.selectionPrice === 4) this.setSelectedFilter([500, 10000]);
-    },
-
-    setCategory() {
-      if (this.selectionCategory === 0) this.setSelectedCategory("");
-      if (this.selectionCategory === 1) this.setSelectedCategory("");
-      if (this.selectionCategory === 2) this.setSelectedCategory("");
-      if (this.selectionCategory === 3) this.setSelectedCategory("");
-      if (this.selectionCategory === 4) this.setSelectedCategory("");
     },
   },
 };

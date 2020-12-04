@@ -70,9 +70,10 @@ export default {
   },
   created() {
     this.updateStores();
+    this.fetchCategories();
   },
   methods: {
-    ...mapActions(["signIn", "signOut", "updateStores"]),
+    ...mapActions(["signIn", "signOut", "updateStores", "fetchCategories"]),
     onScroll(e) {
       if (typeof window === "undefined") return;
       const top = window.pageYOffset || e.target.scrollTop || 0;
