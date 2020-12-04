@@ -1,6 +1,8 @@
 package user
 
-import cognito "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
+import (
+	cognito "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
+)
 
 type UserService interface {
 	CreateEmployee(*cognito.AdminCreateUserInput) (*cognito.AdminCreateUserOutput, error)
@@ -11,7 +13,7 @@ type UserService interface {
 	ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error)
 	Login(*cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error)
 	// UpdatePreferredStore(username string, preferredStore int) error
-	CreateProfile(user *User) (*User, error)
+	CreateProfile(Username string, StoreID int, FirstName string, LastName string) error
 	GetProfile(username string) (*User, error)
 	UpdateProfile(user *User) (*User, error)
 	// DeleteUser(username string) (bool, error)
@@ -105,17 +107,25 @@ func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.Initiate
 	return output, err
 }
 
-func (s *userService) CreateProfile(user *User) (*User, error) {
-	return nil, nil
+func (s *userService) CreateProfile(Username string, StoreID int, FirstName string, LastName string) error {
+	err := s.db.createProfile(Username, StoreID, FirstName, LastName)
+	if err != nil {
+		// log.Printf("%v", err)
+		return err
+	}
+
+	return nil
 }
 
 func (s *userService) GetProfile(username string) (*User, error) {
-	// output, err := s.db.getProfile(username)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// return output, nil
-	return nil, nil
+
+	user, err := s.db.getProfile(username)
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (s *userService) UpdateProfile(user *User) (*User, error) {
