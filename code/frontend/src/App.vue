@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- main app tag -->
-    <Header />
+    <Header class="v-navigation-drawer" />
     <v-main
       ><!--where pages are to be loaded-->
       <v-container fluid>
@@ -86,4 +86,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.v-navigation-drawer {
+  z-index: 999999 !important;
+}
+</style>
