@@ -14,28 +14,36 @@ const getters = {
   },
 };
 
+var domain;
+
+if (process.env.NODE_ENV === 'development') {
+  domain = 'http://localhost:8081';
+} else {
+  domain = 'https://thesmartshopper.online:8081';
+}
+
 const actions = {
   async addCategory({ commit }, category) {
     await axios
-      .post(`http://localhost:8081/category/${category}`)
+      .post(domain + `/category/${category}`)
       .then(commit("addCategoryToState", category))
       .catch(console.log("error adding category"));
   },
   async deleteCategory({ commit }, id) {
     await axios
-      .delete(`http://localhost:8081/category/${id}`)
+      .delete(domain + `/category/${id}`)
       .then(commit("deleteCategoryFromState", id))
       .catch(console.log("error deleting category"));
   },
   async updateCategory({ commit }, category) {
     await axios
-      .put(`http://localhost:8081/category/${category}`)
+      .put(domain + `/category/${category}`)
       .then(commit("updateCategoryInState", category))
       .catch(console.log("error updating category"));
   },
   async fetchCategories({ commit }) {
     await axios
-      .get("http://localhost:8081/category")
+      .get(domain + "/category")
       .then((res) => commit("updateCategories", res.data))
       .catch(console.log("error fetching categories"));
   },
