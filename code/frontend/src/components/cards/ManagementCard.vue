@@ -3,20 +3,20 @@
     <v-row>
       <!--Info-->
       <v-col md="8">
-        <v-card-title>{{ product.name }} </v-card-title>
-        <v-card-subtitle>$ {{ product.price }} <br/> {{product.category}} </v-card-subtitle>
+        <v-card-title>{{ item.name }} </v-card-title>
+        <v-card-subtitle>$ {{ item.price }} <br/> {{item.category}} </v-card-subtitle>
         <v-card-actions>
           <ManagementDialog 
-            v-on:form-saved="$emit('update-event', $event)" 
+            v-on:form-saved="updateItem(item.itemID, $event)" 
             :type="itemType"
-            :fields="fields" 
+            :fields="populateFieldsValues" 
             :headline="headline">
             <template v-slot:button="{ on }">
               <v-btn v-on="on" color="green" outlined>
                 <v-icon left>mdi-pencil</v-icon>
                 Edit {{ itemType }}
               </v-btn>
-              <v-btn color="red" outlined>
+              <v-btn color="red" outlined @click="deleteItem(item.itemID)">
                 <v-icon left>mdi-delete</v-icon>
                 Delete {{ itemType }}</v-btn
               >
@@ -30,6 +30,7 @@
 
 <script>
 import ManagementDialog from "../manage/ManagementDialog";
+import { mapActions} from 'vuex';
 
 export default {
   name: "ManagementCard",
@@ -37,15 +38,40 @@ export default {
     ManagementDialog,
   },
   props: {
-    product: Object,
-    itemType: String,
-    visibleImage: Boolean,
+    item: Object,
     fields: Array,
   },
   data() {
     return {
       headline: `Edit ${this.itemType}`,
+      itemType: "Item",
     };
+  },
+  computed: {
+    populateFieldsValues() {
+      let filledArray = JSON.parse(JSON.stringify(this.fields));
+      
+      for(var field of filledArray)
+      {
+        field.value = this.item[`${field.schemaName}`];
+      }
+
+      return filledArray;
+    }
+  },
+   methods : {
+    ...mapActions(["deleteItem", "updateItem"]),
+    mapItemToSchema(fieldArray) {
+      let mappedItem = {};
+      for(var attribute of fieldArray)
+      {
+        mappedItem[attribute.schemaName] = attribute.value;
+      }
+
+      return mappedItem;
+      
+    },
+    
   },
 };
 </script>

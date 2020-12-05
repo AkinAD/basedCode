@@ -25,10 +25,10 @@ const getters = {
 
 var domain;
 
-if (process.env.NODE_ENV === 'development') {
-  domain = 'http://localhost:8081';
+if (process.env.NODE_ENV === "development") {
+  domain = "http://localhost:8081";
 } else {
-  domain = 'https://thesmartshopper.online:8081';
+  domain = "https://thesmartshopper.online:8081";
 }
 
 const actions = {
@@ -44,9 +44,7 @@ const actions = {
 
   async setSelectedStore({ commit }, store) {
     try {
-      const res = await axios.get(
-        domain + `/store/${store.storeID}`
-      ); //selected store's items
+      const res = await axios.get(domain + `/store/${store.storeID}`); //selected store's items
       commit("setSelectedStore", [store, res.data]);
     } catch {
       commit("setSelectedStore", store, []); //no items found
@@ -55,7 +53,7 @@ const actions = {
   //items
   async addItem({ commit }, item) {
     await axios
-      .post(domain + `/item/${item}`)
+      .post(domain + "/item/", item) //fix
       .then(commit("addItemToState", item))
       .catch(console.log("error writing item to db"));
   },
@@ -65,9 +63,9 @@ const actions = {
       .then(commit("deleteItemFromState", id))
       .catch(console.log("error deleting item from db"));
   },
-  async updateItem({ commit }, item) {
+  async updateItem({ commit }, id, item) {
     await axios
-      .put(domain + `/item/${item}`)
+      .put(domain + `/item/${id}`, item)
       .then(commit("updateItemInState", item))
       .catch(console.log("error updating item on db"));
   },
@@ -93,7 +91,7 @@ const mutations = {
   },
   updateItemInState: (state, item) => {
     for (var i of state.items) {
-      if (i.id == item.id) {
+      if (i.itemID == item.itemID) {
         i = item;
         break;
       }
