@@ -81,7 +81,7 @@ func main() {
 	//admin
 	router.GET("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupAdmin)
 	router.POST("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
-	// router.DELTE("admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}) ,deleteFromAdmin)
+	router.DELTE("admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}), deleteFromAdmin)
 
 	//item
 	router.GET("/item", getItems) //?storeID= to get the shops/stock for a specific store
@@ -314,6 +314,28 @@ func getGroup(c *gin.Context, group string) {
 		c.JSON(500, err)
 	}
 
+	c.JSON(200, resp)
+}
+
+func deleteFromAdmin(c *gin.Context) {
+
+	var userName struct {
+		Username string `json:"username"`
+	}
+	err := c.ShouldBind(&userName)
+	if err != nil {
+		c.JSON(401, err)
+	}
+
+	input := &cognito.AdminDeleteUserInput{
+		Username:   aws.String(userName.Username),
+		UserPoolId: aws.String(userPoolID),
+	}
+
+	resp, err := userSrv.DeleteUser(input)
+	if err != nil {
+		c.JSON(500, err)
+	}
 	c.JSON(200, resp)
 }
 
