@@ -1,6 +1,8 @@
 package user
 
 import (
+	"fmt"
+
 	cognito "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 )
 
@@ -10,10 +12,10 @@ type UserService interface {
 	AddUserToGroup(input *cognito.AdminAddUserToGroupInput) (*cognito.AdminAddUserToGroupOutput, error)
 	RemoveUserFromGroup(input *cognito.AdminRemoveUserFromGroupInput) (*cognito.AdminRemoveUserFromGroupOutput, error)
 	GetUser(input *cognito.AdminGetUserInput) (*cognito.AdminGetUserOutput, error)
-	ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error)
+	ListUsersInGroup(input *cognito.ListUsersInGroupInput) ([]*User, error)
 	Login(*cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error)
 	// UpdatePreferredStore(username string, preferredStore int) error
-	CreateProfile(Username string, StoreID int, FirstName string, LastName string) error
+	CreateProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error
 	GetProfile(username string) (*User, error)
 	UpdateProfile(user *User) (*User, error)
 	// DeleteUser(username string) (bool, error)
@@ -91,12 +93,30 @@ Request Syntax
    "UserPoolId": "string"
 }
 */
-func (s *userService) ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error) {
+
+func (s *userService) ListUsersInGroup(input *cognito.ListUsersInGroupInput) ([]*User, error) {
 	output, err := s.cognito.ListUsersInGroup(input)
+
+	// this grabs the username. they're stored in an array
+	//fmt.Println(*output.Users[1].Username)
+	length := len(output.Users)
+	//fmt.Println(length)
+	var userArray []*User
+	var user *User
+
+	for i := 0; i < length; i++ {
+		fmt.Println(*output.Users[i].Username)
+		user, err = s.db.getProfile(*output.Users[i].Username)
+		userArray = append(userArray, user)
+		//fmt.Println(*user)
+	}
+
+	//fmt.Println(userArray)
 	if err != nil {
 		return nil, err
 	}
-	return output, nil
+
+	return userArray, nil
 }
 
 func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error) {
@@ -107,8 +127,8 @@ func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.Initiate
 	return output, err
 }
 
-func (s *userService) CreateProfile(Username string, StoreID int, FirstName string, LastName string) error {
-	err := s.db.createProfile(Username, StoreID, FirstName, LastName)
+func (s *userService) CreateProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error {
+	err := s.db.createProfile(Username, StoreID, FirstName, LastName, Email)
 	if err != nil {
 		// log.Printf("%v", err)
 		return err

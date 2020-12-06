@@ -9,7 +9,7 @@ type UserRepo interface {
 	updatePreferredStore(username string, preferredStore int) error
 	updateProfile(input *User) (*User, error)
 	getProfile(input string) (*User, error)
-	createProfile(Username string, StoreID int, FirstName string, LastName string) error
+	createProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error
 }
 
 type userRepo struct {
@@ -58,9 +58,9 @@ func (r *userRepo) getProfile(input string) (*User, error) {
 	}
 	return &userProfile, nil
 }
-func (r *userRepo) createProfile(Username string, StoreID int, FirstName string, LastName string) error {
+func (r *userRepo) createProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error {
 	//result := r.db.Table("accounts").Where("username = ?", input.Username).Update("storeid", input.StoreID)
-	result := r.db.Exec("INSERT INTO accounts (username,storeid,firstname,lastname) VALUES (?,?,?,?)", Username, StoreID, FirstName, LastName)
+	result := r.db.Exec("INSERT INTO accounts (username,storeid,firstname,lastname,email) VALUES (?,?,?,?,?)", Username, StoreID, FirstName, LastName, Email)
 	if result.Error != nil {
 		return result.Error
 	}
