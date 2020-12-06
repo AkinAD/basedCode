@@ -72,18 +72,18 @@ func main() {
 	router.POST("/employee", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), createEmployee)
 	// router.PUT("/employee", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"employee", "manager", "admin"}), updateEmployee)
 	// router.DELETE("/employee", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{manager", "admin"}), deleteEmployee)
-	router.DELETE("/employee/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), deleteFromAdmin)
+	router.DELETE("/employee", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), deleteFromAdmin)
 
 	//managers
 	router.GET("/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"manager", "admin"}), getGroupManager)
 	router.POST("/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToManager)
 	// router.DELETE("manager/:id", deleteManager)
-	router.DELETE("/manager/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin", "manager"}), deleteFromAdmin)
+	router.DELETE("/manager", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin", "manager"}), deleteFromAdmin)
 
 	//admin
 	router.GET("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupAdmin)
 	router.POST("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
-	router.DELETE("/admin/:id", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteFromAdmin)
+	router.DELETE("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), deleteFromAdmin)
 
 	//item
 	router.GET("/item", getItems) //?storeID= to get the shops/stock for a specific store
