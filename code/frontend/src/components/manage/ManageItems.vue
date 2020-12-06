@@ -36,7 +36,7 @@ export default {
     
   },
   created() {
-    //this.fetchEmployees();
+    this.fetchEmployees();
   }
 };
 </script>

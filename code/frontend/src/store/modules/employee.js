@@ -30,6 +30,7 @@ const actions = {
       firstname : employee.firstname,
       lastname : employee.lastname
     };
+    console.log(employee);
     await axios
       .post(domain + "/employee/", employee, {
         headers: {
@@ -41,71 +42,62 @@ const actions = {
   },
   async deleteEmployee({ commit }, username) {
     let session = await Auth.currentSession();
+    let employee = {
+      username: username.toString()
+    };
+    console.log(employee);
     await axios
-      .delete(domain + "/employee/", username, {
+      .delete(domain + "/employee/", employee, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then((response) => {
-        //do something
-        response;
-        commit("deleteEmployeeFromState", username);
-      })
-      .catch({
-        //do something else
-      });
+      .then(commit("deleteEmployeeFromState", username))
+      .catch();
   },
   async updateEmployee({ commit }, employee) {
     let session = await Auth.currentSession();
+    console.log(employee);
     await axios
       .put(domain + "/employee/", employee, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then((response) => {
-        //do something
-        response;
-        commit("updateEmployeeInState", employee);
-      })
-      .catch({
-        //do something else
-      });
+      .then(commit("updateEmployeeInState", employee))
+      .catch();
   },
-  async promoteToManager(employee) {
+  async promoteToManager({state}, employee) {
     let session = await Auth.currentSession();
+    state;
+    let username = {
+      username: employee.username
+    };
+    console.log(username);
+    console.log(employee);
     await axios
-      .post(domain + "/manager/", employee.username, {
+      .post(domain + "/manager/", username, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then((response) => {
-        //do something
-        response;
-        
-      })
-      .catch({
-        //do something else
-      });
+      .then()
+      .catch();
   },
-  async promoteToAdmin(employee) {
+  async promoteToAdmin({state},employee) {
     let session = await Auth.currentSession();
+    state;
+    let username = {
+      username: employee.username
+    };
     await axios
-      .post(domain + "/admin/", employee.username ,{
+      .post(domain + "/admin/", username ,{
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then((response) => {
-        //do something
-        response;
-        
-      })
-      .catch({
-        //do something else
-      });
+      .then()
+      .catch();
   },
   async fetchEmployees({ commit }) {
     let session = await Auth.currentSession();

@@ -2,47 +2,45 @@
   <v-container outlined full-width>
     <v-row>
       <!--Info-->
-      <v-col md="8">
-        <v-card-title>{{ employee.firstname }} {{employee.lastname}}</v-card-title>
-        <v-card-subtitle>{{ employee.username }} <br/> {{employee.email}} <br/> {{employee.storeid}}  </v-card-subtitle>
-        <v-card-actions>
-          <v-btn color="red" outlined @click="deleteEmployee(employee.username)">
-                <v-icon left>mdi-delete</v-icon>
-                Delete {{ type }}</v-btn
-              >
-              <v-btn color="blue" v-show="isManager || isAdmin" outlined @click="promoteToManager(employee)">
-                <v-icon left>mdi-plus</v-icon>
-                Promote to Manager</v-btn
-              >
-              <v-btn color="blue" v-show="isAdmin" outlined @click="promoteToAdmin(employee)">
-                <v-icon left>mdi-plus</v-icon>
-                Promote to Admin</v-btn
-              >
-          <!-- <ManagementDialog 
-            v-on:form-saved="_updateEmployee(employee.username, $event)" 
-            :type="type"
-            :fields="populateFieldsValues" 
-            :headline="headline">
-            <template v-slot:button="{ on }">
-              <v-btn v-on="on" color="green" outlined>
-                <v-icon left>mdi-pencil</v-icon>
-                Edit {{ type }}
-              </v-btn>
-              <v-btn color="red" outlined @click="deleteEmployee(employee.username)">
-                <v-icon left>mdi-delete</v-icon>
-                Delete {{ type }}</v-btn
-              >
-              <v-btn color="blue" v-show="isManager || isAdmin" outlined @click="promoteToManager(employee)">
-                <v-icon left>mdi-plus</v-icon>
-                Promote to Manager</v-btn
-              >
-              <v-btn color="blue" v-show="isAdmin" outlined @click="promoteToAdmin(employee)">
-                <v-icon left>mdi-plus</v-icon>
-                Promote to Admin</v-btn
-              >
-            </template>
-          </ManagementDialog> -->
-        </v-card-actions>
+      <v-col>
+        <v-card outlined>
+          <v-card-title
+            >{{ employee.firstname }} {{ employee.lastname }}</v-card-title
+          >
+          <v-card-subtitle
+            >{{ employee.username }} <br />
+            {{ employee.email }} <br />
+            {{ employee.storeid }}
+          </v-card-subtitle>
+          <v-card-actions>
+            <v-btn
+              color="red"
+              outlined
+              v-on:click="deleteEmployee(employee.username)"
+            >
+              <v-icon left>mdi-delete</v-icon>
+              Delete {{ type }}</v-btn
+            >
+            <v-btn
+              color="blue"
+              v-show="isManager || isAdmin"
+              outlined
+              v-on:click="promoteToManager(employee)"
+            >
+              <v-icon left>mdi-plus</v-icon>
+              Promote to Manager</v-btn
+            >
+            <v-btn
+              color="blue"
+              v-show="isAdmin"
+              outlined
+              v-on:click="promoteToAdmin(employee)"
+            >
+              <v-icon left>mdi-plus</v-icon>
+              Promote to Admin</v-btn
+            >
+          </v-card-actions>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -50,7 +48,7 @@
 
 <script>
 //import ManagementDialog from "../manage/ManagementDialog";
-import { mapActions, mapGetters} from 'vuex';
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "ManageEmployeeCard",
@@ -71,25 +69,29 @@ export default {
     ...mapGetters(["getUserGroups"]),
     populateFieldsValues() {
       let filledArray = JSON.parse(JSON.stringify(this.fields));
-      
-      for(var field of filledArray)
-      {
+
+      for (var field of filledArray) {
         field.value = this.employee[`${field.schemaName}`];
       }
 
       return filledArray;
     },
-    isManager () {
+    isManager() {
       const groups = this.getUserGroups;
-      return groups.includes('manager');
+      return groups.includes("manager");
     },
-    isAdmin () {
+    isAdmin() {
       const groups = this.getUserGroups;
-      return groups.includes('admin');
-    }, 
+      return groups.includes("admin");
+    },
   },
-   methods : {
-    ...mapActions(["deleteEmployee", "updateEmployee", "promoteToAdmin", "promoteToManager"]),
+  methods: {
+    ...mapActions([
+      "deleteEmployee",
+      "updateEmployee",
+      "promoteToAdmin",
+      "promoteToManager",
+    ]),
     mapEmployeeToSchema(fieldArray) {
       let mappedEmployee = {};
       for (var attribute of fieldArray) {
@@ -101,7 +103,7 @@ export default {
     _updateEmployee(id, employee) {
       employee.employeeID = id;
       this.updateEmployee(this.mapEmployeeToSchema(employee));
-    }
+    },
   },
 };
 </script>

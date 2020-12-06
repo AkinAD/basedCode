@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols= "6" md="6">
         <ManageStockList 
-          title="Items in stock at"
+          :title="this.inStockTitle"
           :items="this.getItems"
           :inStore="true"
           stockAction="Remove from Stock"
@@ -73,7 +73,7 @@ export default {
       dialog : false,
       row : "",
       col : "",
-      localItemID : Number
+      localItemID : Number,
     }
   },
   methods : {
@@ -126,7 +126,10 @@ export default {
   computed: {
     ...mapGetters([ "getItems","getAllItems", "getSelectedStore"]),
 
-     allItemsNotInStock () {
+    inStockTitle () {
+      return `Items in stock at ${this.getSelectedStore.address}`;
+    },
+    allItemsNotInStock () {
       
       let allNonStockItems = [];
       const allItems = this.getAllItems;
