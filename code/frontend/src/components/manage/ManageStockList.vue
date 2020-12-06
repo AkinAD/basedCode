@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+
 
 import ManageStockCard from "../cards/ManageStockCard";
 
@@ -73,21 +73,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getItems"]),
+
   },
   methods: {
-    ...mapActions(["addItem"]),
-    mapItemToSchema(fieldArray) {
-      let mappedItem = {};
-      for (var attribute of fieldArray) {
-        mappedItem[attribute.schemaName] = attribute.value;
-      }
-
-      return mappedItem;
-    },
-    _addItem(fieldArray) {
-      this.addItem(this.mapItemToSchema(fieldArray));
-    },
+  
   },
 };
 </script>

@@ -109,22 +109,36 @@ const actions = {
   },
 
   //***********************************************************************************stock
-  async addStock({ commit }, stockInfo) {
+  async addStock( {state, commit },stockInfo) {
     let session = await Auth.currentSession();
+
     stockInfo = {
       itemID : Number(stockInfo.itemID),
       storeID : Number(stockInfo.storeID),
       row : Number(stockInfo.row),
       col : Number(stockInfo.col)
     };
+    console.log(stockInfo);
     await axios
       .post("/stock/", stockInfo, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then(commit("addStockToState", stockInfo))
+      .then(() => {
+        for(var item of state.allItems) {
+          if(item.itemID === stockInfo.itemID)
+          {
+            item.col = stockInfo.col;
+            item.row = stockInfo.row;
+            commit("addStockToState", item);
+            break;
+          }
+        }
+      })
       .catch(console.log("error writing item to db"));
+    
+    
   },
   async deleteStock({ commit }, stockInfo) {
     let session = await Auth.currentSession();
@@ -132,15 +146,19 @@ const actions = {
       itemID : Number(stockInfo.itemID),
       storeID : Number(stockInfo.storeID)
     };
+    console.log(stockInfo);
     await axios
-      .delete(domain + `/stock/${stockInfo.itemID}/${stockInfo.storeID}` , {
+      .delete(domain + `/stock/${stockInfo.storeID}/${stockInfo.itemID}` , {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then(commit("deleteStockFromState", stockInfo))
+      .then(commit("deleteStockFromState", stockInfo.itemID))
       .catch(console.log("error deleting item from db"));
+
+    
   },
+
   async updateStock({ commit }, stockInfo) {
     let session = await Auth.currentSession();
     stockInfo = {
@@ -149,14 +167,27 @@ const actions = {
       row : Number(stockInfo.row),
       col : Number(stockInfo.col)
     };
+    console.log(stockInfo);
     await axios
       .put("/stock/", stockInfo, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then(commit("updateStockInState", stockInfo))
+      .then((response) => {
+        for(var item of state.items) {
+          if(item.itemID === stockInfo.itemID)
+          {
+            item.col = response.data.col;
+            item.row = response.data.row;
+            commit("updateStockInState", item)
+            break;
+          }
+        }
+      })
       .catch(console.log("error updating item on db"));
+    
+    
   },
   
   //****************************************************************************************items
@@ -246,6 +277,21 @@ const mutations = {
   },
   setDialog: (state, bool) => {
     state.dialog = bool;
+  },
+  //Stock
+  addStockToState: (state, item) => {
+    state.items.push(item);
+  },
+  deleteStockFromState: (state, id) => {
+    state.items = state.items.filter((i) => i.itemID != id);
+  },
+  updateStockInState: (state, item) => {
+    for (var i in state.items) {
+      if (state.items[i].itemID == item.itemID) {
+        Vue.set(state.items, i, item);
+        break;
+      }
+    }
   },
   //items
   populateAllItems: (state, items) =>

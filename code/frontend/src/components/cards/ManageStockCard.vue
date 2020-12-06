@@ -7,7 +7,7 @@
         <v-card-subtitle>$ {{ item.price }} <br/> {{item.category}} </v-card-subtitle>
         <v-card-actions>
           <ManagementDialog 
-            v-on:form-saved="$emit('update', $event)" 
+            v-on:form-saved="_updateStockInfo($event)" 
             :type="itemType"
             :fields="populateFieldsValues" 
             :headline="headline">
@@ -30,7 +30,7 @@
 
 <script>
 import ManagementDialog from "../manage/ManagementDialog";
-import { mapActions} from 'vuex';
+
 
 export default {
   name: "ManageItemCard",
@@ -62,7 +62,6 @@ export default {
     }
   },
    methods : {
-    ...mapActions(["deleteItem", "updateItem"]),
     mapItemToSchema(fieldArray) {
       let mappedItem = this.item;
       for (var attribute of fieldArray) {
@@ -71,10 +70,10 @@ export default {
 
       return mappedItem;
     },
-    _updateItem(id, item) {
-      item = this.mapItemToSchema(item);
-      item.itemID = id;
-      this.updateItem(item);
+    _updateStockInfo(locationInfo) {
+      locationInfo = this.mapItemToSchema(locationInfo);
+      locationInfo.itemID = this.item.itemID;
+      this.$emit('update', locationInfo);
     }
   },
 };
