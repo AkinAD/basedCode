@@ -463,44 +463,106 @@ func createEmployee(c *gin.Context) {
 		UserPoolId:     aws.String(userPoolID),
 		Username:       aws.String(input.Username),
 	}
-	//get manager's profile to get their storeID, which is used for creating the employee
-	managerUsername := c.GetString("username")
-	if managerUsername == "" {
-		c.AbortWithError(500, errors.New("Could not get managerUsername from token"))
-		return
-	}
-	managerInfo, managerErr := userSrv.GetProfile(managerUsername)
-	if managerErr != nil {
-		c.JSON(500, managerErr)
-	}
-	//fmt.Println(managerInfo.StoreID)
-	if managerInfo.StoreID != input.StoreID {
-		c.AbortWithError(500, errors.New("The employee's StoreID does not match the Manager's Store ID"))
+
+	//check to see if the current user is admin or manager
+	//grab current user
+	currentUser := c.GetString("username")
+	if currentUser == "" {
+		c.AbortWithError(500, errors.New("Could not get username from token"))
 		return
 	}
 
-	//create employee
-	resp, err := userSrv.CreateEmployee(payload)
-	if err != nil {
-		c.JSON(500, err)
-	}
-	c.JSON(200, resp)
-
-	//add them to employee group
-	input2 := &cognito.AdminAddUserToGroupInput{
-		GroupName:  aws.String("employee"),
+	//check permissions of current user to see if they are admin/manager
+	input2 := &cognito.AdminListGroupsForUserInput{
 		UserPoolId: aws.String(userPoolID),
-		Username:   aws.String(input.Username),
+		Username:   aws.String(currentUser),
 	}
-	_, err2 := userSrv.AddUserToGroup(input2)
-	if err2 != nil {
-		c.JSON(500, err2)
+	userPool, errCheck := userSrv.ListGroupsForUser(input2)
+
+	if errCheck != nil {
+		c.AbortWithError(500, errCheck)
+		return
+	}
+	adminCheck := false
+	managerCheck := false
+
+	length := len(userPool.Groups)
+	for i := 0; i < length; i++ {
+		if *userPool.Groups[i].GroupName == "manager" {
+			managerCheck = true
+		}
+		if *userPool.Groups[i].GroupName == "admin" {
+			adminCheck = true
+		}
 	}
 
-	//create their profile in userDB
-	err3 := userSrv.CreateProfile(input.Username, managerInfo.StoreID, input.FirstName, input.LastName, input.Email)
-	if err3 != nil {
-		c.JSON(500, err3)
+	if adminCheck == true {
+		fmt.Println("You are a Admin")
+		//create employee
+		resp, err := userSrv.CreateEmployee(payload)
+		if err != nil {
+			c.JSON(500, err)
+		}
+		c.JSON(200, resp)
+
+		//add them to employee group
+		input2 := &cognito.AdminAddUserToGroupInput{
+			GroupName:  aws.String("employee"),
+			UserPoolId: aws.String(userPoolID),
+			Username:   aws.String(input.Username),
+		}
+		_, err2 := userSrv.AddUserToGroup(input2)
+		if err2 != nil {
+			c.JSON(500, err2)
+		}
+
+		//create their profile in userDB
+		err3 := userSrv.CreateProfile(input.Username, input.StoreID, input.FirstName, input.LastName, input.Email)
+		if err3 != nil {
+			c.JSON(500, err3)
+		}
+	} else if managerCheck == true {
+
+		//get manager's profile to get their storeID, which is used for creating the employee
+		managerUsername := c.GetString("username")
+		if managerUsername == "" {
+			c.AbortWithError(500, errors.New("Could not get managerUsername from token"))
+			return
+		}
+		managerInfo, managerErr := userSrv.GetProfile(managerUsername)
+		if managerErr != nil {
+			c.JSON(500, managerErr)
+		}
+		//fmt.Println(managerInfo.StoreID)
+		if managerInfo.StoreID != input.StoreID {
+			c.AbortWithError(500, errors.New("The employee's StoreID does not match the Manager's Store ID"))
+			return
+		}
+
+		//create employee
+		resp, err := userSrv.CreateEmployee(payload)
+		if err != nil {
+			c.JSON(500, err)
+		}
+		c.JSON(200, resp)
+
+		//add them to employee group
+		input2 := &cognito.AdminAddUserToGroupInput{
+			GroupName:  aws.String("employee"),
+			UserPoolId: aws.String(userPoolID),
+			Username:   aws.String(input.Username),
+		}
+		_, err2 := userSrv.AddUserToGroup(input2)
+		if err2 != nil {
+			c.JSON(500, err2)
+		}
+
+		//create their profile in userDB
+		err3 := userSrv.CreateProfile(input.Username, managerInfo.StoreID, input.FirstName, input.LastName, input.Email)
+		if err3 != nil {
+			c.JSON(500, err3)
+		}
+
 	}
 
 }
