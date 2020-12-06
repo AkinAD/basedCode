@@ -1,4 +1,7 @@
 import axios from "axios";
+import Vue from 'vue';
+
+import { Auth } from "aws-amplify";
 
 //each store should have a name, location, and list of items
 const state = {
@@ -52,20 +55,49 @@ const actions = {
   },
   //items
   async addItem({ commit }, item) {
+    let session = await Auth.currentSession();
+    item = {
+      name : item.name,
+      description : item.description,
+      price : parseFloat(item.price),
+      categoryID : Number(item.categoryID)
+    };
+
     await axios
-      .post(domain + "/item/", item) //fix
+      .post("/item/", item, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then(commit("addItemToState", item))
       .catch(console.log("error writing item to db"));
   },
   async deleteItem({ commit }, id) {
+    let session = await Auth.currentSession();
     await axios
-      .delete(domain + `/item/${id}`)
+      .delete(domain + `/item/${id}` , {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then(commit("deleteItemFromState", id))
       .catch(console.log("error deleting item from db"));
   },
-  async updateItem({ commit }, id, item) {
+  async updateItem({ commit }, item) {
+    let session = await Auth.currentSession();
+    let id = item.itemID;
+    item = {
+      name : item.name,
+      description : item.description,
+      price : parseFloat(item.price),
+      categoryID : Number(item.categoryID)
+    };
     await axios
-      .put(domain + `/item/${id}`, item)
+      .put(`/item/${id}`, item, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then(commit("updateItemInState", item))
       .catch(console.log("error updating item on db"));
   },
@@ -87,12 +119,12 @@ const mutations = {
     state.items.push(item);
   },
   deleteItemFromState: (state, id) => {
-    state.items = state.items.filter((i) => i.id != id);
+    state.items = state.items.filter((i) => i.itemID != id);
   },
   updateItemInState: (state, item) => {
-    for (var i of state.items) {
-      if (i.itemID == item.itemID) {
-        i = item;
+    for (var i in state.items) {
+      if (state.items[i].itemID == item.itemID) {
+        Vue.set(state.items, i, item);
         break;
       }
     }

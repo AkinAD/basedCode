@@ -8,6 +8,8 @@
 <script>
 import ManageItemsList from "./ManageItemsList";
 
+import {mapActions} from 'vuex';
+
 // category: String
 // categoryID: Int
 // col: Int
@@ -28,9 +30,13 @@ export default {
     }
   },
   methods : {
+    ...mapActions(['fetchEmployees']),
   },
   computed: {
     
+  },
+  created() {
+    //this.fetchEmployees();
   }
 };
 </script>

@@ -1,9 +1,9 @@
 <template>
   <v-container fluid full-width>
     <ManagementDialog
-      v-on:form-saved="_addItem($event)"
+      v-on:form-saved="_addCategory($event)"
       :type="type"
-      :fields="itemFields"
+      :fields="categoryFields"
       :headline="headline"
     >
       <template v-slot:button="{ on: dialog }">
@@ -32,10 +32,10 @@
     <div>
       <h3>{{ title }}</h3>
       <v-row>
-        <v-col md="12" v-for="item of getItems" :key="item.itemID">
-          <ManageItemCard
-            :fields="itemFields"
-            :item="item"
+        <v-col md="12" v-for="category of getCategories" :key="category.categoryID">
+          <ManageCategoryCard
+            :fields="categoryFields"
+            :category="category"
           />
         </v-col>
       </v-row>
@@ -46,13 +46,13 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 
-import ManageItemCard from "../cards/ManageItemCard";
+import ManageCategoryCard from "../cards/ManageCategoryCard";
 import ManagementDialog from "./ManagementDialog";
 
 export default {
-  name: "ManageItemsList",
+  name: "ManageCategoriesList",
   components: {
-    ManageItemCard,
+    ManageCategoryCard,
     ManagementDialog,
   },
   props: {
@@ -60,32 +60,29 @@ export default {
   },
   data() {
     return {
-      headline: "Add Items",
-      type : "Item",
-      title: "All Items",
-      itemFields: [
-        { schemaName: "name", displayName: "Name", value: ''},
-        { schemaName: "description", displayName: "Description", value: ''},
-        { schemaName: "price", displayName: "Price", value: ''},
-        { schemaName: "categoryID", displayName: "Category ID", value: ''},
+      headline: "Add Categories",
+      type : "Category",
+      title: "All Categories",
+      categoryFields: [
+        { schemaName: "category", displayName: "Name", value: ''},
       ]
     };
   },
   computed: {
-    ...mapGetters(["getItems"]),
+    ...mapGetters(["getCategories"]),
   },
   methods: {
-    ...mapActions(["addItem"]),
-    mapItemToSchema(fieldArray) {
-      let mappedItem = {};
+    ...mapActions(["addCategory"]),
+    mapCategoryToSchema(fieldArray) {
+      let mappedCategory = {};
       for (var attribute of fieldArray) {
-        mappedItem[attribute.schemaName] = attribute.value;
+        mappedCategory[attribute.schemaName] = attribute.value;
       }
 
-      return mappedItem;
+      return mappedCategory;
     },
-    _addItem(fieldArray) {
-      this.addItem(this.mapItemToSchema(fieldArray));
+    _addCategory(fieldArray) {
+      this.addCategory(this.mapCategoryToSchema(fieldArray));
     },
   },
 };

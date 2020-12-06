@@ -1,8 +1,11 @@
 import axios from "axios";
+import Vue from 'vue';
+
+import { Auth } from "aws-amplify";
 
 const state = {
   categories: [],
-  selectedCatorgory: 0,
+  selectedCategory: 0,
 };
 
 const getters = {
@@ -10,7 +13,7 @@ const getters = {
     return state.categories;
   },
   getSelectedCategory() {
-    return state.selectedCatorgory;
+    return state.selectedCategory;
   },
 };
 
@@ -24,20 +27,42 @@ if (process.env.NODE_ENV === 'development') {
 
 const actions = {
   async addCategory({ commit }, category) {
+    let session = await Auth.currentSession();
+    let newCategory = { name: category.category }
+  
     await axios
-      .post(domain + `/category/${category}`)
+      .post("/category/", newCategory, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then(commit("addCategoryToState", category))
       .catch(console.log("error adding category"));
   },
   async deleteCategory({ commit }, id) {
+    let session = await Auth.currentSession();
     await axios
-      .delete(domain + `/category/${id}`)
+      .delete(domain + `/category/${id}` , {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then(commit("deleteCategoryFromState", id))
       .catch(console.log("error deleting category"));
   },
   async updateCategory({ commit }, category) {
+    let session = await Auth.currentSession();
+    category = {
+      category : category.category,
+      categoryID : Number(category.categoryID)
+    };
+    console.log(category);
     await axios
-      .put(domain + `/category/${category}`)
+      .put("/category/", category , {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then(commit("updateCategoryInState", category))
       .catch(console.log("error updating category"));
   },
@@ -54,15 +79,16 @@ const mutations = {
     state.categories.push(category);
   },
   deleteCategoryFromState: (state, id) => {
-    state.categories = state.categories.filter((i) => i.id != id);
+    state.categories = state.categories.filter((i) => i.categoryID != id);
   },
   updateCategoryInState: (state, category) => {
-    for (var c of state.categories) {
-      if (c.id == category.id) {
-        c = category;
+    for (var i in state.categories) {
+      if (state.categories[i].categoryID == category.categoryID) {
+        Vue.set(state.categories, i, category)
         break;
       }
     }
+    
   },
   setSelectedCategory: (state, category) => {
     state.selectedCatorgory = category;

@@ -31,6 +31,8 @@
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 
+// import axios from 'axios';
+
 import { Hub } from "aws-amplify";
 import { mapActions } from "vuex";
 import { Auth } from "aws-amplify";
@@ -67,13 +69,15 @@ export default {
         this.signOut();
         this.$router.push("/home");
       });
+    //axios.defaults.headers.common['Authorization'] = this.getUsers.;  
   },
   created() {
     this.updateStores();
     this.fetchCategories();
+    
   },
   methods: {
-    ...mapActions(["signIn", "signOut", "updateStores", "fetchCategories"]),
+    ...mapActions(["signIn", "signOut", "updateStores", "fetchCategories", "fetchEmployees",]),
     onScroll(e) {
       if (typeof window === "undefined") return;
       const top = window.pageYOffset || e.target.scrollTop || 0;

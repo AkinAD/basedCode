@@ -1,9 +1,9 @@
 <template>
   <v-container fluid full-width>
     <ManagementDialog
-      v-on:form-saved="_addItem($event)"
+      v-on:form-saved="_addEmployee($event)"
       :type="type"
-      :fields="itemFields"
+      :fields="employeeFields"
       :headline="headline"
     >
       <template v-slot:button="{ on: dialog }">
@@ -32,10 +32,10 @@
     <div>
       <h3>{{ title }}</h3>
       <v-row>
-        <v-col md="12" v-for="item of getItems" :key="item.itemID">
-          <ManageItemCard
-            :fields="itemFields"
-            :item="item"
+        <v-col md="12" v-for="employee in getEmployees" :key="employee.employeeID">
+          <ManageEmployeeCard
+            :fields="employeeFields"
+            :employee="employee"
           />
         </v-col>
       </v-row>
@@ -46,13 +46,13 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 
-import ManageItemCard from "../cards/ManageItemCard";
+import ManageEmployeeCard from "../cards/ManageEmployeeCard";
 import ManagementDialog from "./ManagementDialog";
 
 export default {
-  name: "ManageItemsList",
+  name: "ManageEmployeesList",
   components: {
-    ManageItemCard,
+    ManageEmployeeCard,
     ManagementDialog,
   },
   props: {
@@ -60,32 +60,33 @@ export default {
   },
   data() {
     return {
-      headline: "Add Items",
-      type : "Item",
-      title: "All Items",
-      itemFields: [
-        { schemaName: "name", displayName: "Name", value: ''},
-        { schemaName: "description", displayName: "Description", value: ''},
-        { schemaName: "price", displayName: "Price", value: ''},
-        { schemaName: "categoryID", displayName: "Category ID", value: ''},
+      headline: "Add Employees",
+      type : "Employee",
+      title: "All Employees",
+      employeeFields: [
+        { schemaName: "username", displayName: "Username", value: ''},
+        { schemaName: "email", displayName: "Email", value: ''},
+        { schemaName: "storeid", displayName: "Store ID", value: ''},
+        { schemaName: "firstname", displayName: "First Name", value: ''},
+        { schemaName: "lastname", displayName: "Last Name", value: ''},
       ]
     };
   },
   computed: {
-    ...mapGetters(["getItems"]),
+    ...mapGetters(["getEmployees"]),
   },
   methods: {
-    ...mapActions(["addItem"]),
-    mapItemToSchema(fieldArray) {
-      let mappedItem = {};
+    ...mapActions(["addEmployee"]),
+    mapEmployeeToSchema(fieldArray) {
+      let mappedEmployee = {};
       for (var attribute of fieldArray) {
-        mappedItem[attribute.schemaName] = attribute.value;
+        mappedEmployee[attribute.schemaName] = attribute.value;
       }
 
-      return mappedItem;
+      return mappedEmployee;
     },
-    _addItem(fieldArray) {
-      this.addItem(this.mapItemToSchema(fieldArray));
+    _addEmployee(fieldArray) {
+      this.addEmployee(this.mapEmployeeToSchema(fieldArray));
     },
   },
 };

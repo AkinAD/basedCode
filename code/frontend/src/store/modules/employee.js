@@ -1,4 +1,6 @@
 import axios from "axios";
+import Vue from 'vue';
+import { Auth } from "aws-amplify";
 
 const state = {
   employeeList: [],
@@ -20,26 +22,48 @@ if (process.env.NODE_ENV === 'development') {
 
 const actions = {
   async addEmployee({ commit }, employee) {
+    let session = await Auth.currentSession();
+    employee = {
+      username : employee.username,
+      email : employee.email,
+      storeid : Number(employee.storeid),
+      firstname : employee.firstname,
+      lastname : employee.lastname
+    };
     await axios
-      .post(domain + `/employee/${employee}`)
+      .post("/employee/", employee, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then(commit("addEmployeeToState", employee))
       .catch(console.log("error adding employee"));
   },
-  async deleteEmployee({ commit }, id) {
+  async deleteEmployee({ commit }, username) {
+    let session = await Auth.currentSession();
     await axios
-      .delete("...")
+      .delete(domain + "/employee/", username, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then((response) => {
         //do something
         response;
-        commit("deleteEmployeeFromState", id);
+        commit("deleteEmployeeFromState", username);
       })
       .catch({
         //do something else
       });
   },
   async updateEmployee({ commit }, employee) {
+    let session = await Auth.currentSession();
     await axios
-      .put("...")
+      .put(domain + "/employee/", employee, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then((response) => {
         //do something
         response;
@@ -49,9 +73,48 @@ const actions = {
         //do something else
       });
   },
-  async fetchEmployees({ commit }) {
+  async promoteToManager(employee) {
+    let session = await Auth.currentSession();
     await axios
-      .get(domain + "/employee")
+      .post(domain + "/manager/", employee.username, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
+      .then((response) => {
+        //do something
+        response;
+        
+      })
+      .catch({
+        //do something else
+      });
+  },
+  async promoteToAdmin(employee) {
+    let session = await Auth.currentSession();
+    await axios
+      .post(domain + "/admin/", employee.username ,{
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
+      .then((response) => {
+        //do something
+        response;
+        
+      })
+      .catch({
+        //do something else
+      });
+  },
+  async fetchEmployees({ commit }) {
+    let session = await Auth.currentSession();
+    await axios
+      .get(domain + "/employee", {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
       .then((res) => commit("updateEmployees", res.data))
       .catch(console.log("error fetching employee list"));
   },
@@ -61,13 +124,14 @@ const mutations = {
   addEmployeeToState: (state, employee) => {
     state.employeeList.push(employee);
   },
-  deleteEmployeeFromState: (state, id) => {
-    state.employeeList = state.employeeList.filter((i) => i.id != id);
+  deleteEmployeeFromState: (state, username) => {
+    state.employeeList = state.employeeList.filter((e) => e.username != username);
   },
   updateEmployeeInState: (state, employee) => {
-    for (var e of state.employeeList) {
-      if (e.id == employee.id) {
-        e = employee;
+  
+    for (var i in state.employeeList) {
+      if (state.employeeList[i].username == employee.username) {
+        Vue.set(state.employeeList, i, employee);
         break;
       }
     }
