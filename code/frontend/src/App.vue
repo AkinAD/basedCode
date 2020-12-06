@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- main app tag -->
-    <Header class="v-navigation-drawer" />
+    <Header />
     <v-main
       ><!--where pages are to be loaded-->
       <v-container fluid>
@@ -82,14 +82,6 @@ export default {
       "fetchEmployees",
       "fetchAllItems",
     ]),
-    onScroll(e) {
-      if (typeof window === "undefined") return;
-      const top = window.pageYOffset || e.target.scrollTop || 0;
-      this.fab = top > 20;
-    },
-    toTop() {
-      this.$vuetify.goTo(0);
-    },
   },
 };
 </script>
