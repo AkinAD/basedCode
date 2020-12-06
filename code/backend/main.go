@@ -251,6 +251,7 @@ func getAccountByUsername(c *gin.Context) {
 }
 
 func updateAccount(c *gin.Context) {
+
 	var user *user.User
 	err := c.ShouldBind(&user)
 	if err != nil {
@@ -336,7 +337,15 @@ func deleteFromAdmin(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, err)
 	}
+
+	status, err2 := userSrv.DeleteProfile(userName.Username)
+	if err2 != nil {
+		c.JSON(500, err2)
+	}
+	fmt.Println(status)
+
 	c.JSON(200, resp)
+
 }
 
 func createEmployee(c *gin.Context) {
@@ -379,7 +388,6 @@ func createEmployee(c *gin.Context) {
 	if err2 != nil {
 		c.JSON(500, err2)
 	}
-	c.JSON(200, resp)
 
 	//create their profile in userDB
 	err3 := userSrv.CreateProfile(input.Username, input.StoreID, input.FirstName, input.LastName, input.Email)

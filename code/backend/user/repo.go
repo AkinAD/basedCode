@@ -10,6 +10,7 @@ type UserRepo interface {
 	updateProfile(input *User) (*User, error)
 	getProfile(input string) (*User, error)
 	createProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error
+	deleteProfile(username string) (bool, error)
 }
 
 type userRepo struct {
@@ -65,4 +66,13 @@ func (r *userRepo) createProfile(Username string, StoreID int, FirstName string,
 		return result.Error
 	}
 	return nil
+}
+
+func (r *userRepo) deleteProfile(username string) (bool, error) {
+	var userProfile User
+	result := r.db.Raw("DELETE from accounts WHERE username = ?", username).Scan(&userProfile)
+	if result.Error != nil {
+		return false, result.Error
+	}
+	return true, nil
 }

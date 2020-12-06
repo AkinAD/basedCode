@@ -18,6 +18,7 @@ type UserService interface {
 	CreateProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error
 	GetProfile(username string) (*User, error)
 	UpdateProfile(user *User) (*User, error)
+	DeleteProfile(username string) (bool, error)
 	// DeleteUser(username string) (bool, error)
 }
 
@@ -156,4 +157,14 @@ func (s *userService) UpdateProfile(user *User) (*User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *userService) DeleteProfile(username string) (bool, error) {
+	_, err := s.db.deleteProfile(username)
+	if err != nil {
+		// log.Printf("%v", err)
+		return false, err
+	}
+
+	return true, nil
 }
