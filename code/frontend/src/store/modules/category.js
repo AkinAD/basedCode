@@ -31,7 +31,7 @@ const actions = {
     let newCategory = { name: category.category }
   
     await axios
-      .post(domain + "/category/", newCategory, {
+      .post(domain + "/category", newCategory, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -60,7 +60,7 @@ const actions = {
     };
     console.log(category);
     await axios
-      .put(domain + "/category/", category , {
+      .put(domain + "/category", category , {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
