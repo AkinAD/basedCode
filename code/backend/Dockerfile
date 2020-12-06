@@ -5,7 +5,7 @@ WORKDIR /src
 ENV CGO_ENABLED=0
 COPY go.* .
 COPY auth/go.* .
-COPY item/go.* .
+COPY shop/go.* .
 COPY user/go.* .
 RUN go mod download
 COPY . .

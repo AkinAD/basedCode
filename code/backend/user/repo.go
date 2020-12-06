@@ -7,19 +7,23 @@ import (
 
 type UserRepo interface {
 	updatePreferredStore(username string, preferredStore int) error
+	updateProfile(input *User) (*User, error)
+	getProfile(input string) (*User, error)
+	createProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error
+	deleteProfile(username string) (bool, error)
 }
 
 type userRepo struct {
 	db *gorm.DB
 }
 
-func NewDatabase(config string) UserRepo {
+func newDatabase(config string) UserRepo {
 	return &userRepo{
-		db: newDatabase(config),
+		db: initDatabase(config),
 	}
 }
 
-func newDatabase(config string) *gorm.DB {
+func initDatabase(config string) *gorm.DB {
 	db, err := gorm.Open(postgres.Open(config), &gorm.Config{})
 	if err != nil {
 		panic(err)
@@ -28,9 +32,47 @@ func newDatabase(config string) *gorm.DB {
 }
 
 func (r *userRepo) updatePreferredStore(username string, preferredStore int) error {
-	result := r.db.Table("account").Where("username = ?", username).Update("storeID", preferredStore)
+	result := r.db.Table("accounts").Where("username = ?", username).Update("storeID", preferredStore)
 	if result.Error != nil {
 		return result.Error
 	}
 	return nil
+}
+
+func (r *userRepo) updateProfile(input *User) (*User, error) {
+	result := r.db.Table("accounts").Where("username = ?", input.Username).Update("storeid", input.StoreID)
+	//result := r.db.Model(&User{StoreID: input.StoreID})
+	//var users []User
+	//result := r.db.Raw("update accounts set storeid = 1 where username = 'matthewwalk';").Scan(&users)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return input, nil
+}
+
+func (r *userRepo) getProfile(input string) (*User, error) {
+	var userProfile User
+	result := r.db.Raw("SELECT * from accounts WHERE username = ?", input).Scan(&userProfile)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &userProfile, nil
+}
+func (r *userRepo) createProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error {
+	//result := r.db.Table("accounts").Where("username = ?", input.Username).Update("storeid", input.StoreID)
+	result := r.db.Exec("INSERT INTO accounts (username,storeid,firstname,lastname,email) VALUES (?,?,?,?,?)", Username, StoreID, FirstName, LastName, Email)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (r *userRepo) deleteProfile(username string) (bool, error) {
+	var userProfile User
+	result := r.db.Raw("DELETE from accounts WHERE username = ?", username).Scan(&userProfile)
+	if result.Error != nil {
+		return false, result.Error
+	}
+	return true, nil
 }

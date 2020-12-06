@@ -14,12 +14,12 @@
       </v-tab>
 
       <!--Tabs that do require authentication-->
-      <v-tab v-show="this.signedIn" to="/cart">
+      <v-tab v-show="signedIn" to="/cart">
         <v-icon left dark> mdi-cart </v-icon>
         Cart
       </v-tab>
 
-      <v-tab v-show="!this.signedIn" to="/login">
+      <v-tab v-show="!signedIn" to="/login">
         <v-icon left dark> mdi-lock </v-icon>
         Login
       </v-tab>
@@ -30,11 +30,39 @@
         Manage
       </v-tab>
 
-      <v-btn class="ma-2" text icon>
-        <StoreSelector />
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn class="ma-2" text icon v-on="on">
+            <OptimumRoute />
+          </v-btn>
+        </template>
+        <span>Click to see optimum route.</span>
+      </v-tooltip>
 
-      <amplify-sign-out class="ma-2" v-show="signedIn"></amplify-sign-out>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn class="ma-2" text icon v-on="on">
+            <StoreSelector />
+          </v-btn>
+        </template>
+        <span>Click to select a store.</span>
+      </v-tooltip>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            class="ma-2"
+            color="red"
+            v-show="signedIn"
+            icon
+            v-on="on"
+            @click="signOut"
+          >
+            <v-icon>mdi-logout</v-icon>
+          </v-btn>
+        </template>
+        <span>Click to logout.</span>
+      </v-tooltip>
     </v-tabs>
   </v-app-bar>
 </template>
@@ -42,11 +70,14 @@
 <script>
 import StoreSelector from "../../components/browse/StoreSelector";
 import { mapGetters } from "vuex";
+import OptimumRoute from "../../components/OptimumRoute";
+import { Auth } from "aws-amplify";
 
 export default {
   name: "Header",
   components: {
     StoreSelector,
+    OptimumRoute,
   },
   data() {
     //needs to be modified to be dynamic based on router links maybe
@@ -66,6 +97,14 @@ export default {
         this.getUserGroups.includes("employee")
       );
     },
+  },
+  methods: {
+    signOut() {
+      Auth.signOut();
+    },
+  },
+  watch: {
+    signedIn() {},
   },
 };
 </script>

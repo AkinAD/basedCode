@@ -1,6 +1,10 @@
 package user
 
-import cognito "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
+import (
+	"fmt"
+
+	cognito "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
+)
 
 type UserService interface {
 	CreateEmployee(*cognito.AdminCreateUserInput) (*cognito.AdminCreateUserOutput, error)
@@ -8,12 +12,26 @@ type UserService interface {
 	AddUserToGroup(input *cognito.AdminAddUserToGroupInput) (*cognito.AdminAddUserToGroupOutput, error)
 	RemoveUserFromGroup(input *cognito.AdminRemoveUserFromGroupInput) (*cognito.AdminRemoveUserFromGroupOutput, error)
 	GetUser(input *cognito.AdminGetUserInput) (*cognito.AdminGetUserOutput, error)
-	ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error)
+	ListUsersInGroup(input *cognito.ListUsersInGroupInput) ([]*User, error)
 	Login(*cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error)
-	UpdatePreferredStore(username string, preferredStore int) error
+	// UpdatePreferredStore(username string, preferredStore int) error
+	CreateProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error
+	GetProfile(username string) (*User, error)
+	UpdateProfile(user *User) (*User, error)
+	DeleteProfile(username string) (bool, error)
+	// DeleteUser(username string) (bool, error)
+	ListGroupsForUser(input *cognito.AdminListGroupsForUserInput) (*cognito.AdminListGroupsForUserOutput, error)
 }
 
 //cognito = CognitoIdentityProvider
+
+func (s *userService) ListGroupsForUser(input *cognito.AdminListGroupsForUserInput) (*cognito.AdminListGroupsForUserOutput, error) {
+	output, err := s.cognito.AdminListGroupsForUser(input)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
 
 // https://docs.aws.amazon.com/sdk-for-go/api/service/cognitoidentityprovider/#CognitoIdentityProvider.AdminCreateUser
 func (s *userService) CreateEmployee(input *cognito.AdminCreateUserInput) (*cognito.AdminCreateUserOutput, error) {
@@ -85,12 +103,30 @@ Request Syntax
    "UserPoolId": "string"
 }
 */
-func (s *userService) ListUsersInGroup(input *cognito.ListUsersInGroupInput) (*cognito.ListUsersInGroupOutput, error) {
+
+func (s *userService) ListUsersInGroup(input *cognito.ListUsersInGroupInput) ([]*User, error) {
 	output, err := s.cognito.ListUsersInGroup(input)
+
+	// this grabs the username. they're stored in an array
+	//fmt.Println(*output.Users[1].Username)
+	length := len(output.Users)
+	//fmt.Println(length)
+	var userArray []*User
+	var user *User
+
+	for i := 0; i < length; i++ {
+		fmt.Println(*output.Users[i].Username)
+		user, err = s.db.getProfile(*output.Users[i].Username)
+		userArray = append(userArray, user)
+		//fmt.Println(*user)
+	}
+
+	//fmt.Println(userArray)
 	if err != nil {
 		return nil, err
 	}
-	return output, nil
+
+	return userArray, nil
 }
 
 func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.InitiateAuthOutput, error) {
@@ -101,10 +137,43 @@ func (s *userService) Login(input *cognito.InitiateAuthInput) (*cognito.Initiate
 	return output, err
 }
 
-func (r *userService) UpdatePreferredStore(username string, preferredStore int) error {
-	err := r.db.updatePreferredStore(username, preferredStore)
+func (s *userService) CreateProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error {
+	err := s.db.createProfile(Username, StoreID, FirstName, LastName, Email)
 	if err != nil {
+		// log.Printf("%v", err)
 		return err
 	}
+
 	return nil
+}
+
+func (s *userService) GetProfile(username string) (*User, error) {
+
+	user, err := s.db.getProfile(username)
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *userService) UpdateProfile(user *User) (*User, error) {
+	user, err := s.db.updateProfile(user)
+	if err != nil {
+		// log.Printf("%v", err)
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *userService) DeleteProfile(username string) (bool, error) {
+	_, err := s.db.deleteProfile(username)
+	if err != nil {
+		// log.Printf("%v", err)
+		return false, err
+	}
+
+	return true, nil
 }

@@ -16,7 +16,12 @@
     </v-container>
 
     <v-row>
-      <v-col sm="6" md="4" v-for="item in searchFilteredItems" :key="item.id">
+      <v-col
+        sm="6"
+        md="4"
+        v-for="item in searchFilteredItems"
+        :key="item.itemID"
+      >
         <VerticalProduct :product="item" />
       </v-col>
     </v-row>
@@ -40,22 +45,40 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getItems", "getSelectedFilter"]),
+    ...mapGetters([
+      "getItems",
+      "getSelectedFilter",
+      "getSelectedCategory",
+      "getCategories",
+    ]),
 
     filteredItems() {
       const filter = this.getSelectedFilter;
+      const category = this.getSelectedCategory;
       if (filter === null) {
-        return this.getItems;
-      } else
+        if (category === 0) return this.getItems;
+        else
+          return this.getItems.filter((item) => {
+            return item.categoryID === category;
+          });
+      } else if (category === 0) {
         return this.getItems.filter((item) => {
           return item.price <= filter[1] && item.price >= filter[0];
         });
+      } else
+        return this.getItems
+          .filter((item) => {
+            return item.price <= filter[1] && item.price >= filter[0];
+          })
+          .filter((item) => {
+            return item.categoryID === category;
+          });
     },
 
     searchFilteredItems() {
       const search = this.search.toLowerCase();
       return this.filteredItems.filter((item) => {
-        return item.title.toLowerCase().includes(search);
+        return item.name.toLowerCase().includes(search);
       });
     },
   },

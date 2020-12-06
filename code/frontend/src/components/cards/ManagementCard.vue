@@ -1,28 +1,27 @@
 <template>
   <v-container outlined full-width>
     <v-row>
-      <!--Image-->
-      <v-col md="4">
-        <v-img
-          v-show="visibleImage"
-          :src="product.image"
-          contain
-          height="200px"
-        />
-      </v-col>
       <!--Info-->
       <v-col md="8">
-        <v-card-title>{{ product.title }} </v-card-title>
-        <v-card-subtitle>$ {{ product.price }} </v-card-subtitle>
+        <v-card-title>{{ product.name }} </v-card-title>
+        <v-card-subtitle>$ {{ product.price }} <br/> {{product.category}} </v-card-subtitle>
         <v-card-actions>
-          <v-btn color="green" outlined>
-            <v-icon left>mdi-pencil</v-icon>
-            Edit {{ itemType }}</v-btn
-          >
-          <v-btn color="red" outlined>
-            <v-icon left>mdi-delete</v-icon>
-            Delete {{ itemType }}</v-btn
-          >
+          <ManagementDialog 
+            v-on:form-saved="$emit('update-event', $event)" 
+            :type="itemType"
+            :fields="fields" 
+            :headline="headline">
+            <template v-slot:button="{ on }">
+              <v-btn v-on="on" color="green" outlined>
+                <v-icon left>mdi-pencil</v-icon>
+                Edit {{ itemType }}
+              </v-btn>
+              <v-btn color="red" outlined>
+                <v-icon left>mdi-delete</v-icon>
+                Delete {{ itemType }}</v-btn
+              >
+            </template>
+          </ManagementDialog>
         </v-card-actions>
       </v-col>
     </v-row>
@@ -30,12 +29,23 @@
 </template>
 
 <script>
+import ManagementDialog from "../manage/ManagementDialog";
+
 export default {
   name: "ManagementCard",
+  components: {
+    ManagementDialog,
+  },
   props: {
     product: Object,
     itemType: String,
     visibleImage: Boolean,
+    fields: Array,
+  },
+  data() {
+    return {
+      headline: `Edit ${this.itemType}`,
+    };
   },
 };
 </script>

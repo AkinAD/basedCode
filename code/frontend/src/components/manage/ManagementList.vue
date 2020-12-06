@@ -1,19 +1,30 @@
 <template>
   <v-container fluid full-width>
+    <ManagementDialog v-on:form-saved="$emit('add-event', $event)" :type="type" :fields="fields" :headline="headline">
+      <template v-slot:button="{on : dialog}">
+        <v-tooltip top>
+          <template v-slot:activator="{ on : tooltip, attrs }">
+            <v-btn v-bind="attrs" fab fixed right bottom large dark color="blue" elevation="6" v-on="{ ...tooltip, ...dialog }">
+             <v-icon> mdi-plus </v-icon>
+            </v-btn>
+          </template>
+          <span>Add {{ type }}</span>
+        </v-tooltip>
+      </template>
+    </ManagementDialog>
+
     <div>
       <h3>{{ title }}</h3>
-      <v-btn fab fixed right bottom large dark color="blue" elevation="6">
-        <!--{{btnText}}-->
-        <v-icon> mdi-plus </v-icon>
-      </v-btn>
       <v-row>
         <v-col
           md="12"
-          v-for="recommendation in allRecommendations"
-          :key="recommendation.id"
+          v-for="item in getItems"
+          :key="item.itemID"
         >
           <ManagementCard
-            :product="recommendation"
+            :fields="fields" 
+            v-on:update-event="$emit('update-event', $event)"
+            :product="item"
             :itemType="type"
             :visibleImage="showImage"
           />
@@ -24,27 +35,30 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 import ManagementCard from "../cards/ManagementCard";
+import ManagementDialog from "./ManagementDialog";
 
 export default {
   name: "ManagementList",
   components: {
     ManagementCard,
+    ManagementDialog
   },
   props: {
     type: String,
     showImage: Boolean,
     title: String,
+    fields: Array
   },
-  methods: {
-    ...mapActions(["fetchRecommendations"]),
+  data () {
+    return {
+      headline : `Add ${this.type}`
+    }
   },
-  computed: mapGetters(["allRecommendations"]),
-  created() {
-    this.fetchRecommendations();
-  },
+  computed: mapGetters(["getItems"]),
+  
 };
 </script>
 

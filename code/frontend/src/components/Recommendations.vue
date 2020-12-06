@@ -6,30 +6,34 @@
     <v-row
       v-for="recommendation in allRecommendations"
       :key="recommendation.id"
-      sm="6"
-      md="4"
     >
-      <v-card elevation="0" class="py-2">
+      <v-container fluid>
         <VerticalProduct :product="recommendation" />
-      </v-card>
+      </v-container>
     </v-row>
+    <v-container fluid>
+      <v-card v-if="allRecommendations.length === 0">
+        <v-card-title
+          >Oh no! It appears we have no recommendations for you :(
+        </v-card-title>
+      </v-card>
+    </v-container>
   </v-container>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 import VerticalProduct from "../components/cards/VerticalProduct";
 
 export default {
   name: "Recommendations",
   components: { VerticalProduct },
-  methods: {
-    ...mapActions(["fetchRecommendations"]),
-  },
-  computed: mapGetters(["allRecommendations"]),
-  created() {
-    this.fetchRecommendations();
+  computed: {
+    ...mapGetters(["getCart", "getItems"]),
+    allRecommendations() {
+      return this.getItems.filter((item) => !this.getCart.includes(item));
+    },
   },
 };
 </script>
