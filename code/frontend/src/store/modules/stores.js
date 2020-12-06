@@ -33,7 +33,7 @@ const getters = {
 var domain;
 
 if (process.env.NODE_ENV === "development") {
-  domain = "http://localhost:8081";
+  domain = "";
 } else {
   domain = "https://thesmartshopper.online:8081";
 }
@@ -49,7 +49,7 @@ const actions = {
     };
 
     await axios
-      .post( "/store/", store, {
+      .post(domain + "/store/", store, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -81,7 +81,7 @@ const actions = {
     };
     console.log(store);
     await axios
-      .put( "/store/", store, {
+      .put(domain +  "/store/", store, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -120,7 +120,7 @@ const actions = {
     };
     console.log(stockInfo);
     await axios
-      .post("/stock/", stockInfo, {
+      .post(domain + "/stock/", stockInfo, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -169,7 +169,7 @@ const actions = {
     };
     console.log(stockInfo);
     await axios
-      .put("/stock/", stockInfo, {
+      .put(domain + "/stock/", stockInfo, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -201,7 +201,7 @@ const actions = {
     };
 
     await axios
-      .post("/item/", item, {
+      .post(domain + "/item/", item, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -232,7 +232,7 @@ const actions = {
       categoryID : Number(item.categoryID)
     };
     await axios
-      .put(`/item/${id}`, item, {
+      .put(domain + `/item/${id}`, item, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -245,7 +245,7 @@ const actions = {
   async fetchAllItems({ commit }) {
    
     await axios
-      .get("/item/")
+      .get(domain + "/item/")
       .then((response) => {
         commit("populateAllItems", response.data);
       })

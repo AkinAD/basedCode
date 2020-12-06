@@ -15,7 +15,7 @@ const getters = {
 var domain;
 
 if (process.env.NODE_ENV === 'development') {
-  domain = 'http://localhost:8081';
+  domain = '';
 } else {
   domain = 'https://thesmartshopper.online:8081';
 }
@@ -31,7 +31,7 @@ const actions = {
       lastname : employee.lastname
     };
     await axios
-      .post("/employee/", employee, {
+      .post(domain + "/employee/", employee, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }

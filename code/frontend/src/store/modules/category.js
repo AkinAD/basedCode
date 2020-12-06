@@ -20,7 +20,7 @@ const getters = {
 var domain;
 
 if (process.env.NODE_ENV === 'development') {
-  domain = 'http://localhost:8081';
+  domain = '';
 } else {
   domain = 'https://thesmartshopper.online:8081';
 }
@@ -31,7 +31,7 @@ const actions = {
     let newCategory = { name: category.category }
   
     await axios
-      .post("/category/", newCategory, {
+      .post(domain + "/category/", newCategory, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -60,7 +60,7 @@ const actions = {
     };
     console.log(category);
     await axios
-      .put("/category/", category , {
+      .put(domain + "/category/", category , {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
