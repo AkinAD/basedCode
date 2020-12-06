@@ -1,17 +1,19 @@
 <template>
   <v-card fluid transition="slide-x-transition">
-    <ManagementList title="All Categories" type="Category" :showImage="false" />
+    <ManageCategoriesList />
   </v-card>
 </template>
 
 <script>
-import ManagementList from "./ManagementList";
+import ManageCategoriesList from "./ManageCategoriesList";
 
 export default {
   name: "ManageCategories",
   components: {
-    ManagementList,
+   ManageCategoriesList,
   },
+  computed : {
+  }
 };
 </script>
 

@@ -1,12 +1,10 @@
 <template>
   <v-app-bar elevate-on-scroll app>
-    <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-
     <v-avatar>
       <v-img :src="img"></v-img>
     </v-avatar>
 
-    <v-tabs grow>
+    <v-tabs class="hidden-xs-only" grow>
       <!--Tabs that don't require authentication-->
       <v-tab flat v-for="item in menuItems" :key="item.title" :to="item.path">
         <v-icon left dark>{{ item.icon }}</v-icon>
@@ -64,6 +62,30 @@
         <span>Click to logout.</span>
       </v-tooltip>
     </v-tabs>
+    <!-- Show only on small devices -->
+    <v-navigation-drawer
+      class="v-navigation-drawer"
+      v-model="drawer"
+      disable-resize-watcher
+      absolute
+      temporary
+      left
+      elevate-on-scroll
+    >
+      <v-list>
+        <v-list-item
+          v-for="item in menuItems"
+          :key="item.title"
+          :to="item.path"
+          link
+        >
+          <v-list-item-icon
+            ><v-icon left dark>{{ item.icon }}</v-icon></v-list-item-icon
+          >
+          {{ item.title }}
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
   </v-app-bar>
 </template>
 
@@ -82,6 +104,7 @@ export default {
   data() {
     //needs to be modified to be dynamic based on router links maybe
     return {
+      drawer: false,
       menuItems: [
         { title: "Home", path: "/home", icon: "mdi-home" },
         { title: "Browse", path: "/browse", icon: "mdi-book" },

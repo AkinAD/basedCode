@@ -1,43 +1,42 @@
 <template>
   <v-card fluid transition="slide-x-transition">
-    <ManagementList 
-      v-on:add-event="addItem($event)"
-      v-on:update-event="updateItem($event)" 
-      v-on:delete-event="deleteItem($event)"
-      :fields="itemFields" 
-      title="All Items " 
-      type="Item" 
-      :showImage="true" />
+    <ManageItemsList />
   </v-card>
   
 </template>
 
 <script>
-import { mapActions, mapGetters} from 'vuex';
-import ManagementList from "./ManagementList";
+import ManageItemsList from "./ManageItemsList";
 
+import {mapActions} from 'vuex';
+
+// category: String
+// categoryID: Int
+// col: Int
+// description: String
+// itemID: Int
+// name: String
+// price: Double
+// row: Int
 
 export default {
   name: "ManageItems",
   components: {
-    ManagementList,
+    ManageItemsList,
   },
   data () {
     return {
-      //Item fields go here whenever we find out what they are
-      itemFields: [
-        { name: "Item Name", value: ''},
-        { name: "Price", value: ''},
-        { name: "Category", value: ''}
-        
-      ]
+      
     }
   },
   methods : {
-    ...mapActions(["addItem", "deleteItem", "updateItem"]),
+    ...mapActions(['fetchEmployees']),
   },
   computed: {
-    ...mapGetters(["getItems"]),
+    
+  },
+  created() {
+    this.fetchEmployees();
   }
 };
 </script>

@@ -15,18 +15,18 @@
           <v-row>
             <v-col
               md="12"
-              v-for="field in localFields"
-              :key="field.name"
+              v-for="field of localFields"
+              :key="field.schemaName"
             >
-              <v-text-field :label="field.name" v-model="field.value" required></v-text-field>
+              <v-text-field :label="field.displayName" v-model="field.value" required></v-text-field>
             </v-col>
           </v-row>
         </v-container>
-        <small>*indicates required field</small>
+        <small>All fields required</small>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="dialog = false">
+        <v-btn color="blue darken-1" text @click="formClosed()">
           Close
         </v-btn>
         <v-btn color="blue darken-1" text @click="formSaved()"> Save </v-btn>
@@ -47,7 +47,8 @@ export default {
   data () {
       return {
         dialog: false,
-        localFields : JSON.parse(JSON.stringify(this.fields))
+        localFields : JSON.parse(JSON.stringify(this.fields)),
+
       } 
   },
   methods: {
@@ -57,6 +58,10 @@ export default {
       //deep copy -__-
       this.localFields = JSON.parse(JSON.stringify(this.fields));
     },
+    formClosed() {
+      this.dialog = false;
+      this.localFields = JSON.parse(JSON.stringify(this.fields));
+    }
     
 
   },
