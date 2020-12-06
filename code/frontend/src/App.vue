@@ -67,13 +67,16 @@ export default {
         this.signOut();
         this.$router.push("/home");
       });
+     
   },
   created() {
     this.updateStores();
     this.fetchCategories();
+    this.fetchAllItems();
+    
   },
   methods: {
-    ...mapActions(["signIn", "signOut", "updateStores", "fetchCategories"]),
+    ...mapActions(["signIn", "signOut", "updateStores", "fetchCategories", "fetchEmployees", "fetchAllItems",]),
     onScroll(e) {
       if (typeof window === "undefined") return;
       const top = window.pageYOffset || e.target.scrollTop || 0;
