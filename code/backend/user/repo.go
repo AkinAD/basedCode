@@ -9,7 +9,8 @@ type UserRepo interface {
 	updatePreferredStore(username string, preferredStore int) error
 	updateProfile(input *User) (*User, error)
 	getProfile(input string) (*User, error)
-	createProfile(Username string, StoreID int, FirstName string, LastName string) error
+	createProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error
+	deleteProfile(username string) (bool, error)
 }
 
 type userRepo struct {
@@ -58,11 +59,20 @@ func (r *userRepo) getProfile(input string) (*User, error) {
 	}
 	return &userProfile, nil
 }
-func (r *userRepo) createProfile(Username string, StoreID int, FirstName string, LastName string) error {
+func (r *userRepo) createProfile(Username string, StoreID int, FirstName string, LastName string, Email string) error {
 	//result := r.db.Table("accounts").Where("username = ?", input.Username).Update("storeid", input.StoreID)
-	result := r.db.Exec("INSERT INTO accounts (username,storeid,firstname,lastname) VALUES (?,?,?,?)", Username, StoreID, FirstName, LastName)
+	result := r.db.Exec("INSERT INTO accounts (username,storeid,firstname,lastname,email) VALUES (?,?,?,?,?)", Username, StoreID, FirstName, LastName, Email)
 	if result.Error != nil {
 		return result.Error
 	}
 	return nil
+}
+
+func (r *userRepo) deleteProfile(username string) (bool, error) {
+	var userProfile User
+	result := r.db.Raw("DELETE from accounts WHERE username = ?", username).Scan(&userProfile)
+	if result.Error != nil {
+		return false, result.Error
+	}
+	return true, nil
 }

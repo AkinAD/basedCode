@@ -81,7 +81,7 @@ func main() {
 	//admin
 	router.GET("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), getGroupAdmin)
 	router.POST("/admin", auth.AuthMiddleware(awsRegion, userPoolID, []string{"admin"}), promoteToAdmin)
-	// router.DELTE("admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}) ,deleteFromAdmin)
+	//router.DELTE("admin/:id", auth.AuthMiddleware(cognitoRegion, userPoolID, []string{"admin"}), deleteFromAdmin)
 
 	//item
 	router.GET("/item", getItems) //?storeID= to get the shops/stock for a specific store
@@ -217,13 +217,13 @@ func getAccount(c *gin.Context) {
 		Username:   aws.String(username),
 	}
 
-	resp, err := userSrv.GetUser(input)
+	_, err := userSrv.GetUser(input)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return
 	}
-
-	c.JSON(200, resp)
+	//no longer printing out the default aws cognito response (for normalization sake)
+	//c.JSON(200, resp)
 
 	getProfile(c, username)
 
@@ -240,17 +240,18 @@ func getAccountByUsername(c *gin.Context) {
 		Username:   aws.String(username),
 	}
 
-	resp, err := userSrv.GetUser(input)
+	_, err := userSrv.GetUser(input)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return
 	}
-
-	c.JSON(200, &resp)
-
+	//no longer printing out the default aws cognito response (for normalization sake)
+	//c.JSON(200, &resp)
+	getProfile(c, username)
 }
 
 func updateAccount(c *gin.Context) {
+
 	var user *user.User
 	err := c.ShouldBind(&user)
 	if err != nil {
@@ -317,6 +318,36 @@ func getGroup(c *gin.Context, group string) {
 	c.JSON(200, resp)
 }
 
+func deleteFromAdmin(c *gin.Context) {
+
+	var userName struct {
+		Username string `json:"username"`
+	}
+	err := c.ShouldBind(&userName)
+	if err != nil {
+		c.JSON(401, err)
+	}
+
+	input := &cognito.AdminDeleteUserInput{
+		Username:   aws.String(userName.Username),
+		UserPoolId: aws.String(userPoolID),
+	}
+
+	resp, err := userSrv.DeleteUser(input)
+	if err != nil {
+		c.JSON(500, err)
+	}
+
+	status, err2 := userSrv.DeleteProfile(userName.Username)
+	if err2 != nil {
+		c.JSON(500, err2)
+	}
+	fmt.Println(status)
+
+	c.JSON(200, resp)
+
+}
+
 func createEmployee(c *gin.Context) {
 	//binded variables change depending on what is being sent from front-end
 	type CreateEmployeeInput struct {
@@ -340,15 +371,28 @@ func createEmployee(c *gin.Context) {
 		Username:       aws.String(input.Username),
 	}
 
+	//create employee
 	resp, err := userSrv.CreateEmployee(payload)
 	if err != nil {
 		c.JSON(500, err)
 	}
 	c.JSON(200, resp)
 
-	err2 := userSrv.CreateProfile(input.Username, input.StoreID, input.FirstName, input.LastName)
+	//add them to employee group
+	input2 := &cognito.AdminAddUserToGroupInput{
+		GroupName:  aws.String("employee"),
+		UserPoolId: aws.String(userPoolID),
+		Username:   aws.String(input.Username),
+	}
+	_, err2 := userSrv.AddUserToGroup(input2)
 	if err2 != nil {
 		c.JSON(500, err2)
+	}
+
+	//create their profile in userDB
+	err3 := userSrv.CreateProfile(input.Username, input.StoreID, input.FirstName, input.LastName, input.Email)
+	if err3 != nil {
+		c.JSON(500, err3)
 	}
 
 }
