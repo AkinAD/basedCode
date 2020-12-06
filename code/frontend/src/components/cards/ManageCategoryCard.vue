@@ -2,10 +2,10 @@
   <v-container outlined full-width>
     <v-row>
       <!--Info-->
-      <v-col >
+      <v-col>
         <v-card outlined>
           <v-card-title>{{ category.category }} </v-card-title>
-          <!-- <v-card-subtitle>$ {{ category.price }} <br/> {{category.category}} </v-card-subtitle> -->
+          <v-card-subtitle>Category ID: {{ category.categoryID }}</v-card-subtitle>
           <v-card-actions>
             <ManagementDialog
               v-on:form-saved="_updateCategory(category.categoryID, $event)"

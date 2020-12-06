@@ -2,11 +2,14 @@
   <v-container outlined full-width>
     <v-row>
       <!--Info-->
-      <v-col >
+      <v-col>
         <v-card outlined>
           <v-card-title>{{ item.name }} </v-card-title>
           <v-card-subtitle
-            >$ {{ item.price }} <br />
+            >$ {{ item.price }} 
+            <br />
+            {{ item.description }}
+            <br />
             {{ item.category }}
           </v-card-subtitle>
           <v-card-actions>

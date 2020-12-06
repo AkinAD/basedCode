@@ -5,7 +5,7 @@
       <v-col>
         <v-card outlined>
           <v-card-title>{{ store.address }} </v-card-title>
-          <!-- <v-card-subtitle>$ {{ store.price }} <br/> {{store.category}} </v-card-subtitle> -->
+          <v-card-subtitle>Store ID: {{ store.storeID }} </v-card-subtitle>
           <v-card-actions>
             <ManagementDialog
               v-on:form-saved="_updateStore(store.storeID, $event)"
