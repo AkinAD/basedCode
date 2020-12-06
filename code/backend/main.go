@@ -203,6 +203,7 @@ func login(c *gin.Context) {
 }
 
 func getAccount(c *gin.Context) {
+
 	username := c.GetString("username")
 	if username == "" {
 		c.AbortWithError(500, errors.New("Could not get username from token"))
@@ -224,7 +225,6 @@ func getAccount(c *gin.Context) {
 	}
 	//no longer printing out the default aws cognito response (for normalization sake)
 	//c.JSON(200, resp)
-
 	getProfile(c, username)
 
 }
@@ -251,7 +251,6 @@ func getAccountByUsername(c *gin.Context) {
 }
 
 func updateAccount(c *gin.Context) {
-
 	var user *user.User
 	err := c.ShouldBind(&user)
 	if err != nil {
@@ -267,7 +266,6 @@ func updateAccount(c *gin.Context) {
 		c.JSON(401, err)
 	}
 	c.JSON(200, &resp)
-
 }
 
 func getProfile(c *gin.Context, username string) {
@@ -297,13 +295,6 @@ func getGroupAdmin(c *gin.Context) {
 }
 
 func getGroup(c *gin.Context, group string) {
-	// employee UserPoolId = 3
-	// var groupName string
-	// err := c.ShouldBind(&groupName)
-	// if err != nil {
-	// 	c.JSON(500, err)
-	// }
-
 	input := &cognito.ListUsersInGroupInput{
 		GroupName: aws.String(group),
 		//	NextToken:  aws.String("1"),
@@ -319,32 +310,134 @@ func getGroup(c *gin.Context, group string) {
 }
 
 func deleteFromAdmin(c *gin.Context) {
-
-	var userName struct {
+	//grab username to be deleted
+	var userToBeDeleted struct {
 		Username string `json:"username"`
 	}
-	err := c.ShouldBind(&userName)
+	err := c.ShouldBind(&userToBeDeleted)
 	if err != nil {
 		c.JSON(401, err)
 	}
+	fmt.Println(userToBeDeleted.Username)
 
-	input := &cognito.AdminDeleteUserInput{
-		Username:   aws.String(userName.Username),
+	//grab current user
+	currentUser := c.GetString("username")
+	if currentUser == "" {
+		c.AbortWithError(500, errors.New("Could not get username from token"))
+		return
+	}
+
+	//check permissions of current user to see if they are admin/manager
+	input := &cognito.AdminListGroupsForUserInput{
 		UserPoolId: aws.String(userPoolID),
+		Username:   aws.String(currentUser),
+	}
+	userPool, errCheck := userSrv.ListGroupsForUser(input)
+
+	if errCheck != nil {
+		c.AbortWithError(500, errCheck)
+		return
+	}
+	adminCheck := false
+	managerCheck := false
+	employeeCheck := false
+
+	length := len(userPool.Groups)
+	for i := 0; i < length; i++ {
+		if *userPool.Groups[i].GroupName == "manager" {
+			managerCheck = true
+		}
+		if *userPool.Groups[i].GroupName == "admin" {
+			adminCheck = true
+		}
+	}
+	//check permissions of userToBeDeleted to see if they are an employee
+	input2 := &cognito.AdminListGroupsForUserInput{
+		UserPoolId: aws.String(userPoolID),
+		Username:   aws.String(userToBeDeleted.Username),
 	}
 
-	resp, err := userSrv.DeleteUser(input)
-	if err != nil {
-		c.JSON(500, err)
+	userPoolEmployee, errCheck2 := userSrv.ListGroupsForUser(input2)
+	if errCheck2 != nil {
+		c.AbortWithError(500, errCheck2)
+		return
 	}
 
-	status, err2 := userSrv.DeleteProfile(userName.Username)
-	if err2 != nil {
-		c.JSON(500, err2)
+	length = len(userPoolEmployee.Groups)
+	for i := 0; i < length; i++ {
+		if *userPoolEmployee.Groups[i].GroupName == "employee" {
+			employeeCheck = true
+			fmt.Println(*userPoolEmployee.Groups[i].GroupName)
+		}
 	}
-	fmt.Println(status)
 
-	c.JSON(200, resp)
+	if adminCheck == true {
+		fmt.Println("You are a Admin")
+
+		//can delete anyone if you are an admin
+		input := &cognito.AdminDeleteUserInput{
+			Username:   aws.String(userToBeDeleted.Username),
+			UserPoolId: aws.String(userPoolID),
+		}
+
+		resp, err := userSrv.DeleteUser(input)
+		if err != nil {
+			c.JSON(500, err)
+		}
+
+		status, err2 := userSrv.DeleteProfile(userToBeDeleted.Username)
+		if err2 != nil {
+			c.JSON(500, err2)
+		}
+		fmt.Println(status)
+		c.JSON(200, resp)
+
+	} else if managerCheck == true {
+		fmt.Println("You are a Manager")
+		//can only delete employees in your store if you are a manager
+		managerInfo, managerErr := userSrv.GetProfile(currentUser)
+		if managerErr != nil {
+			c.JSON(500, managerErr)
+		}
+		//check if the user to be deleted is an employee
+		if employeeCheck == true {
+			//get employee's profile to compare storeIDs with Manager
+			employeeInfo, employeeErr := userSrv.GetProfile(userToBeDeleted.Username)
+			if employeeErr != nil {
+				c.JSON(500, employeeErr)
+			}
+
+			//compare the storeIDs
+			if managerInfo.StoreID != employeeInfo.StoreID {
+				c.AbortWithError(500, errors.New("The employee's StoreID does not match the Manager's Store ID"))
+				return
+			}
+
+			//delete the user
+			input := &cognito.AdminDeleteUserInput{
+				Username:   aws.String(userToBeDeleted.Username),
+				UserPoolId: aws.String(userPoolID),
+			}
+
+			resp, err := userSrv.DeleteUser(input)
+			if err != nil {
+				c.JSON(500, err)
+			}
+
+			status, err2 := userSrv.DeleteProfile(userToBeDeleted.Username)
+			if err2 != nil {
+				c.JSON(500, err2)
+			}
+			fmt.Println(status)
+
+			c.JSON(200, resp)
+		} else {
+			c.AbortWithError(500, errors.New("User to be deleted it not an employee"))
+		}
+
+	} else {
+		c.AbortWithError(500, errors.New("Current user is not a Manager or Admin"))
+	}
 
 }
 
@@ -370,6 +463,21 @@ func createEmployee(c *gin.Context) {
 		UserPoolId:     aws.String(userPoolID),
 		Username:       aws.String(input.Username),
 	}
+	//get manager's profile to get their storeID, which is used for creating the employee
+	managerUsername := c.GetString("username")
+	if managerUsername == "" {
+		c.AbortWithError(500, errors.New("Could not get managerUsername from token"))
+		return
+	}
+	managerInfo, managerErr := userSrv.GetProfile(managerUsername)
+	if managerErr != nil {
+		c.JSON(500, managerErr)
+	}
+	//fmt.Println(managerInfo.StoreID)
+	if managerInfo.StoreID != input.StoreID {
+		c.AbortWithError(500, errors.New("The employee's StoreID does not match the Manager's Store ID"))
+		return
+	}
 
 	//create employee
 	resp, err := userSrv.CreateEmployee(payload)
@@ -390,7 +498,7 @@ func createEmployee(c *gin.Context) {
 	}
 
 	//create their profile in userDB
-	err3 := userSrv.CreateProfile(input.Username, input.StoreID, input.FirstName, input.LastName, input.Email)
+	err3 := userSrv.CreateProfile(input.Username, managerInfo.StoreID, input.FirstName, input.LastName, input.Email)
 	if err3 != nil {
 		c.JSON(500, err3)
 	}
