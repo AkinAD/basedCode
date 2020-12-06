@@ -19,7 +19,7 @@
       <v-col
         sm="6"
         md="4"
-        v-for="item in searchFilteredItems"
+        v-for="item of searchFilteredItems"
         :key="item.itemID"
       >
         <VerticalProduct :product="item" />

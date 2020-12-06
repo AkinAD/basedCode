@@ -3,22 +3,22 @@
     <v-row>
       <!--Info-->
       <v-col md="8">
-        <v-card-title>{{ item.name }} </v-card-title>
-        <v-card-subtitle>$ {{ item.price }} <br/> {{item.category}} </v-card-subtitle>
+        <v-card-title>{{ store.address }} </v-card-title>
+        <!-- <v-card-subtitle>$ {{ store.price }} <br/> {{store.category}} </v-card-subtitle> -->
         <v-card-actions>
           <ManagementDialog 
-            v-on:form-saved="_updateItem(item.itemID, $event)" 
-            :type="itemType"
+            v-on:form-saved="_updateStore(store.storeID, $event)" 
+            :type="type"
             :fields="populateFieldsValues" 
             :headline="headline">
             <template v-slot:button="{ on }">
               <v-btn v-on="on" color="green" outlined>
                 <v-icon left>mdi-pencil</v-icon>
-                Edit {{ itemType }}
+                Edit {{ type }}
               </v-btn>
-              <v-btn color="red" outlined @click="deleteItem(item.itemID)">
+              <v-btn color="red" outlined @click="deleteStore(store.storeID)">
                 <v-icon left>mdi-delete</v-icon>
-                Delete {{ itemType }}</v-btn
+                Delete {{ type }}</v-btn
               >
             </template>
           </ManagementDialog>
@@ -33,18 +33,18 @@ import ManagementDialog from "../manage/ManagementDialog";
 import { mapActions} from 'vuex';
 
 export default {
-  name: "ManageItemCard",
+  name: "ManageStoreCard",
   components: {
     ManagementDialog,
   },
   props: {
-    item: Object,
+    store: Object,
     fields: Array,
   },
   data() {
     return {
-      headline: "Edit Item",
-      itemType: "Item",
+      headline: "Edit Store",
+      type: "Store",
     };
   },
   computed: {
@@ -53,26 +53,26 @@ export default {
       
       for(var field of filledArray)
       {
-        field.value = this.item[`${field.schemaName}`];
+        field.value = this.store[`${field.schemaName}`];
       }
 
       return filledArray;
     }
   },
    methods : {
-    ...mapActions(["deleteItem", "updateItem"]),
-    mapItemToSchema(fieldArray) {
-      let mappedItem = this.item;
+    ...mapActions(["deleteStore", "updateStore"]),
+    mapStoreToSchema(fieldArray) {
+      let mappedStore = this.store;
       for (var attribute of fieldArray) {
-        mappedItem[attribute.schemaName] = attribute.value;
+        mappedStore[attribute.schemaName] = attribute.value;
       }
 
-      return mappedItem;
+      return mappedStore;
     },
-    _updateItem(id, item) {
-      item = this.mapItemToSchema(item);
-      item.itemID = id;
-      this.updateItem(item);
+    _updateStore(id, store) {
+      store = this.mapStoreToSchema(store);
+      store.storeID = id;
+      this.updateStore(store);
     }
   },
 };

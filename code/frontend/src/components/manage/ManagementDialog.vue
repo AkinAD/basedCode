@@ -15,7 +15,7 @@
           <v-row>
             <v-col
               md="12"
-              v-for="field in localFields"
+              v-for="field of localFields"
               :key="field.schemaName"
             >
               <v-text-field :label="field.displayName" v-model="field.value" required></v-text-field>

@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      headline: `Edit ${this.categoryType}`,
+      headline: "Edit Category",
       categoryType: "Category",
     };
   },

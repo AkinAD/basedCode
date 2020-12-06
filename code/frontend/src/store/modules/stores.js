@@ -35,7 +35,57 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const actions = {
-  //todo: implement axios calls to get stores
+  //stores
+  
+  async addStore({ commit }, store) {
+    let session = await Auth.currentSession();
+    store = {
+      address : store.address,
+      storeID : Number(store.storeID)
+    };
+
+    await axios
+      .post( "/store/", store, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
+      .then((response) => {
+        
+        commit("addStoreToState", response.data);
+      })
+      .catch(console.log("error writing store to db"));
+  },
+  async deleteStore({ commit }, storeID) {
+    let session = await Auth.currentSession();
+    storeID = Number(storeID);
+    await axios
+      .delete(domain + `/store/${storeID}`, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
+      .then(commit("removeStoreFromState", storeID))
+      .catch(console.log("error writing store to db"));
+  },
+  async updateStore({ commit }, store) {
+    let session = await Auth.currentSession();
+   
+    store = {
+      address : store.address,
+      storeID : Number(store.storeID)
+    };
+    console.log(store);
+    await axios
+      .put( "/store/", store, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
+      .then(commit("updateStoreInState", store))
+      .catch(console.log("error writing store to db"));
+  },
+
   async updateStores({ commit }) {
     try {
       const res = await axios.get(domain + "/store"); //stores endpoint
@@ -105,6 +155,20 @@ const actions = {
 
 const mutations = {
   //stores
+  addStoreToState: (state, store) => {
+    state.stores.push(store);
+  },
+  removeStoreFromState: (state, id) => {
+    state.stores = state.stores.filter((i) => i.storeID != id);
+  },
+  updateStoreInState: (state, store) => {
+    for (var i in state.stores) {
+      if (state.stores[i].storeID == store.storeID) {
+        Vue.set(state.stores, i, store);
+        break;
+      }
+    }
+  },
   updateStores: (state, newStores) => {
     state.stores = newStores;
   },

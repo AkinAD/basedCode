@@ -63,7 +63,7 @@ export default {
   },
   data() {
     return {
-      headline: `Edit ${this.type}`,
+      headline: "Edit Employee",
       type: "Employee",
     };
   },
