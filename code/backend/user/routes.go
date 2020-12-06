@@ -20,9 +20,18 @@ type UserService interface {
 	UpdateProfile(user *User) (*User, error)
 	DeleteProfile(username string) (bool, error)
 	// DeleteUser(username string) (bool, error)
+	ListGroupsForUser(input *cognito.AdminListGroupsForUserInput) (*cognito.AdminListGroupsForUserOutput, error)
 }
 
 //cognito = CognitoIdentityProvider
+
+func (s *userService) ListGroupsForUser(input *cognito.AdminListGroupsForUserInput) (*cognito.AdminListGroupsForUserOutput, error) {
+	output, err := s.cognito.AdminListGroupsForUser(input)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
 
 // https://docs.aws.amazon.com/sdk-for-go/api/service/cognitoidentityprovider/#CognitoIdentityProvider.AdminCreateUser
 func (s *userService) CreateEmployee(input *cognito.AdminCreateUserInput) (*cognito.AdminCreateUserOutput, error) {
