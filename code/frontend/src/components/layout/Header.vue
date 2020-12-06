@@ -1,6 +1,6 @@
 <template>
   <v-app-bar elevate-on-scroll app>
-    <v-app-bar-nav-icon></v-app-bar-nav-icon>
+    <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
     <v-avatar>
       <v-img :src="img"></v-img>
@@ -70,5 +70,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
