@@ -31,6 +31,7 @@ type User struct {
 	StoreID   int    `json:"storeID" gorm:"column:storeid"`
 	FirstName string `json:"firstName" gorm:"column:firstname"`
 	LastName  string `json:"lastName" gorm:"column:lastname"`
+	Email     string `json:"email" gorm:"column:email"`
 }
 
 func awsSession(awsRegion, awsID, awsSecret string) (*session.Session, error) {

@@ -1,9 +1,5 @@
 <template>
   <v-app-bar elevate-on-scroll app>
-    <span class="hidden-sm-and-up">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"> </v-app-bar-nav-icon>
-    </span>
-
     <v-avatar>
       <v-img :src="img"></v-img>
     </v-avatar>
