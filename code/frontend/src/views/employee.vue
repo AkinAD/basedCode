@@ -37,13 +37,18 @@
         </v-tab-item>
       </keep-alive>
       <keep-alive>
-        <v-tab-item v-show="isManager">
+        <v-tab-item v-show="isManager || isAdmin">
           <ManageEmployees />
         </v-tab-item>
       </keep-alive>
       <keep-alive>
-        <v-tab-item v-show="isManager">
+        <v-tab-item v-show="isAdmin">
           <ManageStores />
+        </v-tab-item>
+      </keep-alive>
+      <keep-alive>
+        <v-tab-item v-show="isManager">
+          <ManageStock />
         </v-tab-item>
       </keep-alive>
     </v-tabs-items>
@@ -55,11 +60,12 @@ import ManageItems from "../components/manage/ManageItems";
 import ManageEmployees from "../components/manage/ManageEmployees";
 import ManageCategories from "../components/manage/ManageCategories";
 import ManageStores from "../components/manage/ManageStores";
+import ManageStock from "../components/manage/ManageStock";
 import { mapGetters } from "vuex";
 
 export default {
   name: "employee",
-  components: { ManageItems, ManageEmployees, ManageCategories, ManageStores },
+  components: { ManageItems, ManageEmployees, ManageCategories, ManageStores, ManageStock },
   data() {
     return {
       tabs: null,
@@ -69,6 +75,9 @@ export default {
     ...mapGetters(["getUserGroups"]),
     isManager() {
       return this.getUserGroups.includes("manager");
+    },
+    isAdmin() {
+      return this.getUserGroups.includes("admin");
     },
   },
 };

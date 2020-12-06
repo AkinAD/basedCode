@@ -1,6 +1,6 @@
 <template>
   <v-container fluid full-width>
-    <ManagementDialog
+    <!-- <ManagementDialog
       v-on:form-saved="_addItem($event)"
       :type="type"
       :fields="itemFields"
@@ -27,15 +27,19 @@
           <span>Add {{ type }}</span>
         </v-tooltip>
       </template>
-    </ManagementDialog>
+    </ManagementDialog> -->
 
     <div>
       <h3>{{ title }}</h3>
       <v-row>
-        <v-col md="12" v-for="item of getAllItems" :key="item.itemID">
-          <ManageItemCard
-            :fields="itemFields"
+        <v-col md="12" v-for="item of items" :key="item.itemID">
+          <ManageStockCard
+            :fields="stockFields"
             :item="item"
+            :inStore="inStore"
+            :stockAction="stockAction"
+            v-on:toggle-stock="$emit('toggle-stock', $event)"
+            v-on:update="$emit('update', $event)"
           />
         </v-col>
       </v-row>
@@ -46,33 +50,30 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 
-import ManageItemCard from "../cards/ManageItemCard";
-import ManagementDialog from "./ManagementDialog";
+import ManageStockCard from "../cards/ManageStockCard";
 
 export default {
-  name: "ManageItemsList",
+  name: "ManageStockList",
   components: {
-    ManageItemCard,
-    ManagementDialog,
+    ManageStockCard,
   },
   props: {
-    
+    title : String,
+    items : Array,
+    inStore : Boolean,
+    stockAction : String
   },
   data() {
     return {
-      headline: "Add Items",
       type : "Item",
-      title: "All Items",
-      itemFields: [
-        { schemaName: "name", displayName: "Name", value: ''},
-        { schemaName: "description", displayName: "Description", value: ''},
-        { schemaName: "price", displayName: "Price", value: ''},
-        { schemaName: "categoryID", displayName: "Category ID", value: ''},
+      stockFields: [
+        { schemaName: "row", displayName: "Row", value: ''},
+        { schemaName: "col", displayName: "Column", value: ''}
       ]
     };
   },
   computed: {
-    ...mapGetters(["getAllItems"]),
+    ...mapGetters(["getItems"]),
   },
   methods: {
     ...mapActions(["addItem"]),

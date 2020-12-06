@@ -74,10 +74,11 @@ export default {
   created() {
     this.updateStores();
     this.fetchCategories();
+    this.fetchAllItems();
     
   },
   methods: {
-    ...mapActions(["signIn", "signOut", "updateStores", "fetchCategories", "fetchEmployees",]),
+    ...mapActions(["signIn", "signOut", "updateStores", "fetchCategories", "fetchEmployees", "fetchAllItems",]),
     onScroll(e) {
       if (typeof window === "undefined") return;
       const top = window.pageYOffset || e.target.scrollTop || 0;

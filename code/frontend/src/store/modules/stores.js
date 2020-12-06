@@ -6,6 +6,7 @@ import { Auth } from "aws-amplify";
 //each store should have a name, location, and list of items
 const state = {
   stores: [],
+  allItems: [],
   items: [],
   selectedStore: null,
   dialog: false,
@@ -24,6 +25,9 @@ const getters = {
   getItems() {
     return state.items;
   },
+  getAllItems() {
+    return state.allItems;
+  },
 };
 
 var domain;
@@ -35,7 +39,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const actions = {
-  //stores
+  //************************************************************************************stores
   
   async addStore({ commit }, store) {
     let session = await Auth.currentSession();
@@ -103,7 +107,59 @@ const actions = {
       commit("setSelectedStore", store, []); //no items found
     }
   },
-  //items
+
+  //***********************************************************************************stock
+  async addStock({ commit }, stockInfo) {
+    let session = await Auth.currentSession();
+    stockInfo = {
+      itemID : Number(stockInfo.itemID),
+      storeID : Number(stockInfo.storeID),
+      row : Number(stockInfo.row),
+      col : Number(stockInfo.col)
+    };
+    await axios
+      .post("/stock/", stockInfo, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
+      .then(commit("addStockToState", stockInfo))
+      .catch(console.log("error writing item to db"));
+  },
+  async deleteStock({ commit }, stockInfo) {
+    let session = await Auth.currentSession();
+    stockInfo = {
+      itemID : Number(stockInfo.itemID),
+      storeID : Number(stockInfo.storeID)
+    };
+    await axios
+      .delete(domain + `/stock/${stockInfo.itemID}/${stockInfo.storeID}` , {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
+      .then(commit("deleteStockFromState", stockInfo))
+      .catch(console.log("error deleting item from db"));
+  },
+  async updateStock({ commit }, stockInfo) {
+    let session = await Auth.currentSession();
+    stockInfo = {
+      itemID : Number(stockInfo.itemID),
+      storeID : Number(stockInfo.storeID),
+      row : Number(stockInfo.row),
+      col : Number(stockInfo.col)
+    };
+    await axios
+      .put("/stock/", stockInfo, {
+        headers: {
+        'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        }
+      })
+      .then(commit("updateStockInState", stockInfo))
+      .catch(console.log("error updating item on db"));
+  },
+  
+  //****************************************************************************************items
   async addItem({ commit }, item) {
     let session = await Auth.currentSession();
     item = {
@@ -119,7 +175,9 @@ const actions = {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then(commit("addItemToState", item))
+      .then((response) => {
+        commit("addItemToState", response.data)
+      })
       .catch(console.log("error writing item to db"));
   },
   async deleteItem({ commit }, id) {
@@ -148,8 +206,19 @@ const actions = {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then(commit("updateItemInState", item))
+      .then((response) => {
+        commit("updateItemInState", response.data)
+      })
       .catch(console.log("error updating item on db"));
+  },
+  async fetchAllItems({ commit }) {
+   
+    await axios
+      .get("/item/")
+      .then((response) => {
+        commit("populateAllItems", response.data);
+      })
+      .catch(console.log("error fetching all items"));
   },
 };
 
@@ -179,16 +248,20 @@ const mutations = {
     state.dialog = bool;
   },
   //items
+  populateAllItems: (state, items) =>
+  {
+    state.allItems = items;
+  },
   addItemToState: (state, item) => {
-    state.items.push(item);
+    state.allItems.push(item);
   },
   deleteItemFromState: (state, id) => {
-    state.items = state.items.filter((i) => i.itemID != id);
+    state.allItems = state.allItems.filter((i) => i.itemID != id);
   },
   updateItemInState: (state, item) => {
-    for (var i in state.items) {
-      if (state.items[i].itemID == item.itemID) {
-        Vue.set(state.items, i, item);
+    for (var i in state.allItems) {
+      if (state.allItems[i].itemID == item.itemID) {
+        Vue.set(state.allItems, i, item);
         break;
       }
     }

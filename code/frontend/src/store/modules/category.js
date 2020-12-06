@@ -36,7 +36,9 @@ const actions = {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
       })
-      .then(commit("addCategoryToState", category))
+      .then((response) => {
+        commit("addCategoryToState", response.data)
+      })
       .catch(console.log("error adding category"));
   },
   async deleteCategory({ commit }, id) {
