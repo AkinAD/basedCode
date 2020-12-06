@@ -8,7 +8,7 @@
         <router-view />
       </v-container>
       <v-container>
-        <v-btn
+        <!-- <v-btn
           v-scroll="onScroll"
           v-show="fab"
           fab
@@ -20,7 +20,7 @@
           @click="toTop"
         >
           <v-icon>mdi-chevron-up</v-icon>
-        </v-btn>
+        </v-btn> -->
       </v-container>
     </v-main>
     <Footer />
@@ -67,16 +67,21 @@ export default {
         this.signOut();
         this.$router.push("/home");
       });
-     
   },
   created() {
     this.updateStores();
     this.fetchCategories();
     this.fetchAllItems();
-    
   },
   methods: {
-    ...mapActions(["signIn", "signOut", "updateStores", "fetchCategories", "fetchEmployees", "fetchAllItems",]),
+    ...mapActions([
+      "signIn",
+      "signOut",
+      "updateStores",
+      "fetchCategories",
+      "fetchEmployees",
+      "fetchAllItems",
+    ]),
     onScroll(e) {
       if (typeof window === "undefined") return;
       const top = window.pageYOffset || e.target.scrollTop || 0;
