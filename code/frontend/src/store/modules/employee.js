@@ -27,8 +27,8 @@ const actions = {
       username : employee.username,
       email : employee.email,
       storeid : Number(employee.storeid),
-      firstname : employee.firstName,
-      lastname : employee.lastName
+      firstName : employee.firstName,
+      lastName : employee.lastName
     };
     console.log(employee);
     await axios
