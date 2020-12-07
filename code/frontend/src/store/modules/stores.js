@@ -49,7 +49,7 @@ const actions = {
     };
 
     await axios
-      .post(domain + "/store/", store, {
+      .post(domain + "/store", store, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -81,7 +81,7 @@ const actions = {
     };
     console.log(store);
     await axios
-      .put(domain +  "/store/", store, {
+      .put(domain +  "/store", store, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -120,7 +120,7 @@ const actions = {
     };
     console.log(stockInfo);
     await axios
-      .post(domain + "/stock/", stockInfo, {
+      .post(domain + "/stock", stockInfo, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -169,7 +169,7 @@ const actions = {
     };
     console.log(stockInfo);
     await axios
-      .put(domain + "/stock/", stockInfo, {
+      .put(domain + "/stock", stockInfo, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -201,7 +201,7 @@ const actions = {
     };
 
     await axios
-      .post(domain + "/item/", item, {
+      .post(domain + "/item", item, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -245,7 +245,7 @@ const actions = {
   async fetchAllItems({ commit }) {
    
     await axios
-      .get(domain + "/item/")
+      .get(domain + "/item")
       .then((response) => {
         commit("populateAllItems", response.data);
       })

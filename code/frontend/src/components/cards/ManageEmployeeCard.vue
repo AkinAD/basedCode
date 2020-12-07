@@ -5,7 +5,7 @@
       <v-col>
         <v-card outlined>
           <v-card-title
-            >{{ employee.firstname }} {{ employee.lastname }}</v-card-title
+            >{{ employee.firstName }} {{ employee.lastName }}</v-card-title
           >
           <v-card-subtitle
             >{{ employee.username }} <br />

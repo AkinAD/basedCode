@@ -67,8 +67,8 @@ export default {
         { schemaName: "username", displayName: "Username", value: ''},
         { schemaName: "email", displayName: "Email", value: ''},
         { schemaName: "storeid", displayName: "Store ID", value: ''},
-        { schemaName: "firstname", displayName: "First Name", value: ''},
-        { schemaName: "lastname", displayName: "Last Name", value: ''},
+        { schemaName: "firstName", displayName: "First Name", value: ''},
+        { schemaName: "lastName", displayName: "Last Name", value: ''},
       ]
     };
   },

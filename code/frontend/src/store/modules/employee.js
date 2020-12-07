@@ -27,12 +27,12 @@ const actions = {
       username : employee.username,
       email : employee.email,
       storeid : Number(employee.storeid),
-      firstname : employee.firstname,
-      lastname : employee.lastname
+      firstname : employee.firstName,
+      lastname : employee.lastName
     };
     console.log(employee);
     await axios
-      .post(domain + "/employee/", employee, {
+      .post(domain + "/employee", employee, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -43,13 +43,16 @@ const actions = {
   async deleteEmployee({ commit }, username) {
     let session = await Auth.currentSession();
     let employee = {
-      username: username.toString()
+      username: username
     };
     console.log(employee);
     await axios
-      .delete(domain + "/employee/", employee, {
+      .delete(domain + "/employee", {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        },
+        data: {
+          username: employee.username
         }
       })
       .then(commit("deleteEmployeeFromState", username))
@@ -59,7 +62,7 @@ const actions = {
     let session = await Auth.currentSession();
     console.log(employee);
     await axios
-      .put(domain + "/employee/", employee, {
+      .put(domain + "/employee", employee, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -76,7 +79,7 @@ const actions = {
     console.log(username);
     console.log(employee);
     await axios
-      .post(domain + "/manager/", username, {
+      .post(domain + "/manager", username, {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
@@ -91,7 +94,7 @@ const actions = {
       username: employee.username
     };
     await axios
-      .post(domain + "/admin/", username ,{
+      .post(domain + "/admin", username ,{
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
         }
