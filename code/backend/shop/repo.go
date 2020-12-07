@@ -122,7 +122,7 @@ func (r *shopRepo) updateItem(item *Item) (*Item, error) {
 
 func (r *shopRepo) deleteItem(ID int) (bool, error) {
 	var items []Item
-	result := r.db.Raw("DELETE from items CASCADE WHERE itemid = ? ", ID).Scan(&items)
+	result := r.db.Raw("DELETE from items WHERE itemid = ?", ID).Scan(&items)
 	err := result.Error
 
 	if err != nil {
