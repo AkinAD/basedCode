@@ -93,7 +93,7 @@ const mutations = {
     
   },
   setSelectedCategory: (state, category) => {
-    state.selectedCatorgory = category;
+    state.selectedCategory = category;
   },
   updateCategories: (state, categories) => {
     state.categories = categories;

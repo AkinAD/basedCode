@@ -27,8 +27,8 @@ const actions = {
       username : employee.username,
       email : employee.email,
       storeid : Number(employee.storeid),
-      firstname : employee.firstname,
-      lastname : employee.lastname
+      firstname : employee.firstName,
+      lastname : employee.lastName
     };
     console.log(employee);
     await axios
@@ -43,13 +43,16 @@ const actions = {
   async deleteEmployee({ commit }, username) {
     let session = await Auth.currentSession();
     let employee = {
-      username: username.toString()
+      username: username
     };
     console.log(employee);
     await axios
-      .delete(domain + "/employee", employee, {
+      .delete(domain + "/employee", {
         headers: {
         'Authorization': `Bearer ${session.getAccessToken().getJwtToken()}`
+        },
+        data: {
+          username: employee.username
         }
       })
       .then(commit("deleteEmployeeFromState", username))
